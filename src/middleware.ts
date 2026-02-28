@@ -3,17 +3,27 @@ import { SITE_PASSWORD } from 'astro:env/server';
 import { getPublicPathDecision, normalizePathname, sanitizeRedirectTarget } from './lib/auth/paths';
 import { AUTH_COOKIE_NAME, verifySessionCookieValue } from './lib/auth/session';
 
-const SECURITY_HEADERS = {
-  'cache-control': 'private, no-store, max-age=0',
+const RESPONSE_SECURITY_HEADERS = {
   'referrer-policy': 'no-referrer',
   'x-frame-options': 'DENY',
   'x-robots-tag': 'noindex, nofollow, noarchive, nosnippet, noimageindex, notranslate',
 } as const;
+const PRIVATE_CACHE_CONTROL_HEADER = 'private, no-store, max-age=0';
 
-function applySecurityHeaders(response: Response): Response {
-  Object.entries(SECURITY_HEADERS).forEach(([header, value]) => {
+function shouldPreserveCacheControl(pathname: string): boolean {
+  return (
+    pathname.startsWith('/_astro/') || pathname === '/robots.txt' || pathname === '/favicon.svg'
+  );
+}
+
+function applySecurityHeaders(pathname: string, response: Response): Response {
+  Object.entries(RESPONSE_SECURITY_HEADERS).forEach(([header, value]) => {
     response.headers.set(header, value);
   });
+
+  if (!shouldPreserveCacheControl(pathname)) {
+    response.headers.set('cache-control', PRIVATE_CACHE_CONTROL_HEADER);
+  }
 
   return response;
 }
@@ -26,7 +36,7 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
   const { isPublic } = getPublicPathDecision(pathname);
 
   if (pathname === '/login' && isAuthenticated) {
-    return applySecurityHeaders(context.redirect('/', 302));
+    return applySecurityHeaders(pathname, context.redirect('/', 302));
   }
 
   if (!isPublic && !isAuthenticated) {
@@ -38,10 +48,11 @@ export const onRequest: MiddlewareHandler = async (context, next) => {
     }
 
     return applySecurityHeaders(
+      pathname,
       context.redirect(`${redirectLocation.pathname}${redirectLocation.search}`, 302),
     );
   }
 
   const response = await next();
-  return applySecurityHeaders(response);
+  return applySecurityHeaders(pathname, response);
 };

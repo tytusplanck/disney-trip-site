@@ -57,6 +57,11 @@ This repository is a private Disney trip site built to be maintained primarily b
 - `npm run build`
 - `npm run verify`
 
+## Testing Expectations
+
+- Coverage settings must include request/auth logic and shared helper modules, not just narrow leaf files
+- When request routing or auth behavior changes, add or update tests for middleware and API routes alongside helper tests
+
 ## Documentation Policy
 
 - `AGENTS.md` is only a table of contents and quick instructions

@@ -7,68 +7,40 @@ import { loginPage } from './login.page';
 const error = Astro.url.searchParams.get('error');
 const next = sanitizeRedirectTarget(Astro.url.searchParams.get('next'));
 const hasError = error === 'invalid-password';
-const { form, intro, meta, security } = loginPage;
+const { form, intro, meta } = loginPage;
 ---
 
 <BaseLayout title={meta.title} description={meta.description}>
-  <AuthShell
-    metaLabel={intro.eyebrow}
-    footerNote="Protected trip routes stay server-rendered and shared-password gated."
-  >
+  <AuthShell metaLabel={intro.eyebrow}>
     <div class="auth-page">
-      <section class="auth-stage">
-        <section class="auth-panel">
-          <p class="page-label">{intro.eyebrow}</p>
-          <h1 class="page-title">{intro.title}</h1>
-          <p class="page-intro">{intro.lede}</p>
-          <p class="body-copy">{intro.detail}</p>
+      <section class="auth-card" aria-labelledby="login-title">
+        <p class="page-label">{intro.eyebrow}</p>
+        <h1 class="page-title" id="login-title">{intro.title}</h1>
+        <p class="auth-card__quip">{intro.quip}</p>
 
-          <p class="page-label">{security.heading}</p>
-          <h2 class="section-title">{security.intro}</h2>
-
-          <dl class="detail-grid">
-            {
-              security.details.map((detail) => (
-                <div class="detail-card">
-                  <dt class="detail-label">{detail.label}</dt>
-                  <dd class="detail-value">{detail.value}</dd>
-                </div>
-              ))
-            }
-          </dl>
-
-          <ul class="bullet-list">
-            {security.notes.map((note) => <li>{note}</li>)}
-          </ul>
-        </section>
-
-        <section class="auth-panel auth-panel--form">
-          <p class="page-label">{form.eyebrow}</p>
-          <h2 class="section-title">{form.heading}</h2>
-          <p class="page-intro">{form.intro}</p>
-
-          <form class="form-stack" action="/api/auth/login" method="post">
-            <input type="hidden" name="next" value={next} />
-            <label class="field" for="password">
-              <span class="field__label">{form.passwordLabel}</span>
-              <span class="field__control">
-                <span class="field__symbol" aria-hidden="true">+</span>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autocomplete="current-password"
-                  placeholder={form.passwordPlaceholder}
-                  required
-                />
-              </span>
-            </label>
-            {hasError && <p class="form-error">{form.errorMessage}</p>}
-            <button class="button" type="submit">{form.submitLabel}</button>
-          </form>
-
-          <p class="helper-note">{form.hint}</p>
-        </section>
+        <form class="form-stack auth-card__form" action="/api/auth/login" method="post">
+          <input type="hidden" name="next" value={next} />
+          <label class="field" for="password">
+            <span class="field__label">{form.passwordLabel}</span>
+            <input
+              class="auth-card__input"
+              id="password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              placeholder={form.passwordPlaceholder}
+              required
+            />
+          </label>
+          {
+            hasError && (
+              <p class="form-error" role="alert">
+                {form.errorMessage}
+              </p>
+            )
+          }
+          <button class="button auth-card__button" type="submit">{form.submitLabel}</button>
+        </form>
       </section>
     </div>
   </AuthShell>

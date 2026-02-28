@@ -2,11 +2,10 @@
 import BrandMark from '../BrandMark.astro';
 
 interface Props {
-  footerNote: string;
   metaLabel: string;
 }
 
-const { footerNote, metaLabel } = Astro.props;
+const { metaLabel } = Astro.props;
 ---
 
 <div class="auth-shell">
@@ -18,8 +17,4 @@ const { footerNote, metaLabel } = Astro.props;
   <main class="auth-shell__main" id="main-content">
     <slot />
   </main>
-
-  <footer class="auth-shell__footer">
-    <p>{footerNote}</p>
-  </footer>
 </div>

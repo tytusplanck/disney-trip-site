@@ -51,7 +51,8 @@ Middleware verifies the signature before treating the request as authenticated.
 - session-scoped lifetime (no persistent max age)
 - secure cookie in HTTPS/production contexts
 - `noindex` and `X-Robots-Tag` protections
-- `Cache-Control: private, no-store, max-age=0`
+- `Cache-Control: private, no-store, max-age=0` on login, auth redirects, and protected page responses
+- framework-managed caching preserved for public build assets such as `/_astro/*`
 
 ## Astro Origin Check
 

@@ -1,7 +1,7 @@
 ---
 import ChipList from './ChipList.astro';
 import StatusBadge from './StatusBadge.astro';
-import { getArchiveCardHref, getTripSectionPath } from '../lib/trips/archive';
+import { getTripLandingPath, getTripSectionPath } from '../lib/trips/archive';
 import type { ArchiveTripInsight } from '../lib/trips/details';
 import type { TripSummary } from '../lib/trips/types';
 
@@ -12,7 +12,7 @@ interface Props {
 
 const { trip, insights = [] } = Astro.props;
 
-const cardHref = getArchiveCardHref(trip);
+const cardHref = getTripLandingPath(trip);
 const PrimaryTag = cardHref === null ? 'div' : 'a';
 
 const cardStats = [

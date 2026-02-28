@@ -69,13 +69,7 @@ export function getTripSectionPath(
   return `${getTripBasePath(trip)}/${section}`;
 }
 
-export function getArchiveCardHref(
-  trip: Pick<TripSummary, 'groupId' | 'id' | 'status'>,
-): string | null {
-  return trip.status === 'planning' ? getTripSectionPath(trip, 'attractions') : null;
-}
-
-export function resolveTripIndexDestination(
+export function getTripLandingPath(
   trip: Pick<TripSummary, 'groupId' | 'id' | 'status'>,
 ): string | null {
   return trip.status === 'planning' ? getTripSectionPath(trip, 'attractions') : null;

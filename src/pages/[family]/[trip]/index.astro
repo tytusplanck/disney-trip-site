@@ -2,7 +2,7 @@
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
 import { tripArchiveData } from '../../../data/trip-archive';
 import { upcomingStubStatus } from '../../../data/trip-stubs';
-import { findArchiveTrip, resolveTripIndexDestination } from '../../../lib/trips/archive';
+import { findArchiveTrip, getTripLandingPath } from '../../../lib/trips/archive';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
@@ -12,7 +12,7 @@ if (!trip) {
   return Astro.redirect('/');
 }
 
-const destination = resolveTripIndexDestination(trip);
+const destination = getTripLandingPath(trip);
 
 if (destination !== null) {
   return Astro.redirect(destination);

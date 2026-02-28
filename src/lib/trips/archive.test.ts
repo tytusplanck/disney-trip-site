@@ -2,9 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { tripArchiveData } from '../../data/trip-archive';
 import {
   findArchiveTrip,
+  findTripDataModule,
   getArchiveSections,
   getArchiveStats,
-  resolveTripIndexDestination,
+  getTripBarStats,
+  getTripBasePath,
+  getTripLandingPath,
 } from './archive';
 
 describe('archive helpers', () => {
@@ -48,7 +51,28 @@ describe('archive helpers', () => {
       throw new Error('Expected seeded planning and upcoming trips to exist.');
     }
 
-    expect(resolveTripIndexDestination(planningTrip)).toBe('/casschwlanck/2026/attractions');
-    expect(resolveTripIndexDestination(upcomingTrip)).toBeNull();
+    expect(getTripLandingPath(planningTrip)).toBe('/casschwlanck/2026/attractions');
+    expect(getTripLandingPath(upcomingTrip)).toBeNull();
+  });
+
+  it('finds trip modules and derives shared trip chrome stats', () => {
+    const planningTrip = findArchiveTrip(tripArchiveData.trips, 'casschwlanck', '2026');
+    const upcomingTrip = findArchiveTrip(tripArchiveData.trips, 'casschwlanck', 'future-trip');
+    const planningModule = findTripDataModule(tripArchiveData.modules, 'casschwlanck', '2026');
+
+    expect(planningModule?.summary.id).toBe('2026');
+    expect(findTripDataModule(tripArchiveData.modules, 'missing', 'trip')).toBeUndefined();
+
+    if (!planningTrip || !upcomingTrip) {
+      throw new Error('Expected seeded trips to exist.');
+    }
+
+    expect(getTripBasePath(planningTrip)).toBe('/casschwlanck/2026');
+    expect(getTripBarStats(upcomingTrip)).toEqual([
+      { label: 'People', value: '--' },
+      { label: 'Days', value: '--' },
+      { label: 'Attractions', value: '--' },
+      { label: 'Parks', value: '--' },
+    ]);
   });
 });

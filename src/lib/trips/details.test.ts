@@ -1,14 +1,92 @@
+import type { TripDataModule } from './types';
 import { describe, expect, it } from 'vitest';
 import { casschwlanck2026TripData } from '../../data/trips/casschwlanck-2026';
 import {
   getArchiveTripInsights,
+  getAttractionHeatmapRows,
   getAttractionMustDoVoteCount,
   getPartyOverview,
   getPartySummaries,
+  getPreferenceLegend,
+  getPreferenceMeta,
   getRankedAttractions,
   getScheduleDaySummaries,
   getScheduleOverview,
 } from './details';
+
+const fallbackTripData: TripDataModule = {
+  summary: {
+    attractionCount: 4,
+    dateLabel: 'TBD',
+    dayCount: 0,
+    groupId: 'casschwlanck',
+    id: 'fallback-test',
+    parkLabels: ['Magic Kingdom'],
+    partySize: 2,
+    status: 'planning',
+    themeId: 'primary',
+    title: 'Fallback Test',
+    topPick: 'Space Mountain',
+  },
+  party: [
+    { id: 'tytus', name: 'Tytus' },
+    { id: 'cassie', name: 'Cassie' },
+  ],
+  schedule: [],
+  attractions: [
+    {
+      areaLabel: 'Tomorrowland',
+      attractionLabel: 'Space Mountain',
+      consensusScore: 9,
+      id: 'high',
+      parkLabel: 'Magic Kingdom',
+      preferenceByPartyMemberId: { cassie: 1, tytus: 1 },
+    },
+    {
+      areaLabel: 'Fantasyland',
+      attractionLabel: 'Peter Pan',
+      consensusScore: 6,
+      id: 'medium',
+      parkLabel: 'Magic Kingdom',
+      preferenceByPartyMemberId: { cassie: 2, tytus: 2 },
+    },
+    {
+      areaLabel: 'Adventureland',
+      attractionLabel: 'Swiss Family Treehouse',
+      consensusScore: 3,
+      id: 'low',
+      parkLabel: 'Magic Kingdom',
+      preferenceByPartyMemberId: { cassie: 3, tytus: 3 },
+    },
+    {
+      areaLabel: 'Fantasyland',
+      attractionLabel: 'Under the Sea',
+      consensusScore: 4,
+      id: 'fallback',
+      parkLabel: 'Magic Kingdom',
+      preferenceByPartyMemberId: { tytus: 2 },
+    },
+  ],
+};
+
+const emptyTripData: TripDataModule = {
+  summary: {
+    attractionCount: 0,
+    dateLabel: 'TBD',
+    dayCount: 0,
+    groupId: 'casschwlanck',
+    id: 'empty-test',
+    parkLabels: [],
+    partySize: 0,
+    status: 'upcoming',
+    themeId: 'secondary',
+    title: 'Empty Test',
+    topPick: null,
+  },
+  party: [],
+  schedule: [],
+  attractions: [],
+};
 
 describe('trip detail helpers', () => {
   it('ranks attractions by consensus score', () => {
@@ -68,5 +146,49 @@ describe('trip detail helpers', () => {
     ]);
     expect(insights[0]?.value).toContain('park');
     expect(insights[2]?.detail).toContain('Led by');
+  });
+
+  it('derives legend metadata and heatmap rows with indifferent fallbacks', () => {
+    const legend = getPreferenceLegend();
+    const rows = getAttractionHeatmapRows(
+      fallbackTripData.party,
+      fallbackTripData.attractions.slice(-1),
+    );
+    const partySummaries = getPartySummaries(fallbackTripData);
+
+    expect(legend).toHaveLength(5);
+    expect(getPreferenceMeta(1).label).toBe('Must Do');
+    expect(rows[0]?.ratings[1]).toMatchObject({
+      memberId: 'cassie',
+      memberName: 'Cassie',
+      tier: 3,
+    });
+    expect(
+      partySummaries.find((summary) => summary.member.id === 'cassie')?.tierSummaries[2],
+    ).toMatchObject({
+      count: 2,
+      label: 'Indifferent',
+      tier: 3,
+    });
+  });
+
+  it('assigns attraction tones across high, medium, and low consensus bands', () => {
+    const rankedAttractions = getRankedAttractions(fallbackTripData.attractions.slice(0, 3), 2);
+
+    expect(rankedAttractions.map((attraction) => attraction.tone)).toEqual([
+      'high',
+      'medium',
+      'low',
+    ]);
+  });
+
+  it('handles empty overview and insight states', () => {
+    expect(getPartyOverview([])).toEqual({
+      averageMustDoCount: 0,
+      memberCount: 0,
+      mostEnthusiasticMember: null,
+      mostSelectiveMember: null,
+    });
+    expect(getArchiveTripInsights(emptyTripData)).toEqual([]);
   });
 });
