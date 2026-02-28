@@ -1,36 +1,75 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { sanitizeRedirectTarget } from '../lib/auth/paths';
+import { loginPage } from './login.page';
 
 const error = Astro.url.searchParams.get('error');
 const next = sanitizeRedirectTarget(Astro.url.searchParams.get('next'));
 const hasError = error === 'invalid-password';
+const { form, intro, meta, security } = loginPage;
 ---
 
-<BaseLayout
-  title="Disney Trip Login"
-  description="Enter the shared password to access the private Disney trip site."
->
-  <main class="screen">
-    <section class="panel login-panel">
-      <p class="eyebrow">Protected site</p>
-      <h1>Enter the shared password</h1>
-      <p class="lede">This trip site stays private until the correct password is submitted.</p>
-      <form class="stack" action="/api/auth/login" method="post">
-        <input type="hidden" name="next" value={next} />
-        <label class="field" for="password">
-          <span>Password</span>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autocomplete="current-password"
-            required
-          />
-        </label>
-        {hasError && <p class="form-error">That password did not match. Try again.</p>}
-        <button class="button" type="submit">Enter site</button>
-      </form>
+<BaseLayout title={meta.title} description={meta.description}>
+  <main class="page page-login" id="main-content">
+    <section class="login-stage">
+      <section class="card login-intro-card reveal">
+        <p class="eyebrow">{intro.eyebrow}</p>
+        <h1 class="display-title display-title-login">{intro.title}</h1>
+        <p class="lede lede-strong">{intro.lede}</p>
+        <p class="body-copy">{intro.detail}</p>
+
+        <div class="section-heading">
+          <p class="eyebrow">{security.heading}</p>
+          <h2 class="section-title">{security.intro}</h2>
+        </div>
+
+        <dl class="detail-grid">
+          {
+            security.details.map((detail) => (
+              <div class="detail-card">
+                <dt class="detail-label">{detail.label}</dt>
+                <dd class="detail-value">{detail.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <ul class="bullet-list">
+          {security.notes.map((note) => <li>{note}</li>)}
+        </ul>
+      </section>
+
+      <section class="card login-form-card reveal reveal-delay-1">
+        <div class="section-heading section-heading-compact">
+          <p class="eyebrow">{form.eyebrow}</p>
+          <h2 class="section-title">{form.heading}</h2>
+          <p class="section-intro">{form.intro}</p>
+        </div>
+
+        <form class="form-stack" action="/api/auth/login" method="post">
+          <input type="hidden" name="next" value={next} />
+          <label class="field" for="password">
+            <span class="field__label">{form.passwordLabel}</span>
+            <span class="field__control">
+              <span class="field__symbol" aria-hidden="true"> + </span>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                placeholder={form.passwordPlaceholder}
+                required
+              />
+            </span>
+          </label>
+          {hasError && <p class="form-error">{form.errorMessage}</p>}
+          <button class="button button-block" type="submit">
+            {form.submitLabel}
+          </button>
+        </form>
+
+        <p class="helper-note">{form.hint}</p>
+      </section>
     </section>
   </main>
 </BaseLayout>

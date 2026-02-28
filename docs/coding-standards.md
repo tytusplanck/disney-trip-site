@@ -19,6 +19,8 @@ This repository is a private Disney trip site built to be maintained primarily b
 - Prefer small, explicit types over loose objects
 - Use type-only imports when appropriate
 - Keep public internal auth types small and exact
+- Store route copy in route-adjacent `.ts` modules as typed page objects
+- Use separate typed data objects only when content is shared across routes or not owned by a single page
 
 ## Astro and React Policy
 
@@ -31,8 +33,9 @@ This repository is a private Disney trip site built to be maintained primarily b
 
 - Use vanilla CSS only
 - Do not add Tailwind, CSS-in-JS, or component libraries
-- Keep the initial experience intentionally minimal
-- Preserve the existing visual direction unless a later task says otherwise
+- Do not use inline `style` attributes in Astro, HTML, JSX, or TSX markup
+- Put presentation in stylesheet classes and CSS variables, not component-local style declarations
+- When a visual direction changes, update the shared stylesheet and keep the route markup class-based
 
 ## Auth and Secrecy Rules
 
@@ -55,6 +58,7 @@ This repository is a private Disney trip site built to be maintained primarily b
 - `AGENTS.md` is only a table of contents and quick instructions
 - Canonical implementation notes belong in `/docs`
 - Update `/docs` when workflows, auth, or coding conventions change
+- If a route changes its content model, document the new page-object or shared-data convention here
 
 ## Vercel Expectations
 

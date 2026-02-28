@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { siteShellData } from '../data/site-shell';
 
 interface Props {
   title: string;
@@ -7,7 +8,7 @@ interface Props {
   noIndex?: boolean;
 }
 
-const { title, description = 'Private Disney trip planning site.', noIndex = true } = Astro.props;
+const { title, description = siteShellData.defaultDescription, noIndex = true } = Astro.props;
 ---
 
 <!doctype html>
@@ -27,8 +28,19 @@ const { title, description = 'Private Disney trip planning site.', noIndex = tru
     <title>{title}</title>
   </head>
   <body>
+    <a class="skip-link" href="#main-content">{siteShellData.skipLinkLabel}</a>
     <div class="site-shell">
+      <header class="site-masthead">
+        <a class="brand-mark" href="/" aria-label={siteShellData.brandLinkLabel}>
+          <span class="brand-mark__eyebrow">{siteShellData.brandEyebrow}</span>
+          <span class="brand-mark__title">{siteShellData.brandTitle}</span>
+        </a>
+        <p class="site-masthead__note">{siteShellData.mastheadNote}</p>
+      </header>
       <slot />
+      <footer class="site-footer">
+        <p>{siteShellData.footerNote}</p>
+      </footer>
     </div>
   </body>
 </html>
