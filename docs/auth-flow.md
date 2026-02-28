@@ -53,6 +53,19 @@ Middleware verifies the signature before treating the request as authenticated.
 - `noindex` and `X-Robots-Tag` protections
 - `Cache-Control: private, no-store, max-age=0`
 
+## Astro Origin Check
+
+Astro ships with a built-in `security.checkOrigin` guard for SSR form submissions. In this project it is disabled because the Vercel deployment path can cause Astro's request origin comparison to reject the shared-password form before the login handler runs.
+
+The application still relies on these controls:
+
+- server-side password validation
+- signed HTTP-only session cookies
+- `SameSite=Strict` cookies
+- route protection in middleware
+
+If form handling changes later, re-evaluate whether a custom CSRF/origin strategy should be added.
+
 ## Deployment And Repository Warning
 
 The password gate protects the deployed site. It does not protect a public GitHub repository.

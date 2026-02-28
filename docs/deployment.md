@@ -34,6 +34,19 @@ Typical Vercel settings for this repo:
 - Build command: `npm run build`
 - Output setting: handled by the Astro Vercel adapter
 
+## Origin Check Note
+
+Astro's built-in `security.checkOrigin` setting is disabled in this project. The deployed Vercel form flow can trip Astro's default SSR origin comparison and block the shared-password login form before the endpoint code runs.
+
+That means this project currently depends on its own application-level protections instead:
+
+- password check on the server
+- signed session cookies
+- `SameSite=Strict` cookies
+- middleware-based route protection
+
+If future features add more state-changing form endpoints, review whether a custom CSRF/origin validation layer should be added.
+
 ## Repository Expectations
 
 The password gate protects the deployed site only. It does not hide source code in GitHub.
