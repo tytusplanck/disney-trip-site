@@ -1,33 +1,136 @@
 ---
+import AttractionHeatmap from '../../../components/AttractionHeatmap.astro';
+import ConsensusBars from '../../../components/ConsensusBars.astro';
+import DetailStatGrid from '../../../components/DetailStatGrid.astro';
+import TripPageShell from '../../../components/shells/TripPageShell.astro';
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
 import { tripArchiveData } from '../../../data/trip-archive';
 import { planningStubStatus, tripStubPages, upcomingStubStatus } from '../../../data/trip-stubs';
-import { findArchiveTrip } from '../../../lib/trips/archive';
+import {
+  getAttractionHeatmapRows,
+  getAttractionMustDoVoteCount,
+  getRankedAttractions,
+} from '../../../lib/trips/details';
+import { findArchiveTrip, findTripDataModule } from '../../../lib/trips/archive';
+import { tripSectionPages } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
 const trip = findArchiveTrip(tripArchiveData.trips, familyId, tripId);
+const tripModule = findTripDataModule(tripArchiveData.modules, familyId, tripId);
 
-if (!trip) {
+if (!trip || !tripModule) {
   return Astro.redirect('/');
 }
 
-const page = tripStubPages.attractions;
+const page = tripSectionPages.attractions;
+const stubPage = tripStubPages.attractions;
 const statusCopy = trip.status === 'upcoming' ? upcomingStubStatus : planningStubStatus;
+const heatmapRows = getAttractionHeatmapRows(tripModule.party, tripModule.attractions);
+const rankedAttractions = getRankedAttractions(tripModule.attractions, tripModule.party.length);
+const spotlightAttractions = rankedAttractions.slice(0, 3);
+const attractionStats = [
+  {
+    label: 'Top score',
+    value: spotlightAttractions[0]
+      ? `${spotlightAttractions[0].consensusScore}/${spotlightAttractions[0].maxScore}`
+      : '--',
+    detail: spotlightAttractions[0]?.attractionLabel ?? 'No attraction data loaded',
+  },
+  {
+    label: 'Must-do votes',
+    value: String(getAttractionMustDoVoteCount(tripModule.attractions)),
+    detail: 'Tier 1 calls across the full imported preference matrix',
+  },
+  {
+    label: 'Scored attractions',
+    value: String(tripModule.attractions.length),
+    detail: `${tripModule.summary.parkLabels.length} parks represented in the source sheet`,
+  },
+  {
+    label: 'Party rated',
+    value: String(tripModule.party.length),
+    detail: 'Every traveler included in the planning preference export',
+  },
+];
 ---
 
-<TripStubShell
-  title={`${trip.title} | Attractions`}
-  description={`Protected placeholder attractions route for ${trip.title}.`}
-  trip={trip}
-  activeSection="attractions"
-  pageEyebrow={page.pageLabel}
-  pageTitle={page.title}
-  pageIntro={trip.status === 'upcoming' ? `${page.intro} Planning begins soon.` : page.intro}
-  panelEyebrow={statusCopy.eyebrow}
-  panelTitle={page.calloutTitle}
-  panelBody={trip.status === 'upcoming'
-    ? `${statusCopy.body} ${page.calloutBody}`
-    : page.calloutBody}
-  checklist={page.checklist}
-/>
+{
+  trip.status === 'upcoming' ? (
+    <TripStubShell
+      title={`${trip.title} | Attractions`}
+      description={`Protected placeholder attractions route for ${trip.title}.`}
+      trip={trip}
+      activeSection="attractions"
+      pageEyebrow={stubPage.pageLabel}
+      pageTitle={stubPage.title}
+      pageIntro={`${stubPage.intro} Planning begins soon.`}
+      panelEyebrow={statusCopy.eyebrow}
+      panelTitle={stubPage.calloutTitle}
+      panelBody={`${statusCopy.body} ${stubPage.calloutBody}`}
+      checklist={stubPage.checklist}
+    />
+  ) : (
+    <TripPageShell
+      title={`${trip.title} | Attractions`}
+      description={`Attractions view for ${trip.title}.`}
+      trip={trip}
+      activeSection="attractions"
+      pageEyebrow={page.pageLabel}
+      pageTitle={page.title}
+      pageIntro={page.intro}
+    >
+      <DetailStatGrid items={attractionStats} />
+
+      <section class="trip-page-section">
+        <div class="trip-page-section__header">
+          <div class="trip-page-section__copy">
+            <p class="page-label">Consensus spotlight</p>
+            <h2 class="section-title">Highest-confidence picks</h2>
+          </div>
+          <p class="trip-page-section__note">Scored out of 50 possible group points</p>
+        </div>
+
+        <div class="featured-grid">
+          {spotlightAttractions.map((attraction, index) => (
+            <article class="featured-attraction">
+              <p class="featured-attraction__eyebrow">#{index + 1} group signal</p>
+              <h3 class="featured-attraction__title">{attraction.attractionLabel}</h3>
+              <p class="featured-attraction__meta">
+                {attraction.parkLabel} / {attraction.areaLabel}
+              </p>
+              <p class="featured-attraction__score">
+                {attraction.consensusScore}/{attraction.maxScore} with {attraction.mustDoVotes}{' '}
+                must-do calls
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="trip-page-section">
+        <div class="trip-page-section__header">
+          <div class="trip-page-section__copy">
+            <p class="page-label">Preference matrix</p>
+            <h2 class="section-title">Who wants to ride what</h2>
+          </div>
+          <p class="trip-page-section__note">Full imported matrix from the planning sheet</p>
+        </div>
+
+        <AttractionHeatmap party={tripModule.party} rows={heatmapRows} />
+      </section>
+
+      <section class="trip-page-section">
+        <div class="trip-page-section__header">
+          <div class="trip-page-section__copy">
+            <p class="page-label">Rankings</p>
+            <h2 class="section-title">Consensus order of battle</h2>
+          </div>
+          <p class="trip-page-section__note">Top 14 attractions by group enthusiasm</p>
+        </div>
+
+        <ConsensusBars items={rankedAttractions.slice(0, 14)} />
+      </section>
+    </TripPageShell>
+  )
+}

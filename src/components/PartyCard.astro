@@ -1,0 +1,70 @@
+---
+import type { PartyMemberSummary } from '../lib/trips/details';
+
+interface Props {
+  summary: PartyMemberSummary;
+}
+
+const { summary } = Astro.props;
+const initial = summary.member.name.slice(0, 1).toUpperCase();
+---
+
+<article class="party-detail-card">
+  <div class="party-detail-card__avatar" aria-hidden="true">
+    {initial}
+  </div>
+
+  <div class="party-detail-card__header">
+    <h3 class="party-detail-card__name">{summary.member.name}</h3>
+    <p class="party-detail-card__style">{summary.styleLabel}</p>
+  </div>
+
+  <dl class="party-detail-card__meta">
+    <div>
+      <dt class="detail-label">Must Do</dt>
+      <dd class="detail-value">{summary.mustDoCount}</dd>
+    </div>
+    <div>
+      <dt class="detail-label">All In</dt>
+      <dd class="detail-value">{summary.enthusiasmCount}</dd>
+    </div>
+    <div>
+      <dt class="detail-label">Avoid</dt>
+      <dd class="detail-value">{summary.avoidCount}</dd>
+    </div>
+  </dl>
+
+  <div class="party-detail-card__tiers">
+    {
+      summary.tierSummaries.map((tierSummary) => (
+        <div class="party-detail-card__tier-row">
+          <div class="party-detail-card__tier-copy">
+            <span class="party-detail-card__tier-label">{tierSummary.label}</span>
+            <span class="party-detail-card__tier-count">{tierSummary.count}</span>
+          </div>
+          <progress
+            class:list={[
+              'party-detail-card__tier-progress',
+              `party-detail-card__tier-progress--${tierSummary.tier}`,
+            ]}
+            max={tierSummary.maxCount}
+            value={tierSummary.count}
+          />
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="party-detail-card__choices">
+    <p class="party-detail-card__choices-label">Top calls</p>
+    <ul class="party-detail-card__choices-list">
+      {
+        summary.topChoices.length > 0 ? (
+          summary.topChoices.map((choice) => <li>{choice}</li>)
+        ) : (
+          <li>No must-do calls logged yet.</li>
+        )
+      }
+    </ul>
+  </div>
+</article>

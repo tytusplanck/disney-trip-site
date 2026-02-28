@@ -1,33 +1,117 @@
 ---
+import ChipList from '../../../components/ChipList.astro';
+import DetailStatGrid from '../../../components/DetailStatGrid.astro';
+import ScheduleDayCard from '../../../components/ScheduleDayCard.astro';
+import TripPageShell from '../../../components/shells/TripPageShell.astro';
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
 import { tripArchiveData } from '../../../data/trip-archive';
 import { planningStubStatus, tripStubPages, upcomingStubStatus } from '../../../data/trip-stubs';
-import { findArchiveTrip } from '../../../lib/trips/archive';
+import { findArchiveTrip, findTripDataModule } from '../../../lib/trips/archive';
+import { getScheduleDaySummaries, getScheduleOverview } from '../../../lib/trips/details';
+import { tripSectionPages } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
 const trip = findArchiveTrip(tripArchiveData.trips, familyId, tripId);
+const tripModule = findTripDataModule(tripArchiveData.modules, familyId, tripId);
 
-if (!trip) {
+if (!trip || !tripModule) {
   return Astro.redirect('/');
 }
 
-const page = tripStubPages.schedule;
+const page = tripSectionPages.schedule;
+const stubPage = tripStubPages.schedule;
 const statusCopy = trip.status === 'upcoming' ? upcomingStubStatus : planningStubStatus;
+const scheduleOverview = getScheduleOverview(tripModule.schedule);
+const scheduleDays = getScheduleDaySummaries(tripModule.schedule);
+const scheduleStats = [
+  {
+    label: 'Park days',
+    value: String(scheduleOverview.parkDays),
+    detail: `${scheduleOverview.parkLineup.length} unique parks planned`,
+  },
+  {
+    label: 'Resort resets',
+    value: String(scheduleOverview.resortDays),
+    detail: 'Quiet days between the heavier park pushes',
+  },
+  {
+    label: 'Travel days',
+    value: String(scheduleOverview.travelDays),
+    detail: 'Arrival and departure hold the edges of the trip',
+  },
+  {
+    label: 'Logged notes',
+    value: String(scheduleOverview.scheduledNotes),
+    detail: 'Meals, holds, and reminders carried over from the CSV',
+  },
+];
 ---
 
-<TripStubShell
-  title={`${trip.title} | Schedule`}
-  description={`Protected placeholder schedule route for ${trip.title}.`}
-  trip={trip}
-  activeSection="schedule"
-  pageEyebrow={page.pageLabel}
-  pageTitle={page.title}
-  pageIntro={trip.status === 'upcoming' ? `${page.intro} Planning begins soon.` : page.intro}
-  panelEyebrow={statusCopy.eyebrow}
-  panelTitle={page.calloutTitle}
-  panelBody={trip.status === 'upcoming'
-    ? `${statusCopy.body} ${page.calloutBody}`
-    : page.calloutBody}
-  checklist={page.checklist}
-/>
+{
+  trip.status === 'upcoming' ? (
+    <TripStubShell
+      title={`${trip.title} | Schedule`}
+      description={`Protected placeholder schedule route for ${trip.title}.`}
+      trip={trip}
+      activeSection="schedule"
+      pageEyebrow={stubPage.pageLabel}
+      pageTitle={stubPage.title}
+      pageIntro={`${stubPage.intro} Planning begins soon.`}
+      panelEyebrow={statusCopy.eyebrow}
+      panelTitle={stubPage.calloutTitle}
+      panelBody={`${statusCopy.body} ${stubPage.calloutBody}`}
+      checklist={stubPage.checklist}
+    />
+  ) : (
+    <TripPageShell
+      title={`${trip.title} | Schedule`}
+      description={`Schedule view for ${trip.title}.`}
+      trip={trip}
+      activeSection="schedule"
+      pageEyebrow={page.pageLabel}
+      pageTitle={page.title}
+      pageIntro={page.intro}
+    >
+      <DetailStatGrid items={scheduleStats} />
+
+      <section class="trip-page-section">
+        <div class="trip-page-section__header">
+          <div class="trip-page-section__copy">
+            <p class="page-label">Trip rhythm</p>
+            <h2 class="section-title">Park cadence and reset days</h2>
+          </div>
+          <p class="trip-page-section__note">Imported directly from the March itinerary sheet</p>
+        </div>
+
+        <article class="schedule-summary-card">
+          <p class="schedule-summary-card__text">
+            Four park days are buffered by three resort days, with travel holding the front and back
+            of the trip. The current park lineup is already clear even before timed reservations are
+            locked.
+          </p>
+
+          <div class="schedule-summary-card__chips">
+            <ChipList items={scheduleOverview.parkLineup} />
+          </div>
+        </article>
+      </section>
+
+      <section class="trip-page-section">
+        <div class="trip-page-section__header">
+          <div class="trip-page-section__copy">
+            <p class="page-label">Daily board</p>
+            <h2 class="section-title">Nine-day itinerary outline</h2>
+          </div>
+          <p class="trip-page-section__note">Day cards stay close to the planning CSV</p>
+        </div>
+
+        <div class="schedule-grid">
+          {scheduleDays.map((day) => (
+            <ScheduleDayCard day={day} />
+          ))}
+        </div>
+      </section>
+    </TripPageShell>
+  )
+}

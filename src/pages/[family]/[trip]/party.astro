@@ -1,33 +1,137 @@
 ---
+import DetailStatGrid from '../../../components/DetailStatGrid.astro';
+import PartyCard from '../../../components/PartyCard.astro';
+import TripPageShell from '../../../components/shells/TripPageShell.astro';
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
 import { tripArchiveData } from '../../../data/trip-archive';
 import { planningStubStatus, tripStubPages, upcomingStubStatus } from '../../../data/trip-stubs';
-import { findArchiveTrip } from '../../../lib/trips/archive';
+import { findArchiveTrip, findTripDataModule } from '../../../lib/trips/archive';
+import {
+  getPartyOverview,
+  getPartySummaries,
+  getRankedAttractions,
+} from '../../../lib/trips/details';
+import { tripSectionPages } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
 const trip = findArchiveTrip(tripArchiveData.trips, familyId, tripId);
+const tripModule = findTripDataModule(tripArchiveData.modules, familyId, tripId);
 
-if (!trip) {
+if (!trip || !tripModule) {
   return Astro.redirect('/');
 }
 
-const page = tripStubPages.party;
+const page = tripSectionPages.party;
+const stubPage = tripStubPages.party;
 const statusCopy = trip.status === 'upcoming' ? upcomingStubStatus : planningStubStatus;
+const partySummaries = getPartySummaries(tripModule);
+const partyOverview = getPartyOverview(partySummaries);
+const sharedPriorityAttractions = getRankedAttractions(
+  tripModule.attractions,
+  tripModule.party.length,
+)
+  .sort(
+    (left, right) =>
+      right.mustDoVotes - left.mustDoVotes ||
+      right.consensusScore - left.consensusScore ||
+      left.attractionLabel.localeCompare(right.attractionLabel),
+  )
+  .slice(0, 5);
+const partyStats = [
+  {
+    label: 'Party members',
+    value: String(partyOverview.memberCount),
+    detail: 'Imported names carried into the reusable trip module',
+  },
+  {
+    label: 'Avg must-dos',
+    value: String(partyOverview.averageMustDoCount),
+    detail: 'Average count of tier 1 calls per person',
+  },
+  {
+    label: 'Most selective',
+    value: partyOverview.mostSelectiveMember ?? '--',
+    detail: 'Highest avoid / skip total in the imported ratings',
+  },
+  {
+    label: 'Most enthusiastic',
+    value: partyOverview.mostEnthusiasticMember ?? '--',
+    detail: 'Most attractions marked must-do or preferred',
+  },
+];
 ---
 
-<TripStubShell
-  title={`${trip.title} | Party`}
-  description={`Protected placeholder party route for ${trip.title}.`}
-  trip={trip}
-  activeSection="party"
-  pageEyebrow={page.pageLabel}
-  pageTitle={page.title}
-  pageIntro={trip.status === 'upcoming' ? `${page.intro} Planning begins soon.` : page.intro}
-  panelEyebrow={statusCopy.eyebrow}
-  panelTitle={page.calloutTitle}
-  panelBody={trip.status === 'upcoming'
-    ? `${statusCopy.body} ${page.calloutBody}`
-    : page.calloutBody}
-  checklist={page.checklist}
-/>
+{
+  trip.status === 'upcoming' ? (
+    <TripStubShell
+      title={`${trip.title} | Party`}
+      description={`Protected placeholder party route for ${trip.title}.`}
+      trip={trip}
+      activeSection="party"
+      pageEyebrow={stubPage.pageLabel}
+      pageTitle={stubPage.title}
+      pageIntro={`${stubPage.intro} Planning begins soon.`}
+      panelEyebrow={statusCopy.eyebrow}
+      panelTitle={stubPage.calloutTitle}
+      panelBody={`${statusCopy.body} ${stubPage.calloutBody}`}
+      checklist={stubPage.checklist}
+    />
+  ) : (
+    <TripPageShell
+      title={`${trip.title} | Party`}
+      description={`Party view for ${trip.title}.`}
+      trip={trip}
+      activeSection="party"
+      pageEyebrow={page.pageLabel}
+      pageTitle={page.title}
+      pageIntro={page.intro}
+    >
+      <DetailStatGrid items={partyStats} />
+
+      <section class="trip-page-section">
+        <div class="trip-page-section__header">
+          <div class="trip-page-section__copy">
+            <p class="page-label">Shared pressure points</p>
+            <h2 class="section-title">Rides pulling the group forward</h2>
+          </div>
+          <p class="trip-page-section__note">Sorted by raw must-do calls, then consensus score</p>
+        </div>
+
+        <article class="party-priority-card">
+          <p class="party-priority-card__text">
+            These attractions have the strongest direct pull on the group because they collect the
+            most tier 1 ratings before broader consensus is even considered.
+          </p>
+
+          <ol class="party-priority-card__list">
+            {sharedPriorityAttractions.map((attraction) => (
+              <li>
+                <strong>{attraction.attractionLabel}</strong>
+                <span>
+                  {attraction.mustDoVotes} must-do calls / {attraction.consensusScore} total score
+                </span>
+              </li>
+            ))}
+          </ol>
+        </article>
+      </section>
+
+      <section class="trip-page-section">
+        <div class="trip-page-section__header">
+          <div class="trip-page-section__copy">
+            <p class="page-label">Member cards</p>
+            <h2 class="section-title">Preference profiles by traveler</h2>
+          </div>
+          <p class="trip-page-section__note">Derived directly from the imported rating matrix</p>
+        </div>
+
+        <div class="party-detail-grid">
+          {partySummaries.map((summary) => (
+            <PartyCard summary={summary} />
+          ))}
+        </div>
+      </section>
+    </TripPageShell>
+  )
+}

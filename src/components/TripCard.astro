@@ -2,13 +2,15 @@
 import ChipList from './ChipList.astro';
 import StatusBadge from './StatusBadge.astro';
 import { getArchiveCardHref, getTripSectionPath } from '../lib/trips/archive';
+import type { ArchiveTripInsight } from '../lib/trips/details';
 import type { TripSummary } from '../lib/trips/types';
 
 interface Props {
   trip: TripSummary;
+  insights?: ArchiveTripInsight[] | undefined;
 }
 
-const { trip } = Astro.props;
+const { trip, insights = [] } = Astro.props;
 
 const cardHref = getArchiveCardHref(trip);
 const PrimaryTag = cardHref === null ? 'div' : 'a';
@@ -45,6 +47,20 @@ const chipItems = trip.parkLabels.length > 0 ? trip.parkLabels : ['Parks TBD'];
           ))
         }
       </div>
+
+      {
+        insights.length > 0 && (
+          <dl class="trip-card__insights">
+            {insights.map((insight) => (
+              <div class="trip-card__insight">
+                <dt class="trip-card__insight-label">{insight.label}</dt>
+                <dd class="trip-card__insight-value">{insight.value}</dd>
+                <p class="trip-card__insight-detail">{insight.detail}</p>
+              </div>
+            ))}
+          </dl>
+        )
+      }
     </div>
   </PrimaryTag>
 

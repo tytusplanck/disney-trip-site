@@ -1,0 +1,33 @@
+---
+import type { ScheduleDaySummary } from '../lib/trips/details';
+
+interface Props {
+  day: ScheduleDaySummary;
+}
+
+const { day } = Astro.props;
+
+const kindLabelByValue = {
+  travel: 'Travel',
+  park: 'Park Day',
+  resort: 'Resort Reset',
+} as const;
+---
+
+<article class="schedule-card" data-kind={day.entry.kind}>
+  <div class="schedule-card__day">
+    <span class="schedule-card__day-index">Day {day.dayNumber}</span>
+    <span class="schedule-card__date">
+      {day.weekdayLabel} / {day.dateLabel}
+    </span>
+  </div>
+
+  <div class="schedule-card__body">
+    <p class="schedule-card__kind">{kindLabelByValue[day.entry.kind]}</p>
+    <h3 class="schedule-card__title">{day.entry.label}</h3>
+    {day.entry.parkLabel && <p class="schedule-card__park">{day.entry.parkLabel}</p>}
+    <p class="schedule-card__note">
+      {day.entry.notes ?? 'No anchor note logged for this day yet.'}
+    </p>
+  </div>
+</article>

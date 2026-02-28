@@ -106,6 +106,51 @@
   color: var(--muted);
 }
 
+.trip-card__insights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin: 0;
+  padding-top: 0.25rem;
+}
+
+.trip-card__insight {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.75rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.trip-card__insight-label,
+.trip-card__insight-value,
+.trip-card__insight-detail {
+  margin: 0;
+}
+
+.trip-card__insight-label {
+  font-family: var(--font-mono);
+  font-size: 0.48rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.trip-card__insight-value {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.trip-card__insight-detail {
+  font-size: 0.68rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
 .trip-card__pick,
 .trip-card__future-note {
   display: flex;
@@ -212,6 +257,10 @@
 
   .trip-card__link:last-child {
     border-bottom: none;
+  }
+
+  .trip-card__insights {
+    grid-template-columns: 1fr;
   }
 
   .archive-footer {

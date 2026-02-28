@@ -1,0 +1,25 @@
+---
+interface DetailStatItem {
+  label: string;
+  value: string;
+  detail: string;
+}
+
+interface Props {
+  items: DetailStatItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<section class="detail-stat-grid" aria-label="Page metrics">
+  {
+    items.map((item) => (
+      <article class="detail-stat-card">
+        <p class="detail-label">{item.label}</p>
+        <p class="detail-value">{item.value}</p>
+        <p class="detail-note">{item.detail}</p>
+      </article>
+    ))
+  }
+</section>

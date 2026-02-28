@@ -4,7 +4,9 @@
 
 - Store trip summaries shared across multiple routes in [`/src/data/trip-archive.ts`](../src/data/trip-archive.ts).
 - Keep shared trip data typed so archive cards, stub routes, and future trip pages read the same source of truth.
+- Store full trip payloads as separate modules under [`/src/data/trips`](../src/data/trips) so `summary`, `party`, `schedule`, and `attractions` can evolve independently while sharing one interface.
 - Use helpers in [`/src/lib/trips/archive.ts`](../src/lib/trips/archive.ts) to derive grouped sections, stat-strip values, and route paths instead of hard-coding those rules in Astro templates.
+- Use [`/src/lib/trips/details.ts`](../src/lib/trips/details.ts) to derive page-level view models such as rankings, party summaries, and schedule day cards from the typed trip modules.
 
 ## Route-Owned Copy
 
@@ -15,6 +17,7 @@
 
 - [`/src/layouts/BaseLayout.astro`](../src/layouts/BaseLayout.astro) owns only document concerns: fonts, metadata, global styles, and skip-link behavior.
 - Visible page chrome lives in page-level shell components such as archive, auth, and trip shells.
+- Planning trip tabs render through a dedicated content shell so the shared header, breadcrumb, and tab chrome stay consistent across attractions, schedule, and party pages.
 - This split keeps route layouts flexible without duplicating document scaffolding.
 
 ## Theme Mapping

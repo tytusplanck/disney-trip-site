@@ -4,7 +4,8 @@ import SectionHeader from '../components/SectionHeader.astro';
 import TripCard from '../components/TripCard.astro';
 import ArchiveShell from '../components/shells/ArchiveShell.astro';
 import { tripArchiveData } from '../data/trip-archive';
-import { getArchiveSections, getArchiveStats } from '../lib/trips/archive';
+import { findTripDataModule, getArchiveSections, getArchiveStats } from '../lib/trips/archive';
+import { getArchiveTripInsights } from '../lib/trips/details';
 import { archivePage } from './index.page';
 
 const { footerNote, headerMetaLabel, meta, sections, stats } = archivePage;
@@ -24,6 +25,12 @@ const sectionLabelByStatus = {
   upcoming: sections.upcomingLabel,
   completed: sections.completedLabel,
 } as const;
+
+function getTripInsights(groupId: string, tripId: string) {
+  const tripModule = findTripDataModule(tripArchiveData.modules, groupId, tripId);
+
+  return tripModule ? getArchiveTripInsights(tripModule) : [];
+}
 ---
 
 <ArchiveShell
@@ -44,7 +51,10 @@ const sectionLabelByStatus = {
         {section.trips.length > 0 ? (
           <div class="trip-grid">
             {section.trips.map((trip) => (
-              <TripCard trip={trip} />
+              <TripCard
+                trip={trip}
+                insights={trip.status === 'planning' ? getTripInsights(trip.groupId, trip.id) : []}
+              />
             ))}
           </div>
         ) : (
