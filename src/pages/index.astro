@@ -1,0 +1,22 @@
+---
+import HelloIsland from '../components/islands/HelloIsland';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Disney Trip Hub" description="Private hello world for the Disney trip site.">
+  <main class="screen">
+    <section class="panel hero-panel">
+      <p class="eyebrow">Private trip hub</p>
+      <h1>Disney Trip Hello World</h1>
+      <p class="lede">
+        This protected page is the starting scaffold for our family Disney trip plans on Vercel.
+      </p>
+      <div class="stack">
+        <HelloIsland client:load initialLabel="Planning status:" />
+        <form action="/api/auth/logout" method="post">
+          <button class="button" type="submit">Log out</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { sanitizeRedirectTarget } from '../lib/auth/paths';
+
+const error = Astro.url.searchParams.get('error');
+const next = sanitizeRedirectTarget(Astro.url.searchParams.get('next'));
+const hasError = error === 'invalid-password';
+---
+
+<BaseLayout
+  title="Disney Trip Login"
+  description="Enter the shared password to access the private Disney trip site."
+>
+  <main class="screen">
+    <section class="panel login-panel">
+      <p class="eyebrow">Protected site</p>
+      <h1>Enter the shared password</h1>
+      <p class="lede">This trip site stays private until the correct password is submitted.</p>
+      <form class="stack" action="/api/auth/login" method="post">
+        <input type="hidden" name="next" value={next} />
+        <label class="field" for="password">
+          <span>Password</span>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+        </label>
+        {hasError && <p class="form-error">That password did not match. Try again.</p>}
+        <button class="button" type="submit">Enter site</button>
+      </form>
+    </section>
+  </main>
+</BaseLayout>
