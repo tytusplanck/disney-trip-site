@@ -1,0 +1,13 @@
+---
+interface Props {
+  tripLabel: string;
+}
+
+const { tripLabel } = Astro.props;
+---
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a class="breadcrumbs__link" href="/">All Trips</a>
+  <span class="breadcrumbs__divider" aria-hidden="true">&gt;</span>
+  <span class="breadcrumbs__current">{tripLabel}</span>
+</nav>

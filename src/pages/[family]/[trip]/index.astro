@@ -1,0 +1,33 @@
+---
+import TripStubShell from '../../../components/shells/TripStubShell.astro';
+import { tripArchiveData } from '../../../data/trip-archive';
+import { upcomingStubStatus } from '../../../data/trip-stubs';
+import { findArchiveTrip, resolveTripIndexDestination } from '../../../lib/trips/archive';
+
+const familyId = Astro.params['family'] ?? '';
+const tripId = Astro.params['trip'] ?? '';
+const trip = findArchiveTrip(tripArchiveData.trips, familyId, tripId);
+
+if (!trip) {
+  return Astro.redirect('/');
+}
+
+const destination = resolveTripIndexDestination(trip);
+
+if (destination !== null) {
+  return Astro.redirect(destination);
+}
+---
+
+<TripStubShell
+  title={`${trip.title} | Trip Workspace`}
+  description={`Protected placeholder route for ${trip.title}.`}
+  trip={trip}
+  pageEyebrow="Archive Stub"
+  pageTitle="Trip workspace reserved"
+  pageIntro="This trip stays quiet until dates, parks, and party details move out of archive preview."
+  panelEyebrow={upcomingStubStatus.eyebrow}
+  panelTitle={upcomingStubStatus.title}
+  panelBody={upcomingStubStatus.body}
+  checklist={['Dates and party size', 'Park lineup', 'Section-ready trip data']}
+/>

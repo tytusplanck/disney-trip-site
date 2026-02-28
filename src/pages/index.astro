@@ -1,96 +1,56 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { homePage } from './index.page';
+import EmptyState from '../components/EmptyState.astro';
+import SectionHeader from '../components/SectionHeader.astro';
+import TripCard from '../components/TripCard.astro';
+import ArchiveShell from '../components/shells/ArchiveShell.astro';
+import { tripArchiveData } from '../data/trip-archive';
+import { getArchiveSections, getArchiveStats } from '../lib/trips/archive';
+import { archivePage } from './index.page';
 
-const { hero, logout, meta, planning, snapshot, timeline } = homePage;
+const { footerNote, headerMetaLabel, meta, sections, stats } = archivePage;
+const archiveSections = getArchiveSections(tripArchiveData.trips);
+const archiveStats = getArchiveStats(tripArchiveData.trips);
+
+const statItems = [
+  { label: stats.tripsLabel, value: archiveStats.totalTrips },
+  { label: stats.planningTripsLabel, value: archiveStats.planningTrips },
+  { label: stats.ridesLabel, value: archiveStats.ridesScouted },
+  { label: stats.peopleLabel, value: archiveStats.nextTripPeople },
+  { label: stats.parksLabel, value: archiveStats.nextTripParks },
+];
+
+const sectionLabelByStatus = {
+  planning: sections.planningLabel,
+  upcoming: sections.upcomingLabel,
+  completed: sections.completedLabel,
+} as const;
 ---
 
-<BaseLayout title={meta.title} description={meta.description}>
-  <main class="page page-home" id="main-content">
-    <section class="card hero-card reveal">
-      <div class="hero-copy">
-        <p class="eyebrow">{hero.eyebrow}</p>
-        <h1 class="display-title">{hero.title}</h1>
-        <p class="lede lede-strong">{hero.lede}</p>
-        <p class="body-copy">{hero.detail}</p>
-        <ul class="chip-row" aria-label="Site principles">
-          {hero.chips.map((chip) => <li class="chip">{chip}</li>)}
-        </ul>
-      </div>
+<ArchiveShell
+  title={meta.title}
+  description={meta.description}
+  metaLabel={headerMetaLabel}
+  statItems={statItems}
+  footerNote={footerNote}
+>
+  {
+    archiveSections.map((section) => (
+      <section class="archive-section">
+        <SectionHeader
+          label={sectionLabelByStatus[section.status]}
+          countLabel={section.countLabel}
+        />
 
-      <section class="hero-rail" aria-labelledby="planning-scaffold-heading">
-        <div class="section-heading section-heading-compact">
-          <p class="eyebrow">{snapshot.heading}</p>
-          <h2 class="section-title section-title-small" id="planning-scaffold-heading">
-            {snapshot.intro}
-          </h2>
-        </div>
-        <ul class="metric-grid">
-          {
-            snapshot.items.map((item) => (
-              <li class="metric-card">
-                <span class="metric-label">{item.label}</span>
-                <strong class="metric-value">{item.value}</strong>
-                <p class="metric-note">{item.note}</p>
-              </li>
-            ))
-          }
-        </ul>
+        {section.trips.length > 0 ? (
+          <div class="trip-grid">
+            {section.trips.map((trip) => (
+              <TripCard trip={trip} />
+            ))}
+          </div>
+        ) : (
+          section.status === 'completed' && <EmptyState text={sections.completedEmptyState} />
+        )}
       </section>
-    </section>
-
-    <section class="dashboard-grid">
-      <section class="card section-card planning-card reveal reveal-delay-1">
-        <div class="section-heading">
-          <p class="eyebrow">{planning.heading}</p>
-          <h2 class="section-title">{planning.intro}</h2>
-        </div>
-        <ul class="guide-grid">
-          {
-            planning.groups.map((group) => (
-              <li class="guide-card">
-                <h3 class="guide-card__title">{group.title}</h3>
-                <p class="guide-card__description">{group.description}</p>
-                <ul class="guide-list">
-                  {group.items.map((item) => (
-                    <li>{item}</li>
-                  ))}
-                </ul>
-              </li>
-            ))
-          }
-        </ul>
-      </section>
-
-      <section class="card section-card timeline-card reveal reveal-delay-2">
-        <div class="section-heading">
-          <p class="eyebrow">{timeline.heading}</p>
-          <h2 class="section-title">{timeline.intro}</h2>
-        </div>
-        <ol class="timeline-list">
-          {
-            timeline.steps.map((step) => (
-              <li class="timeline-step">
-                <span class="timeline-phase">{step.phase}</span>
-                <div class="timeline-step__body">
-                  <h3 class="timeline-step__title">{step.title}</h3>
-                  <p class="timeline-step__description">{step.description}</p>
-                </div>
-              </li>
-            ))
-          }
-        </ol>
-      </section>
-
-      <aside class="card section-card logout-card reveal reveal-delay-3">
-        <div class="section-heading section-heading-compact">
-          <p class="eyebrow">{logout.heading}</p>
-          <p class="body-copy body-copy-tight">{logout.text}</p>
-        </div>
-        <form action="/api/auth/logout" method="post">
-          <button class="button" type="submit">{logout.buttonLabel}</button>
-        </form>
-      </aside>
-    </section>
-  </main>
-</BaseLayout>
+    ))
+  }
+</ArchiveShell>

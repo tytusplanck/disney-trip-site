@@ -17,6 +17,12 @@ const { title, description = siteShellData.defaultDescription, noIndex = true } 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     {
       noIndex && (
         <meta
@@ -29,18 +35,8 @@ const { title, description = siteShellData.defaultDescription, noIndex = true } 
   </head>
   <body>
     <a class="skip-link" href="#main-content">{siteShellData.skipLinkLabel}</a>
-    <div class="site-shell">
-      <header class="site-masthead">
-        <a class="brand-mark" href="/" aria-label={siteShellData.brandLinkLabel}>
-          <span class="brand-mark__eyebrow">{siteShellData.brandEyebrow}</span>
-          <span class="brand-mark__title">{siteShellData.brandTitle}</span>
-        </a>
-        <p class="site-masthead__note">{siteShellData.mastheadNote}</p>
-      </header>
+    <div class="app-shell">
       <slot />
-      <footer class="site-footer">
-        <p>{siteShellData.footerNote}</p>
-      </footer>
     </div>
   </body>
 </html>

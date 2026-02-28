@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../Breadcrumbs.astro';
+import SiteHeader from '../SiteHeader.astro';
+import TripTabs from '../TripTabs.astro';
+import { getTripBarStats } from '../../lib/trips/archive';
+import type { TripSection, TripSummary } from '../../lib/trips/types';
+
+interface Props {
+  title: string;
+  description: string;
+  trip: TripSummary;
+  activeSection?: TripSection;
+  pageEyebrow: string;
+  pageTitle: string;
+  pageIntro: string;
+  panelEyebrow: string;
+  panelTitle: string;
+  panelBody: string;
+  checklist: string[];
+}
+
+const {
+  title,
+  description,
+  trip,
+  activeSection,
+  pageEyebrow,
+  pageTitle,
+  pageIntro,
+  panelEyebrow,
+  panelTitle,
+  panelBody,
+  checklist,
+} = Astro.props;
+
+const tripLabel = `${trip.title} / ${trip.dateLabel}`;
+const tripBarTitle = `${trip.title} - ${trip.dateLabel}`;
+const tripBarStats = getTripBarStats(trip);
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="trip-shell" data-trip-theme={trip.themeId}>
+    <SiteHeader railLabel="Trip summary" railTitle={tripBarTitle} statItems={tripBarStats} sticky>
+      <Breadcrumbs slot="context" tripLabel={tripLabel} />
+    </SiteHeader>
+
+    <main class="trip-shell__main" id="main-content">
+      <div class="trip-shell__page-header">
+        <p class="page-label">{pageEyebrow}</p>
+        <h1 class="page-title">{pageTitle}</h1>
+        <p class="page-intro">{pageIntro}</p>
+      </div>
+
+      <div class="trip-shell__page-tabs">
+        <TripTabs trip={trip} activeSection={activeSection} />
+      </div>
+
+      <section class="stub-panel">
+        <div class="stub-panel__header">
+          <p class="stub-panel__eyebrow">{panelEyebrow}</p>
+          <h2 class="stub-panel__title">{panelTitle}</h2>
+          <p class="stub-panel__body">{panelBody}</p>
+        </div>
+
+        <div class="stub-panel__rail">
+          <p class="stub-panel__rail-title">Next build items</p>
+          <ul class="stub-panel__checklist">
+            {checklist.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+</BaseLayout>

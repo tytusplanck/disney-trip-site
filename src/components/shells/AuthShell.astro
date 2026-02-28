@@ -1,0 +1,25 @@
+---
+import BrandMark from '../BrandMark.astro';
+
+interface Props {
+  footerNote: string;
+  metaLabel: string;
+}
+
+const { footerNote, metaLabel } = Astro.props;
+---
+
+<div class="auth-shell">
+  <header class="auth-shell__header">
+    <BrandMark href="/login" />
+    <p class="auth-shell__meta">{metaLabel}</p>
+  </header>
+
+  <main class="auth-shell__main" id="main-content">
+    <slot />
+  </main>
+
+  <footer class="auth-shell__footer">
+    <p>{footerNote}</p>
+  </footer>
+</div>

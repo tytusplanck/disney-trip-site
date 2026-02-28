@@ -1,0 +1,98 @@
+.trip-shell {
+  min-height: 100vh;
+}
+
+.trip-shell__main {
+  width: min(100%, 62rem);
+  margin: 0 auto;
+  padding: 2.5rem clamp(1rem, 3vw, 2.5rem) 4rem;
+}
+
+.trip-shell__page-header {
+  display: grid;
+  gap: 0.65rem;
+  margin-bottom: 1.1rem;
+}
+
+.trip-shell__page-tabs {
+  margin-bottom: 1.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.trip-shell__page-tabs .trip-tabs {
+  gap: 0.4rem;
+}
+
+.trip-shell__page-tabs .trip-tabs__link {
+  height: auto;
+  padding: 0 0 1rem;
+}
+
+.trip-shell__page-tabs .trip-tabs__link--active {
+  border-bottom-width: 3px;
+}
+
+.stub-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.8fr);
+  gap: 1rem;
+  padding: clamp(1.25rem, 2.5vw, 1.75rem);
+  border: 1px solid var(--border2);
+  border-radius: 0.9rem;
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.stub-panel__header,
+.stub-panel__rail {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.stub-panel__eyebrow {
+  margin: 0;
+  font-size: 0.54rem;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+}
+
+.stub-panel__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 3vw, 1.95rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.stub-panel__rail {
+  align-content: start;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--surface2);
+}
+
+.stub-panel__rail-title {
+  margin: 0;
+  font-size: 0.54rem;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+
+.stub-panel__checklist {
+  display: grid;
+  gap: 0.55rem;
+  padding-left: 1rem;
+  list-style: disc;
+}
+
+.stub-panel__checklist li {
+  color: var(--muted);
+}
+
+@media (max-width: 960px) {
+  .stub-panel {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,79 @@
+---
+import ChipList from './ChipList.astro';
+import StatusBadge from './StatusBadge.astro';
+import { getArchiveCardHref, getTripSectionPath } from '../lib/trips/archive';
+import type { TripSummary } from '../lib/trips/types';
+
+interface Props {
+  trip: TripSummary;
+}
+
+const { trip } = Astro.props;
+
+const cardHref = getArchiveCardHref(trip);
+const PrimaryTag = cardHref === null ? 'div' : 'a';
+
+const cardStats = [
+  { label: 'People', value: trip.partySize === null ? '--' : String(trip.partySize) },
+  { label: 'Days', value: trip.dayCount === null ? '--' : String(trip.dayCount) },
+  { label: 'Rides', value: trip.attractionCount === null ? '--' : String(trip.attractionCount) },
+  { label: 'Parks', value: trip.parkLabels.length === 0 ? '--' : String(trip.parkLabels.length) },
+];
+
+const chipItems = trip.parkLabels.length > 0 ? trip.parkLabels : ['Parks TBD'];
+---
+
+<article
+  class:list={['trip-card', cardHref === null && 'trip-card--disabled']}
+  data-trip-theme={trip.themeId}
+  data-trip-status={trip.status}
+>
+  <div class="trip-card__stripe" aria-hidden="true"></div>
+  <PrimaryTag class="trip-card__primary" {...cardHref ? { href: cardHref } : {}}>
+    <div class="trip-card__body">
+      <StatusBadge status={trip.status} />
+      <h3 class="trip-card__title">{trip.title}</h3>
+      <p class="trip-card__date">{trip.dateLabel}</p>
+      <ChipList items={chipItems} />
+      <div class="trip-card__stats">
+        {
+          cardStats.map((stat) => (
+            <div class="trip-card__stat">
+              <strong class="trip-card__stat-value">{stat.value}</strong>
+              <span class="trip-card__stat-label">{stat.label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </PrimaryTag>
+
+  {
+    trip.status === 'planning' ? (
+      <>
+        {trip.topPick && (
+          <div class="trip-card__pick">
+            <span class="trip-card__pick-star" aria-hidden="true">
+              •
+            </span>
+            <span class="trip-card__pick-label">Top pick:</span>
+            <strong class="trip-card__pick-value">{trip.topPick}</strong>
+          </div>
+        )}
+        <div class="trip-card__links">
+          <a class="trip-card__link" href={getTripSectionPath(trip, 'attractions')}>
+            Attractions
+          </a>
+          <a class="trip-card__link" href={getTripSectionPath(trip, 'schedule')}>
+            Schedule
+          </a>
+          <a class="trip-card__link" href={getTripSectionPath(trip, 'party')}>
+            Party
+          </a>
+        </div>
+      </>
+    ) : (
+      <div class="trip-card__future-note">Planning begins soon</div>
+    )
+  }
+</article>

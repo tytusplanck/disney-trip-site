@@ -1,0 +1,33 @@
+---
+import TripStubShell from '../../../components/shells/TripStubShell.astro';
+import { tripArchiveData } from '../../../data/trip-archive';
+import { planningStubStatus, tripStubPages, upcomingStubStatus } from '../../../data/trip-stubs';
+import { findArchiveTrip } from '../../../lib/trips/archive';
+
+const familyId = Astro.params['family'] ?? '';
+const tripId = Astro.params['trip'] ?? '';
+const trip = findArchiveTrip(tripArchiveData.trips, familyId, tripId);
+
+if (!trip) {
+  return Astro.redirect('/');
+}
+
+const page = tripStubPages.schedule;
+const statusCopy = trip.status === 'upcoming' ? upcomingStubStatus : planningStubStatus;
+---
+
+<TripStubShell
+  title={`${trip.title} | Schedule`}
+  description={`Protected placeholder schedule route for ${trip.title}.`}
+  trip={trip}
+  activeSection="schedule"
+  pageEyebrow={page.pageLabel}
+  pageTitle={page.title}
+  pageIntro={trip.status === 'upcoming' ? `${page.intro} Planning begins soon.` : page.intro}
+  panelEyebrow={statusCopy.eyebrow}
+  panelTitle={page.calloutTitle}
+  panelBody={trip.status === 'upcoming'
+    ? `${statusCopy.body} ${page.calloutBody}`
+    : page.calloutBody}
+  checklist={page.checklist}
+/>

@@ -1,0 +1,20 @@
+---
+import type { TripStatus } from '../lib/trips/types';
+
+interface Props {
+  status: TripStatus;
+}
+
+const { status } = Astro.props;
+
+const statusLabelByValue: Record<TripStatus, string> = {
+  planning: 'Planning',
+  upcoming: 'Upcoming',
+  completed: 'Completed',
+};
+---
+
+<p class:list={['status-badge', `status-badge--${status}`]}>
+  <span class="status-badge__dot" aria-hidden="true"></span>
+  {statusLabelByValue[status]}
+</p>

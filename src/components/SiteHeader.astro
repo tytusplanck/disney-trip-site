@@ -1,0 +1,57 @@
+---
+import BrandMark from './BrandMark.astro';
+
+interface StatItem {
+  label: string;
+  value: string;
+}
+
+interface Props {
+  railLabel: string;
+  statItems: StatItem[];
+  railTitle?: string | undefined;
+  sticky?: boolean | undefined;
+}
+
+const { railLabel, statItems, railTitle, sticky = false } = Astro.props;
+const hasRailTitle = typeof railTitle === 'string' && railTitle.length > 0;
+---
+
+<header class:list={['site-header', sticky && 'site-header--sticky']}>
+  <div class="site-header__top">
+    <BrandMark />
+    <div class="site-header__context">
+      <slot name="context" />
+    </div>
+  </div>
+
+  <section
+    class:list={['site-header__rail', hasRailTitle && 'site-header__rail--with-title']}
+    aria-label={railLabel}
+  >
+    {
+      hasRailTitle && (
+        <>
+          <p class="site-header__rail-title">{railTitle}</p>
+          <div class="site-header__rail-separator" aria-hidden="true" />
+        </>
+      )
+    }
+
+    <div
+      class:list={[
+        'site-header__stats',
+        hasRailTitle ? 'site-header__stats--inline' : 'site-header__stats--grid',
+      ]}
+    >
+      {
+        statItems.map((item) => (
+          <div class="site-header__stat">
+            <strong class="site-header__rail-value">{item.value}</strong>
+            <span class="site-header__rail-label">{item.label}</span>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</header>

@@ -1,0 +1,30 @@
+---
+import { getTripSectionPath } from '../lib/trips/archive';
+import type { TripSection, TripSummary } from '../lib/trips/types';
+
+interface Props {
+  trip: Pick<TripSummary, 'groupId' | 'id'>;
+  activeSection?: TripSection | undefined;
+}
+
+const { trip, activeSection } = Astro.props;
+
+const tabs: { label: string; section: TripSection }[] = [
+  { label: 'Attractions', section: 'attractions' },
+  { label: 'Schedule', section: 'schedule' },
+  { label: 'Party', section: 'party' },
+];
+---
+
+<nav class="trip-tabs" aria-label="Trip sections">
+  {
+    tabs.map((tab) => (
+      <a
+        class:list={['trip-tabs__link', activeSection === tab.section && 'trip-tabs__link--active']}
+        href={getTripSectionPath(trip, tab.section)}
+      >
+        {tab.label}
+      </a>
+    ))
+  }
+</nav>
