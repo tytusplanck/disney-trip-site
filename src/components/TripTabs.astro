@@ -10,6 +10,7 @@ interface Props {
 const { trip, activeSection } = Astro.props;
 
 const tabs: { label: string; section: TripSection }[] = [
+  { label: 'Overview', section: 'overview' },
   { label: 'Attractions', section: 'attractions' },
   { label: 'Schedule', section: 'schedule' },
   { label: 'Party', section: 'party' },
@@ -22,6 +23,7 @@ const tabs: { label: string; section: TripSection }[] = [
       <a
         class:list={['trip-tabs__link', activeSection === tab.section && 'trip-tabs__link--active']}
         href={getTripSectionPath(trip, tab.section)}
+        aria-current={activeSection === tab.section ? 'page' : undefined}
       >
         {tab.label}
       </a>

@@ -3,7 +3,7 @@
 }
 
 .trip-shell__main {
-  width: min(100%, 62rem);
+  width: min(100%, 68rem);
   margin: 0 auto;
   padding: 2.5rem clamp(1rem, 3vw, 2.5rem) 4rem;
 }
@@ -16,20 +16,10 @@
 
 .trip-shell__page-tabs {
   margin-bottom: 1.75rem;
-  border-bottom: 1px solid var(--border);
 }
 
 .trip-shell__page-tabs .trip-tabs {
-  gap: 0.4rem;
-}
-
-.trip-shell__page-tabs .trip-tabs__link {
-  height: auto;
-  padding: 0 0 1rem;
-}
-
-.trip-shell__page-tabs .trip-tabs__link--active {
-  border-bottom-width: 3px;
+  width: 100%;
 }
 
 .stub-panel {
@@ -51,8 +41,8 @@
 
 .stub-panel__eyebrow {
   margin: 0;
-  font-size: 0.54rem;
-  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
   color: var(--accent);
 }
 
@@ -75,8 +65,8 @@
 
 .stub-panel__rail-title {
   margin: 0;
-  font-size: 0.54rem;
-  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
   color: var(--muted);
 }
 

@@ -66,13 +66,11 @@ export function getTripSectionPath(
   trip: Pick<TripSummary, 'groupId' | 'id'>,
   section: TripSection,
 ): string {
-  return `${getTripBasePath(trip)}/${section}`;
+  return section === 'overview' ? getTripBasePath(trip) : `${getTripBasePath(trip)}/${section}`;
 }
 
-export function getTripLandingPath(
-  trip: Pick<TripSummary, 'groupId' | 'id' | 'status'>,
-): string | null {
-  return trip.status === 'planning' ? getTripSectionPath(trip, 'attractions') : null;
+export function getTripLandingPath(trip: Pick<TripSummary, 'groupId' | 'id'>): string {
+  return getTripBasePath(trip);
 }
 
 export function getTripBasePath(trip: Pick<TripSummary, 'groupId' | 'id'>): string {

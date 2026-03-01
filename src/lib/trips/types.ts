@@ -1,6 +1,6 @@
 export type TripStatus = 'planning' | 'upcoming' | 'completed';
 
-export type TripSection = 'attractions' | 'schedule' | 'party';
+export type TripSection = 'overview' | 'attractions' | 'schedule' | 'party';
 
 export type TripThemeId = 'primary' | 'secondary';
 

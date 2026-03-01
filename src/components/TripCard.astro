@@ -13,7 +13,6 @@ interface Props {
 const { trip, insights = [] } = Astro.props;
 
 const cardHref = getTripLandingPath(trip);
-const PrimaryTag = cardHref === null ? 'div' : 'a';
 
 const cardStats = [
   { label: 'People', value: trip.partySize === null ? '--' : String(trip.partySize) },
@@ -23,46 +22,48 @@ const cardStats = [
 ];
 
 const chipItems = trip.parkLabels.length > 0 ? trip.parkLabels : ['Parks TBD'];
+const planningLinks = [
+  { label: 'Attractions', href: getTripSectionPath(trip, 'attractions') },
+  { label: 'Schedule', href: getTripSectionPath(trip, 'schedule') },
+  { label: 'Party', href: getTripSectionPath(trip, 'party') },
+];
 ---
 
-<article
-  class:list={['trip-card', cardHref === null && 'trip-card--disabled']}
-  data-trip-theme={trip.themeId}
-  data-trip-status={trip.status}
->
+<article class="trip-card" data-trip-theme={trip.themeId} data-trip-status={trip.status}>
   <div class="trip-card__stripe" aria-hidden="true"></div>
-  <PrimaryTag class="trip-card__primary" {...cardHref ? { href: cardHref } : {}}>
-    <div class="trip-card__body">
+  <div class="trip-card__body">
+    <div class="trip-card__heading">
       <StatusBadge status={trip.status} />
       <h3 class="trip-card__title">{trip.title}</h3>
       <p class="trip-card__date">{trip.dateLabel}</p>
-      <ChipList items={chipItems} />
-      <div class="trip-card__stats">
-        {
-          cardStats.map((stat) => (
-            <div class="trip-card__stat">
-              <strong class="trip-card__stat-value">{stat.value}</strong>
-              <span class="trip-card__stat-label">{stat.label}</span>
-            </div>
-          ))
-        }
-      </div>
+    </div>
 
+    <ChipList items={chipItems} />
+    <div class="trip-card__stats">
       {
-        insights.length > 0 && (
-          <dl class="trip-card__insights">
-            {insights.map((insight) => (
-              <div class="trip-card__insight">
-                <dt class="trip-card__insight-label">{insight.label}</dt>
-                <dd class="trip-card__insight-value">{insight.value}</dd>
-                <p class="trip-card__insight-detail">{insight.detail}</p>
-              </div>
-            ))}
-          </dl>
-        )
+        cardStats.map((stat) => (
+          <div class="trip-card__stat">
+            <strong class="trip-card__stat-value">{stat.value}</strong>
+            <span class="trip-card__stat-label">{stat.label}</span>
+          </div>
+        ))
       }
     </div>
-  </PrimaryTag>
+
+    {
+      insights.length > 0 && (
+        <dl class="trip-card__insights">
+          {insights.map((insight) => (
+            <div class="trip-card__insight">
+              <dt class="trip-card__insight-label">{insight.label}</dt>
+              <dd class="trip-card__insight-value">{insight.value}</dd>
+              <p class="trip-card__insight-detail">{insight.detail}</p>
+            </div>
+          ))}
+        </dl>
+      )
+    }
+  </div>
 
   {
     trip.status === 'planning' ? (
@@ -76,20 +77,43 @@ const chipItems = trip.parkLabels.length > 0 ? trip.parkLabels : ['Parks TBD'];
             <strong class="trip-card__pick-value">{trip.topPick}</strong>
           </div>
         )}
-        <div class="trip-card__links">
-          <a class="trip-card__link" href={getTripSectionPath(trip, 'attractions')}>
-            Attractions
+        <div class="trip-card__actions">
+          <a class="trip-card__button" href={cardHref}>
+            Open overview
           </a>
-          <a class="trip-card__link" href={getTripSectionPath(trip, 'schedule')}>
-            Schedule
-          </a>
-          <a class="trip-card__link" href={getTripSectionPath(trip, 'party')}>
-            Party
-          </a>
+
+          <div class="trip-card__links-group trip-card__links-group--desktop">
+            <p class="trip-card__links-label">Jump to</p>
+            <div class="trip-card__links">
+              {planningLinks.map((link) => (
+                <a class="trip-card__link" href={link.href}>
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <details class="trip-card__links-panel">
+            <summary class="trip-card__links-summary">Quick sections</summary>
+            <div class="trip-card__links trip-card__links--stacked">
+              {planningLinks.map((link) => (
+                <a class="trip-card__link" href={link.href}>
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </details>
         </div>
       </>
     ) : (
-      <div class="trip-card__future-note">Planning begins soon</div>
+      <div class="trip-card__actions trip-card__actions--single">
+        <a class="trip-card__button" href={cardHref}>
+          Open overview
+        </a>
+        <p class="trip-card__future-note">
+          Planning begins soon. The overview will fill in here first.
+        </p>
+      </div>
     )
   }
 </article>

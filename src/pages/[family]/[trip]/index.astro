@@ -1,33 +1,209 @@
 ---
+import ChipList from '../../../components/ChipList.astro';
+import DetailStatGrid from '../../../components/DetailStatGrid.astro';
+import TripPageShell from '../../../components/shells/TripPageShell.astro';
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
 import { tripArchiveData } from '../../../data/trip-archive';
-import { upcomingStubStatus } from '../../../data/trip-stubs';
-import { findArchiveTrip, getTripLandingPath } from '../../../lib/trips/archive';
+import { tripStubPages, upcomingStubStatus } from '../../../data/trip-stubs';
+import {
+  findArchiveTrip,
+  findTripDataModule,
+  getTripSectionPath,
+} from '../../../lib/trips/archive';
+import {
+  getPartyOverview,
+  getPartySummaries,
+  getRankedAttractions,
+  getScheduleOverview,
+  getSharedPriorityAttractions,
+} from '../../../lib/trips/details';
+import { tripSectionPages } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
 const trip = findArchiveTrip(tripArchiveData.trips, familyId, tripId);
+const tripModule = findTripDataModule(tripArchiveData.modules, familyId, tripId);
 
 if (!trip) {
   return Astro.redirect('/');
 }
 
-const destination = getTripLandingPath(trip);
+const page = tripSectionPages.overview;
+const stubPage = tripStubPages.overview;
+const tripIsStub = trip.status === 'upcoming' || !tripModule;
 
-if (destination !== null) {
-  return Astro.redirect(destination);
-}
+const rankedAttractions = tripModule
+  ? getRankedAttractions(tripModule.attractions, tripModule.party.length)
+  : [];
+const sharedPriorityAttractions = tripModule
+  ? getSharedPriorityAttractions(tripModule.attractions, tripModule.party.length, 3)
+  : [];
+const scheduleOverview = tripModule
+  ? getScheduleOverview(tripModule.schedule)
+  : {
+      parkDays: 0,
+      resortDays: 0,
+      travelDays: 0,
+      scheduledNotes: 0,
+      parkLineup: [],
+    };
+const partyOverview = tripModule
+  ? getPartyOverview(getPartySummaries(tripModule))
+  : {
+      memberCount: 0,
+      averageMustDoCount: 0,
+      mostSelectiveMember: null,
+      mostEnthusiasticMember: null,
+    };
+const parkLineup =
+  scheduleOverview.parkLineup.length > 0 ? scheduleOverview.parkLineup : trip.parkLabels;
+const topAttraction = rankedAttractions[0];
+const overviewStats = [
+  {
+    label: 'Travel window',
+    value: trip.dateLabel,
+    detail: `${trip.dayCount ?? 0} days are currently mapped in the planner`,
+  },
+  {
+    label: 'Parks lined up',
+    value: String(parkLineup.length),
+    detail: parkLineup.length > 0 ? parkLineup.join(' / ') : 'Park lineup still taking shape',
+  },
+  {
+    label: 'Top family pick',
+    value: topAttraction?.attractionLabel ?? '--',
+    detail: topAttraction
+      ? `${topAttraction.mustDoVotes} must-do calls currently lead the board`
+      : 'No attraction data loaded yet',
+  },
+  {
+    label: 'Party pulse',
+    value: partyOverview.mostEnthusiasticMember ?? '--',
+    detail: `${partyOverview.memberCount} travelers already appear in the planner`,
+  },
+];
+
+const quickRoutes = [
+  {
+    title: 'Attractions',
+    href: getTripSectionPath(trip, 'attractions'),
+    eyebrow: 'Organizer view',
+    summary:
+      'Best bets first, then the full matrix and the full rankings when you need every rating.',
+    stat: `${trip.attractionCount ?? 0} rides scored`,
+  },
+  {
+    title: 'Schedule',
+    href: getTripSectionPath(trip, 'schedule'),
+    eyebrow: 'Day-by-day',
+    summary:
+      'Trip rhythm up top, with the complete itinerary tucked into a collapsible daily board.',
+    stat: `${scheduleOverview.parkDays} park days / ${scheduleOverview.resortDays} resort days`,
+  },
+  {
+    title: 'Party',
+    href: getTripSectionPath(trip, 'party'),
+    eyebrow: 'Traveler cards',
+    summary:
+      'Group pressure points first, then every traveler card when you need the full preference breakdown.',
+    stat: `${partyOverview.memberCount} travelers tracked`,
+  },
+];
 ---
 
-<TripStubShell
-  title={`${trip.title} | Trip Workspace`}
-  description={`Protected placeholder route for ${trip.title}.`}
-  trip={trip}
-  pageEyebrow="Archive Stub"
-  pageTitle="Trip workspace reserved"
-  pageIntro="This trip stays quiet until dates, parks, and party details move out of archive preview."
-  panelEyebrow={upcomingStubStatus.eyebrow}
-  panelTitle={upcomingStubStatus.title}
-  panelBody={upcomingStubStatus.body}
-  checklist={['Dates and party size', 'Park lineup', 'Section-ready trip data']}
-/>
+{
+  tripIsStub ? (
+    <TripStubShell
+      title={`${trip.title} | Trip Overview`}
+      description={`Protected overview route for ${trip.title}.`}
+      trip={trip}
+      activeSection="overview"
+      pageEyebrow={stubPage.pageLabel}
+      pageTitle={stubPage.title}
+      pageIntro={stubPage.intro}
+      panelEyebrow={upcomingStubStatus.eyebrow}
+      panelTitle={stubPage.calloutTitle}
+      panelBody={`${upcomingStubStatus.body} ${stubPage.calloutBody}`}
+      checklist={stubPage.checklist}
+    />
+  ) : (
+    <TripPageShell
+      title={`${trip.title} | Overview`}
+      description={`Overview for ${trip.title}.`}
+      trip={trip}
+      activeSection="overview"
+      pageEyebrow={page.pageLabel}
+      pageTitle={page.title}
+      pageIntro={page.intro}
+    >
+      <DetailStatGrid items={overviewStats} />
+
+      <section class="trip-page-section">
+        <div class="trip-page-section__header">
+          <div class="trip-page-section__copy">
+            <p class="page-label">Start here</p>
+            <h2 class="section-title">What matters most right now</h2>
+          </div>
+          <p class="trip-page-section__note">
+            Made to read quickly on a phone without hiding the full planner.
+          </p>
+        </div>
+
+        <div class="overview-glance-grid">
+          <article class="overview-callout">
+            <p class="overview-callout__eyebrow">Park lineup</p>
+            <h3 class="overview-callout__title">Parks already on deck</h3>
+            <p class="overview-callout__body">
+              The schedule already points to a clear park rotation, so casual readers can orient
+              fast before they open the full day-by-day plan.
+            </p>
+            <div class="overview-callout__chips">
+              <ChipList items={parkLineup.length > 0 ? parkLineup : ['Parks TBD']} />
+            </div>
+          </article>
+
+          <article class="overview-callout">
+            <p class="overview-callout__eyebrow">Shared must-dos</p>
+            <h3 class="overview-callout__title">The rides pulling the trip forward</h3>
+            <ol class="overview-priority-list">
+              {sharedPriorityAttractions.map((attraction) => (
+                <li>
+                  <strong>{attraction.attractionLabel}</strong>
+                  <span>
+                    {attraction.mustDoVotes} must-do calls / {attraction.consensusScore} total score
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </article>
+        </div>
+      </section>
+
+      <section class="trip-page-section">
+        <div class="trip-page-section__header">
+          <div class="trip-page-section__copy">
+            <p class="page-label">Quick routes</p>
+            <h2 class="section-title">Jump into the full planner</h2>
+          </div>
+          <p class="trip-page-section__note">
+            All dense organizer views stay one tap away from the overview.
+          </p>
+        </div>
+
+        <div class="overview-route-grid">
+          {quickRoutes.map((route) => (
+            <article class="overview-route-card">
+              <p class="overview-route-card__eyebrow">{route.eyebrow}</p>
+              <h3 class="overview-route-card__title">{route.title}</h3>
+              <p class="overview-route-card__summary">{route.summary}</p>
+              <p class="overview-route-card__stat">{route.stat}</p>
+              <a class="overview-route-card__link" href={route.href}>
+                Open {route.title}
+              </a>
+            </article>
+          ))}
+        </div>
+      </section>
+    </TripPageShell>
+  )
+}

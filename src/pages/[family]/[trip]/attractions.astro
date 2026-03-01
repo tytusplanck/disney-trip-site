@@ -2,6 +2,7 @@
 import AttractionHeatmap from '../../../components/AttractionHeatmap.astro';
 import ConsensusBars from '../../../components/ConsensusBars.astro';
 import DetailStatGrid from '../../../components/DetailStatGrid.astro';
+import DisclosurePanel from '../../../components/DisclosurePanel.astro';
 import TripPageShell from '../../../components/shells/TripPageShell.astro';
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
 import { tripArchiveData } from '../../../data/trip-archive';
@@ -40,19 +41,20 @@ const attractionStats = [
   {
     label: 'Must-do votes',
     value: String(getAttractionMustDoVoteCount(tripModule.attractions)),
-    detail: 'Tier 1 calls across the full imported preference matrix',
+    detail: 'Tier 1 calls across the current preference worksheet',
   },
   {
     label: 'Scored attractions',
     value: String(tripModule.attractions.length),
-    detail: `${tripModule.summary.parkLabels.length} parks represented in the source sheet`,
+    detail: `${tripModule.summary.parkLabels.length} parks currently represented`,
   },
   {
     label: 'Party rated',
     value: String(tripModule.party.length),
-    detail: 'Every traveler included in the planning preference export',
+    detail: 'Every traveler already appears in the ride planner',
   },
 ];
+const maxScoreLabel = spotlightAttractions[0]?.maxScore ?? tripModule.party.length * 5;
 ---
 
 {
@@ -85,10 +87,10 @@ const attractionStats = [
       <section class="trip-page-section">
         <div class="trip-page-section__header">
           <div class="trip-page-section__copy">
-            <p class="page-label">Consensus spotlight</p>
+            <p class="page-label">Best bets</p>
             <h2 class="section-title">Highest-confidence picks</h2>
           </div>
-          <p class="trip-page-section__note">Scored out of 50 possible group points</p>
+          <p class="trip-page-section__note">Scored out of {maxScoreLabel} possible group points</p>
         </div>
 
         <div class="featured-grid">
@@ -111,25 +113,31 @@ const attractionStats = [
       <section class="trip-page-section">
         <div class="trip-page-section__header">
           <div class="trip-page-section__copy">
-            <p class="page-label">Preference matrix</p>
-            <h2 class="section-title">Who wants to ride what</h2>
-          </div>
-          <p class="trip-page-section__note">Full imported matrix from the planning sheet</p>
-        </div>
-
-        <AttractionHeatmap party={tripModule.party} rows={heatmapRows} />
-      </section>
-
-      <section class="trip-page-section">
-        <div class="trip-page-section__header">
-          <div class="trip-page-section__copy">
             <p class="page-label">Rankings</p>
-            <h2 class="section-title">Consensus order of battle</h2>
+            <h2 class="section-title">Open the deeper attraction board when you need it</h2>
           </div>
-          <p class="trip-page-section__note">Top 14 attractions by group enthusiasm</p>
+          <p class="trip-page-section__note">
+            The overview stays readable; the dense planner is still here in full.
+          </p>
         </div>
 
-        <ConsensusBars items={rankedAttractions.slice(0, 14)} />
+        <DisclosurePanel
+          label="Detailed rankings"
+          summary="Open the full attraction rankings"
+          detail="Top 14 attractions sorted by group enthusiasm"
+          mobileCollapsed
+        >
+          <ConsensusBars items={rankedAttractions.slice(0, 14)} />
+        </DisclosurePanel>
+
+        <DisclosurePanel
+          label="Full matrix"
+          summary="Open the full attraction matrix"
+          detail={`${heatmapRows.length} attractions x ${tripModule.party.length} travelers`}
+          mobileCollapsed
+        >
+          <AttractionHeatmap party={tripModule.party} rows={heatmapRows} />
+        </DisclosurePanel>
       </section>
     </TripPageShell>
   )

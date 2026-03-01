@@ -30,9 +30,9 @@ export const archivePage: ArchivePage = {
   meta: {
     title: 'Disney Planned by Tytus',
     description:
-      'Protected Disney trip archive with shared design system scaffolding and future trip routes.',
+      'Protected Disney trip archive with calm overview pages and one-tap access to the full planner.',
   },
-  headerMetaLabel: 'All Trips',
+  headerMetaLabel: 'Trip Archive',
   stats: {
     tripsLabel: 'Trips',
     planningTripsLabel: 'Planning Trips',
@@ -48,5 +48,5 @@ export const archivePage: ArchivePage = {
       'No completed trips yet - archive history will appear here after the first itinerary wraps.',
   },
   footerNote:
-    'Shared trip records live in typed data modules, while route-specific copy stays with the page that owns it.',
+    'Open a trip overview for the essentials, then jump into attractions, schedule, or party details when you need the full planner.',
 };

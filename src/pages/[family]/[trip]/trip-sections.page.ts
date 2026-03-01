@@ -8,25 +8,32 @@ export interface TripSectionPageCopy {
 }
 
 export const tripSectionPages: Record<TripSection, TripSectionPageCopy> = {
+  overview: {
+    section: 'overview',
+    pageLabel: 'Overview',
+    title: 'Trip overview',
+    intro:
+      'Start here for the dates, park lineup, top family picks, and the fastest routes into the full planner.',
+  },
   attractions: {
     section: 'attractions',
-    pageLabel: '01 - Preference Data',
-    title: 'Attractions board',
+    pageLabel: 'Attractions',
+    title: 'Ride picks',
     intro:
-      'Every attraction rating, the strongest consensus picks, and the pressure points where the party splits.',
+      'See the strongest group picks first, then open the full matrix when you need every rating.',
   },
   schedule: {
     section: 'schedule',
-    pageLabel: '02 - Day by Day',
-    title: 'Daily outline',
+    pageLabel: 'Schedule',
+    title: 'Day-by-day plan',
     intro:
-      'A full nine-day trip view built from the imported March planning sheet, including park days, resort resets, and anchor notes.',
+      'Travel, park, and resort days in a quick scan up top, with the full itinerary ready just below.',
   },
   party: {
     section: 'party',
-    pageLabel: '03 - The Party',
-    title: 'Party breakdown',
+    pageLabel: 'Party',
+    title: 'Traveler preferences',
     intro:
-      'Each traveler’s preference profile, strongest lean, and the rides that consistently surface as their personal priorities.',
+      'Start with the group pressure points, then open every traveler card when you need the full breakdown.',
   },
 };

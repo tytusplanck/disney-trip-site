@@ -40,6 +40,15 @@ function getTripInsights(groupId: string, tripId: string) {
   statItems={statItems}
   footerNote={footerNote}
 >
+  <section class="archive-intro">
+    <p class="page-label">Start here</p>
+    <h1 class="page-title archive-intro__title">Choose a trip, then open the overview.</h1>
+    <p class="page-intro archive-intro__body">
+      Every trip opens with a calm summary first. Fast links still get organizers into the full
+      planner in one tap.
+    </p>
+  </section>
+
   {
     archiveSections.map((section) => (
       <section class="archive-section">

@@ -203,6 +203,21 @@ export function getRankedAttractions(
     });
 }
 
+export function getSharedPriorityAttractions(
+  attractions: TripAttractionPreference[],
+  partySize: number,
+  limit = 5,
+): RankedAttraction[] {
+  return getRankedAttractions(attractions, partySize)
+    .sort(
+      (left, right) =>
+        right.mustDoVotes - left.mustDoVotes ||
+        right.consensusScore - left.consensusScore ||
+        left.attractionLabel.localeCompare(right.attractionLabel),
+    )
+    .slice(0, limit);
+}
+
 export function getAttractionMustDoVoteCount(attractions: TripAttractionPreference[]): number {
   return attractions.reduce(
     (total, attraction) => total + getPreferenceTierCount(attraction, 1),

@@ -1,0 +1,29 @@
+---
+interface Props {
+  label?: string | undefined;
+  summary: string;
+  detail: string;
+  mobileCollapsed?: boolean | undefined;
+}
+
+const { label, summary, detail, mobileCollapsed = false } = Astro.props;
+---
+
+<details
+  class:list={['disclosure-panel', mobileCollapsed && 'disclosure-panel--mobile-collapsed']}
+  data-mobile-collapsed={mobileCollapsed ? 'true' : undefined}
+  open
+>
+  <summary class="disclosure-panel__summary">
+    <span class="disclosure-panel__summary-copy">
+      {label && <span class="disclosure-panel__label">{label}</span>}
+      <span class="disclosure-panel__headline">{summary}</span>
+      <span class="disclosure-panel__detail">{detail}</span>
+    </span>
+    <span class="disclosure-panel__toggle" aria-hidden="true"></span>
+  </summary>
+
+  <div class="disclosure-panel__body">
+    <slot />
+  </div>
+</details>

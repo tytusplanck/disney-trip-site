@@ -11,13 +11,16 @@
 ## Route-Owned Copy
 
 - Keep page-specific labels, metadata, and supporting copy in route-adjacent `.page.ts` modules.
+- Keep trip overview and section copy in [`/src/pages/[family]/[trip]/trip-sections.page.ts`](../src/pages/[family]/[trip]/trip-sections.page.ts) so the trip root and tabbed planner stay in sync.
 - Treat Astro components as presentation-only wherever practical. Shared components should receive typed props, not own page copy decisions.
 
 ## Shell Composition
 
 - [`/src/layouts/BaseLayout.astro`](../src/layouts/BaseLayout.astro) owns only document concerns: fonts, metadata, global styles, and skip-link behavior.
 - Visible page chrome lives in page-level shell components such as archive, auth, and trip shells.
-- Planning trip tabs render through a dedicated content shell so the shared header, breadcrumb, and tab chrome stay consistent across attractions, schedule, and party pages.
+- The trip root route is the overview landing page, with the full planner sections continuing under attractions, schedule, and party routes.
+- Planning trip tabs render through a dedicated content shell so the shared header, breadcrumb, and tab chrome stay consistent across overview, attractions, schedule, and party pages.
+- Dense planning views stay fully available, but sections such as the full attraction matrix, full itinerary, and traveler cards collapse through disclosure panels on smaller screens.
 - This split keeps route layouts flexible without duplicating document scaffolding.
 
 ## Theme Mapping

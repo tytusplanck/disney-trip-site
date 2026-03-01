@@ -10,6 +10,7 @@ import {
   getPreferenceLegend,
   getPreferenceMeta,
   getRankedAttractions,
+  getSharedPriorityAttractions,
   getScheduleDaySummaries,
   getScheduleOverview,
 } from './details';
@@ -179,6 +180,15 @@ describe('trip detail helpers', () => {
       'high',
       'medium',
       'low',
+    ]);
+  });
+
+  it('sorts shared priority attractions by must-do votes, then score', () => {
+    const sharedPriorities = getSharedPriorityAttractions(fallbackTripData.attractions, 2, 2);
+
+    expect(sharedPriorities.map((attraction) => attraction.attractionLabel)).toEqual([
+      'Space Mountain',
+      'Peter Pan',
     ]);
   });
 

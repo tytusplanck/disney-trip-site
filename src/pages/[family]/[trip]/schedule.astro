@@ -1,6 +1,7 @@
 ---
 import ChipList from '../../../components/ChipList.astro';
 import DetailStatGrid from '../../../components/DetailStatGrid.astro';
+import DisclosurePanel from '../../../components/DisclosurePanel.astro';
 import ScheduleDayCard from '../../../components/ScheduleDayCard.astro';
 import TripPageShell from '../../../components/shells/TripPageShell.astro';
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
@@ -24,6 +25,13 @@ const stubPage = tripStubPages.schedule;
 const statusCopy = trip.status === 'upcoming' ? upcomingStubStatus : planningStubStatus;
 const scheduleOverview = getScheduleOverview(tripModule.schedule);
 const scheduleDays = getScheduleDaySummaries(tripModule.schedule);
+const scheduleSummaryText = `${scheduleOverview.parkDays} park day${
+  scheduleOverview.parkDays === 1 ? '' : 's'
+} are buffered by ${scheduleOverview.resortDays} resort day${
+  scheduleOverview.resortDays === 1 ? '' : 's'
+}, with ${scheduleOverview.travelDays} travel day${
+  scheduleOverview.travelDays === 1 ? '' : 's'
+} holding the edges of the trip. The park lineup is already clear even before timed reservations are locked.`;
 const scheduleStats = [
   {
     label: 'Park days',
@@ -81,15 +89,11 @@ const scheduleStats = [
             <p class="page-label">Trip rhythm</p>
             <h2 class="section-title">Park cadence and reset days</h2>
           </div>
-          <p class="trip-page-section__note">Imported directly from the March itinerary sheet</p>
+          <p class="trip-page-section__note">Built directly from the current itinerary sheet.</p>
         </div>
 
         <article class="schedule-summary-card">
-          <p class="schedule-summary-card__text">
-            Four park days are buffered by three resort days, with travel holding the front and back
-            of the trip. The current park lineup is already clear even before timed reservations are
-            locked.
-          </p>
+          <p class="schedule-summary-card__text">{scheduleSummaryText}</p>
 
           <div class="schedule-summary-card__chips">
             <ChipList items={scheduleOverview.parkLineup} />
@@ -101,16 +105,25 @@ const scheduleStats = [
         <div class="trip-page-section__header">
           <div class="trip-page-section__copy">
             <p class="page-label">Daily board</p>
-            <h2 class="section-title">Nine-day itinerary outline</h2>
+            <h2 class="section-title">Open the full itinerary when you need every day card</h2>
           </div>
-          <p class="trip-page-section__note">Day cards stay close to the planning CSV</p>
+          <p class="trip-page-section__note">
+            Day cards stay close to the source sheet but collapse down cleanly on phones.
+          </p>
         </div>
 
-        <div class="schedule-grid">
-          {scheduleDays.map((day) => (
-            <ScheduleDayCard day={day} />
-          ))}
-        </div>
+        <DisclosurePanel
+          label="Full itinerary"
+          summary="Open every day card"
+          detail={`${scheduleDays.length} trip days with notes and park labels`}
+          mobileCollapsed
+        >
+          <div class="schedule-grid">
+            {scheduleDays.map((day) => (
+              <ScheduleDayCard day={day} />
+            ))}
+          </div>
+        </DisclosurePanel>
       </section>
     </TripPageShell>
   )

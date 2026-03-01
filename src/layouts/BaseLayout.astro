@@ -38,5 +38,43 @@ const { title, description = siteShellData.defaultDescription, noIndex = true } 
     <div class="app-shell">
       <slot />
     </div>
+    <script>
+      const disclosureQuery = window.matchMedia('(max-width: 720px)');
+
+      const syncDisclosurePanels = () => {
+        document.querySelectorAll('details[data-mobile-collapsed]').forEach((panel) => {
+          if (!(panel instanceof HTMLDetailsElement)) {
+            return;
+          }
+
+          if (panel.dataset['userToggled'] === 'true') {
+            return;
+          }
+
+          panel.open = !disclosureQuery.matches;
+        });
+      };
+
+      const markDisclosureAsTouched = (event: MouseEvent) => {
+        if (!(event.target instanceof Element)) {
+          return;
+        }
+
+        const summary = event.target.closest('details[data-mobile-collapsed] > summary');
+
+        if (summary?.parentElement instanceof HTMLDetailsElement) {
+          summary.parentElement.dataset['userToggled'] = 'true';
+        }
+      };
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', syncDisclosurePanels, { once: true });
+      } else {
+        syncDisclosurePanels();
+      }
+
+      disclosureQuery.addEventListener('change', syncDisclosurePanels);
+      document.addEventListener('click', markDisclosureAsTouched);
+    </script>
   </body>
 </html>

@@ -1,6 +1,6 @@
 .trip-page-shell__main {
   display: grid;
-  gap: 1.8rem;
+  gap: 2rem;
 }
 
 .trip-page-section {
@@ -27,8 +27,8 @@
 .trip-page-section__note {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 0.56rem;
-  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -40,7 +40,10 @@
 }
 
 .detail-stat-card,
+.overview-callout,
+.overview-route-card,
 .featured-attraction,
+.disclosure-panel,
 .trip-heatmap,
 .schedule-summary-card,
 .party-priority-card {
@@ -56,11 +59,13 @@
 
 .detail-note {
   margin: 0.45rem 0 0;
-  font-size: 0.82rem;
+  font-size: 0.92rem;
   line-height: 1.6;
   color: var(--muted);
 }
 
+.overview-glance-grid,
+.overview-route-grid,
 .featured-grid,
 .schedule-grid,
 .party-detail-grid {
@@ -68,16 +73,28 @@
   gap: 0.9rem;
 }
 
+.overview-glance-grid {
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+}
+
+.overview-route-grid {
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+
 .featured-grid {
   grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 }
 
+.overview-callout,
+.overview-route-card,
 .featured-attraction {
   position: relative;
   overflow: hidden;
   padding: 1.25rem 1.25rem 1.1rem;
 }
 
+.overview-callout::before,
+.overview-route-card::before,
 .featured-attraction::before {
   content: '';
   position: absolute;
@@ -87,15 +104,19 @@
   background: var(--family-gradient);
 }
 
+.overview-callout__eyebrow,
+.overview-route-card__eyebrow,
 .featured-attraction__eyebrow {
   margin: 0 0 0.65rem;
   font-family: var(--font-mono);
-  font-size: 0.54rem;
-  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--accent);
 }
 
+.overview-callout__title,
+.overview-route-card__title,
 .featured-attraction__title {
   margin: 0;
   font-family: var(--font-display);
@@ -105,10 +126,73 @@
   letter-spacing: -0.03em;
 }
 
+.overview-callout__body,
+.overview-route-card__summary,
 .featured-attraction__meta,
 .featured-attraction__score {
   margin: 0;
   color: var(--muted);
+}
+
+.overview-callout__body,
+.overview-route-card__summary {
+  margin-top: 0.55rem;
+}
+
+.overview-callout__chips {
+  margin-top: 1rem;
+}
+
+.overview-priority-list {
+  display: grid;
+  gap: 0.8rem;
+  margin: 1rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.overview-priority-list li {
+  display: grid;
+  gap: 0.18rem;
+  color: var(--muted);
+}
+
+.overview-priority-list strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.overview-route-card__stat {
+  margin: 1rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.overview-route-card__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.9rem;
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(200, 169, 110, 0.45);
+  border-radius: 0.8rem;
+  background: rgba(200, 169, 110, 0.14);
+  color: var(--text);
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.overview-route-card__link:hover {
+  transform: translateY(-1px);
+  border-color: rgba(200, 169, 110, 0.7);
+  background: rgba(200, 169, 110, 0.22);
 }
 
 .featured-attraction__meta {
@@ -119,9 +203,90 @@
 .featured-attraction__score {
   margin-top: 0.95rem;
   font-family: var(--font-mono);
-  font-size: 0.58rem;
-  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+}
+
+.disclosure-panel {
+  overflow: hidden;
+}
+
+.disclosure-panel + .disclosure-panel {
+  margin-top: 1rem;
+}
+
+.disclosure-panel__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.15rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.disclosure-panel__summary::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure-panel__summary-copy {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.disclosure-panel__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.disclosure-panel__headline {
+  font-size: 1.06rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.disclosure-panel__detail {
+  color: var(--muted);
+}
+
+.disclosure-panel__toggle {
+  position: relative;
+  flex-shrink: 0;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface2);
+}
+
+.disclosure-panel__toggle::before,
+.disclosure-panel__toggle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.85rem;
+  height: 2px;
+  background: var(--accent);
+  transform: translate(-50%, -50%);
+}
+
+.disclosure-panel__toggle::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.disclosure-panel[open] .disclosure-panel__toggle::after {
+  opacity: 0;
+}
+
+.disclosure-panel__body {
+  padding: 0 1.15rem 1.15rem;
+  border-top: 1px solid var(--border);
 }
 
 .trip-heatmap {
@@ -134,7 +299,7 @@
 
 .trip-heatmap__table {
   width: 100%;
-  min-width: 62rem;
+  min-width: 56rem;
   border-collapse: collapse;
 }
 
@@ -150,8 +315,8 @@
   padding: 0.9rem 0.65rem;
   border-bottom: 1px solid var(--border);
   background: var(--surface2);
-  font-size: 0.56rem;
-  letter-spacing: 0.16em;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
   color: var(--muted);
   text-align: center;
   white-space: nowrap;
@@ -184,7 +349,7 @@
 }
 
 .trip-heatmap__attraction {
-  min-width: 19rem;
+  min-width: 17rem;
   padding: 0.95rem 1rem;
   border-right: 1px solid var(--border);
 }
@@ -199,7 +364,7 @@
 .trip-heatmap__attraction-meta {
   display: block;
   margin-top: 0.2rem;
-  font-size: 0.72rem;
+  font-size: 0.82rem;
   color: var(--muted);
 }
 
@@ -213,10 +378,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.85rem;
-  height: 1.85rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 0.45rem;
-  font-size: 0.6rem;
+  font-size: 0.68rem;
   letter-spacing: 0.08em;
   font-weight: 700;
 }
@@ -247,8 +412,8 @@
 }
 
 .trip-heatmap__score {
-  font-size: 0.62rem;
-  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
   color: var(--muted);
 }
 
@@ -263,8 +428,8 @@
 }
 
 .trip-heatmap__legend-label {
-  font-size: 0.54rem;
-  letter-spacing: 0.18em;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
   color: var(--muted);
 }
 
@@ -282,7 +447,7 @@
   align-items: center;
   gap: 0.45rem;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.86rem;
 }
 
 .consensus-bars {
@@ -323,15 +488,15 @@
   border-radius: 999px;
   background: rgba(200, 169, 110, 0.08);
   font-family: var(--font-mono);
-  font-size: 0.5rem;
-  letter-spacing: 0.14em;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--accent);
 }
 
 .consensus-row__sub,
 .consensus-row__votes {
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   color: var(--muted);
 }
 
@@ -470,8 +635,8 @@
 
 .schedule-card__day-index,
 .schedule-card__kind {
-  font-size: 0.54rem;
-  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
 }
 
 .schedule-card__day-index {
@@ -479,8 +644,8 @@
 }
 
 .schedule-card__date {
-  font-size: 0.58rem;
-  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
   color: var(--muted);
 }
 
@@ -502,7 +667,7 @@
 }
 
 .schedule-card__park {
-  font-size: 0.85rem;
+  font-size: 0.92rem;
   color: var(--text);
 }
 
@@ -576,8 +741,8 @@
 }
 
 .party-detail-card__style {
-  font-size: 0.54rem;
-  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
   color: var(--accent);
 }
 
@@ -614,8 +779,8 @@
 
 .party-detail-card__tier-label,
 .party-detail-card__tier-count {
-  font-size: 0.52rem;
-  letter-spacing: 0.16em;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
   color: var(--muted);
 }
 
@@ -677,8 +842,8 @@
 }
 
 .party-detail-card__choices-label {
-  font-size: 0.54rem;
-  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
   color: var(--muted);
 }
 
@@ -710,6 +875,8 @@
   }
 
   .detail-stat-grid,
+  .overview-glance-grid,
+  .overview-route-grid,
   .featured-grid,
   .schedule-grid,
   .party-detail-grid {
@@ -719,5 +886,9 @@
   .trip-heatmap__legend {
     align-items: start;
     flex-direction: column;
+  }
+
+  .disclosure-panel__summary {
+    align-items: start;
   }
 }

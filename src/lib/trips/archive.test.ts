@@ -40,7 +40,7 @@ describe('archive helpers', () => {
     });
   });
 
-  it('redirects planning trips to attractions and leaves upcoming trips on the stub route', () => {
+  it('routes both planning and upcoming trips to the trip overview page', () => {
     const planningTrip = findArchiveTrip(tripArchiveData.trips, 'casschwlanck', '2026');
     const upcomingTrip = findArchiveTrip(tripArchiveData.trips, 'casschwlanck', 'future-trip');
 
@@ -51,8 +51,8 @@ describe('archive helpers', () => {
       throw new Error('Expected seeded planning and upcoming trips to exist.');
     }
 
-    expect(getTripLandingPath(planningTrip)).toBe('/casschwlanck/2026/attractions');
-    expect(getTripLandingPath(upcomingTrip)).toBeNull();
+    expect(getTripLandingPath(planningTrip)).toBe('/casschwlanck/2026');
+    expect(getTripLandingPath(upcomingTrip)).toBe('/casschwlanck/future-trip');
   });
 
   it('finds trip modules and derives shared trip chrome stats', () => {
