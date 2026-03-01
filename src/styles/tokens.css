@@ -17,6 +17,12 @@
   --muted: #8f98ae;
   --faint: #3d4558;
   --accent: #c8a96e;
+  --tone-slate: #7f90a4;
+  --tone-slate-rgb: 127 144 164;
+  --tone-aubergine: #6c5a70;
+  --tone-aubergine-rgb: 108 90 112;
+  --tone-moss: #72816d;
+  --tone-moss-rgb: 114 129 109;
   --blue: #60a5fa;
   --green: #4ade80;
   --amber: #fbbf24;
@@ -45,11 +51,11 @@
 }
 
 [data-trip-theme='primary'] {
-  --family-pip: var(--blue);
-  --family-gradient: linear-gradient(90deg, var(--blue), var(--purple));
+  --family-pip: var(--tone-slate);
+  --family-gradient: linear-gradient(90deg, var(--tone-slate), var(--tone-aubergine));
 }
 
 [data-trip-theme='secondary'] {
-  --family-pip: var(--green);
-  --family-gradient: linear-gradient(90deg, var(--green), var(--accent));
+  --family-pip: var(--tone-moss);
+  --family-gradient: linear-gradient(90deg, var(--tone-moss), var(--accent));
 }

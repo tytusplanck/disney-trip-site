@@ -39,7 +39,7 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: 0.3rem;
-  background: linear-gradient(180deg, rgba(200, 169, 110, 0.8), rgba(96, 165, 250, 0.45));
+  background: linear-gradient(180deg, rgba(200, 169, 110, 0.8), rgb(var(--tone-slate-rgb) / 0.45));
 }
 
 .auth-card__quip {
