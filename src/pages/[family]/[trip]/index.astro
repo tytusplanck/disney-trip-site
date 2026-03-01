@@ -3,13 +3,13 @@ import ChipList from '../../../components/ChipList.astro';
 import DetailStatGrid from '../../../components/DetailStatGrid.astro';
 import TripPageShell from '../../../components/shells/TripPageShell.astro';
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
-import { tripArchiveData } from '../../../data/trip-archive';
+import { allTripsData } from '../../../data/all-trips';
 import { tripStubPages, upcomingStubStatus } from '../../../data/trip-stubs';
 import {
-  findArchiveTrip,
+  findTripSummary,
   findTripDataModule,
   getTripSectionPath,
-} from '../../../lib/trips/archive';
+} from '../../../lib/trips/all-trips';
 import {
   getPartyOverview,
   getPartySummaries,
@@ -17,12 +17,13 @@ import {
   getScheduleOverview,
   getSharedPriorityAttractions,
 } from '../../../lib/trips/details';
+import { hasTripOverviewContent } from '../../../lib/trips/readiness';
 import { tripSectionPages } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
-const trip = findArchiveTrip(tripArchiveData.trips, familyId, tripId);
-const tripModule = findTripDataModule(tripArchiveData.modules, familyId, tripId);
+const trip = findTripSummary(allTripsData.trips, familyId, tripId);
+const tripModule = findTripDataModule(allTripsData.modules, familyId, tripId);
 
 if (!trip) {
   return Astro.redirect('/');
@@ -30,7 +31,7 @@ if (!trip) {
 
 const page = tripSectionPages.overview;
 const stubPage = tripStubPages.overview;
-const tripIsStub = trip.status === 'upcoming' || !tripModule;
+const tripIsStub = !tripModule || !hasTripOverviewContent(tripModule);
 
 const rankedAttractions = tripModule
   ? getRankedAttractions(tripModule.attractions, tripModule.party.length)
@@ -144,9 +145,6 @@ const quickRoutes = [
             <p class="page-label">Start here</p>
             <h2 class="section-title">What matters most right now</h2>
           </div>
-          <p class="trip-page-section__note">
-            Made to read quickly on a phone without hiding the full planner.
-          </p>
         </div>
 
         <div class="overview-glance-grid">
@@ -165,16 +163,24 @@ const quickRoutes = [
           <article class="overview-callout">
             <p class="overview-callout__eyebrow">Shared must-dos</p>
             <h3 class="overview-callout__title">The rides pulling the trip forward</h3>
-            <ol class="overview-priority-list">
-              {sharedPriorityAttractions.map((attraction) => (
-                <li>
-                  <strong>{attraction.attractionLabel}</strong>
-                  <span>
-                    {attraction.mustDoVotes} must-do calls / {attraction.consensusScore} total score
-                  </span>
-                </li>
-              ))}
-            </ol>
+            {sharedPriorityAttractions.length > 0 ? (
+              <ol class="overview-priority-list">
+                {sharedPriorityAttractions.map((attraction) => (
+                  <li>
+                    <strong>{attraction.attractionLabel}</strong>
+                    <span>
+                      {attraction.mustDoVotes} must-do calls / {attraction.consensusScore} total
+                      score
+                    </span>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p class="overview-callout__body">
+                Attraction preferences are still in placeholder mode, so the ride board will fill in
+                after the first ballots land.
+              </p>
+            )}
           </article>
         </div>
       </section>
@@ -185,9 +191,6 @@ const quickRoutes = [
             <p class="page-label">Quick routes</p>
             <h2 class="section-title">Jump into the full planner</h2>
           </div>
-          <p class="trip-page-section__note">
-            All dense organizer views stay one tap away from the overview.
-          </p>
         </div>
 
         <div class="overview-route-grid">

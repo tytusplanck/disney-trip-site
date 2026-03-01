@@ -6,52 +6,129 @@ interface StatItem {
   value: string;
 }
 
+type HeaderKind = 'archive' | 'trip';
+
 interface Props {
+  headerKind: HeaderKind;
   railLabel: string;
   statItems: StatItem[];
   railTitle?: string | undefined;
   sticky?: boolean | undefined;
+  mobileTitle?: string | undefined;
+  mobileBackHref?: string | undefined;
+  mobileBackLabel?: string | undefined;
+  mobileFactsLabel?: string | undefined;
+  mobileFactsItems?: StatItem[] | undefined;
 }
 
-const { railLabel, statItems, railTitle, sticky = false } = Astro.props;
+const {
+  headerKind,
+  railLabel,
+  statItems,
+  railTitle,
+  sticky = false,
+  mobileTitle,
+  mobileBackHref,
+  mobileBackLabel,
+  mobileFactsLabel,
+  mobileFactsItems = [],
+} = Astro.props;
 const hasRailTitle = typeof railTitle === 'string' && railTitle.length > 0;
+const hasMobileFacts = mobileFactsItems.length > 0 && typeof mobileFactsLabel === 'string';
+const fullMobileTitle = railTitle ?? mobileTitle;
 ---
 
-<header class:list={['site-header', sticky && 'site-header--sticky']}>
-  <div class="site-header__top">
-    <BrandMark />
-    <div class="site-header__context">
-      <slot name="context" />
+<header class:list={['site-header', sticky && 'site-header--sticky']} data-header-kind={headerKind}>
+  <div class="site-header__desktop">
+    <div class="site-header__top">
+      <BrandMark />
+      <div class="site-header__context">
+        <slot name="context" />
+      </div>
     </div>
-  </div>
 
-  <section
-    class:list={['site-header__rail', hasRailTitle && 'site-header__rail--with-title']}
-    aria-label={railLabel}
-  >
-    {
-      hasRailTitle && (
-        <>
-          <p class="site-header__rail-title">{railTitle}</p>
-          <div class="site-header__rail-separator" aria-hidden="true" />
-        </>
-      )
-    }
-
-    <div
-      class:list={[
-        'site-header__stats',
-        hasRailTitle ? 'site-header__stats--inline' : 'site-header__stats--grid',
-      ]}
+    <section
+      class:list={['site-header__rail', hasRailTitle && 'site-header__rail--with-title']}
+      aria-label={railLabel}
     >
       {
-        statItems.map((item) => (
-          <div class="site-header__stat">
-            <strong class="site-header__rail-value">{item.value}</strong>
-            <span class="site-header__rail-label">{item.label}</span>
-          </div>
-        ))
+        hasRailTitle && (
+          <>
+            <p class="site-header__rail-title">{railTitle}</p>
+            <div class="site-header__rail-separator" aria-hidden="true" />
+          </>
+        )
       }
-    </div>
-  </section>
+
+      <div
+        class:list={[
+          'site-header__stats',
+          hasRailTitle ? 'site-header__stats--inline' : 'site-header__stats--grid',
+        ]}
+      >
+        {
+          statItems.map((item) => (
+            <div class="site-header__stat">
+              <strong class="site-header__rail-value">{item.value}</strong>
+              <span class="site-header__rail-label">{item.label}</span>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+
+  {
+    headerKind === 'trip' ? (
+      <div class="site-header__mobile site-header__mobile--trip">
+        <a class="site-header__mobile-back" href={mobileBackHref}>
+          {mobileBackLabel}
+        </a>
+        <p class="site-header__mobile-title" title={fullMobileTitle} aria-label={fullMobileTitle}>
+          {mobileTitle}
+        </p>
+        {hasMobileFacts && (
+          <>
+            <details class="site-header__mobile-facts-toggle" data-mobile-collapsed open>
+              <summary class="site-header__mobile-facts-summary">{mobileFactsLabel}</summary>
+            </details>
+            <div class="site-header__mobile-facts-panel">
+              <div class="site-header__mobile-facts-grid">
+                {mobileFactsItems.map((item) => (
+                  <div class="site-header__mobile-fact">
+                    <span class="site-header__mobile-fact-label">{item.label}</span>
+                    <strong class="site-header__mobile-fact-value">{item.value}</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+        <div class="site-header__mobile-tabs">
+          <slot name="mobile-tabs" />
+        </div>
+      </div>
+    ) : (
+      <div class="site-header__mobile site-header__mobile--archive">
+        <BrandMark />
+        {hasMobileFacts && (
+          <>
+            <details class="site-header__mobile-facts-toggle" data-mobile-collapsed open>
+              <summary class="site-header__mobile-facts-summary">{mobileFactsLabel}</summary>
+            </details>
+            <div class="site-header__mobile-facts-panel">
+              <div class="site-header__mobile-facts-grid">
+                {mobileFactsItems.map((item) => (
+                  <div class="site-header__mobile-fact">
+                    <span class="site-header__mobile-fact-label">{item.label}</span>
+                    <strong class="site-header__mobile-fact-value">{item.value}</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    )
+  }
 </header>

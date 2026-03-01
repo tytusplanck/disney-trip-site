@@ -1,0 +1,17 @@
+---
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+---
+
+<details class="trip-shell__page-intro-tooltip">
+  <summary class="trip-shell__page-intro-trigger" aria-label="About this page">
+    <span aria-hidden="true">i</span>
+  </summary>
+  <div class="trip-shell__page-intro-bubble">
+    <p class="trip-shell__page-intro-bubble-label">About this page</p>
+    <p class="page-intro">{text}</p>
+  </div>
+</details>

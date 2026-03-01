@@ -20,20 +20,20 @@ export const tripSectionPages: Record<TripSection, TripSectionPageCopy> = {
     pageLabel: 'Attractions',
     title: 'Ride picks',
     intro:
-      'See the strongest group picks first, then open the full matrix when you need every rating.',
+      'Start with the trip-wide signal, then drill into park day, area, traveler, and full-matrix filters when it is time to make ride calls.',
   },
   schedule: {
     section: 'schedule',
     pageLabel: 'Schedule',
     title: 'Day-by-day plan',
     intro:
-      'Travel, park, and resort days in a quick scan up top, with the full itinerary ready just below.',
+      'Start with the trip rhythm and park lineup, then open the full itinerary when you need every day card.',
   },
   party: {
     section: 'party',
     pageLabel: 'Party',
     title: 'Traveler preferences',
     intro:
-      'Start with the group pressure points, then open every traveler card when you need the full breakdown.',
+      'Start with the kid-versus-adult split to see where the plan diverges, then open every traveler card when you need the full breakdown.',
   },
 };

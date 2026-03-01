@@ -2,22 +2,23 @@
 import EmptyState from '../components/EmptyState.astro';
 import SectionHeader from '../components/SectionHeader.astro';
 import TripCard from '../components/TripCard.astro';
-import ArchiveShell from '../components/shells/ArchiveShell.astro';
-import { tripArchiveData } from '../data/trip-archive';
-import { findTripDataModule, getArchiveSections, getArchiveStats } from '../lib/trips/archive';
-import { getArchiveTripInsights } from '../lib/trips/details';
-import { archivePage } from './index.page';
+import AllTripsShell from '../components/shells/AllTripsShell.astro';
+import { allTripsData } from '../data/all-trips';
+import { findTripDataModule, getAllTripsSections, getAllTripsStats } from '../lib/trips/all-trips';
+import { getAllTripsCardInsights } from '../lib/trips/details';
+import { allTripsPage } from './index.page';
 
-const { footerNote, headerMetaLabel, meta, sections, stats } = archivePage;
-const archiveSections = getArchiveSections(tripArchiveData.trips);
-const archiveStats = getArchiveStats(tripArchiveData.trips);
+const { card, footerNote, headerMetaLabel, headerTitle, intro, meta, sections, stats } =
+  allTripsPage;
+const allTripsSections = getAllTripsSections(allTripsData.trips);
+const allTripsStats = getAllTripsStats(allTripsData.trips);
 
 const statItems = [
-  { label: stats.tripsLabel, value: archiveStats.totalTrips },
-  { label: stats.planningTripsLabel, value: archiveStats.planningTrips },
-  { label: stats.ridesLabel, value: archiveStats.ridesScouted },
-  { label: stats.peopleLabel, value: archiveStats.nextTripPeople },
-  { label: stats.parksLabel, value: archiveStats.nextTripParks },
+  { label: stats.tripsLabel, value: allTripsStats.totalTrips },
+  { label: stats.planningTripsLabel, value: allTripsStats.planningTrips },
+  { label: stats.ridesLabel, value: allTripsStats.ridesScouted },
+  { label: stats.peopleLabel, value: allTripsStats.nextTripPeople },
+  { label: stats.parksLabel, value: allTripsStats.nextTripParks },
 ];
 
 const sectionLabelByStatus = {
@@ -26,43 +27,44 @@ const sectionLabelByStatus = {
   completed: sections.completedLabel,
 } as const;
 
-function getTripInsights(groupId: string, tripId: string) {
-  const tripModule = findTripDataModule(tripArchiveData.modules, groupId, tripId);
+function getTripCardInsights(groupId: string, tripId: string) {
+  const tripModule = findTripDataModule(allTripsData.modules, groupId, tripId);
 
-  return tripModule ? getArchiveTripInsights(tripModule) : [];
+  return tripModule ? getAllTripsCardInsights(tripModule) : [];
 }
 ---
 
-<ArchiveShell
+<AllTripsShell
   title={meta.title}
   description={meta.description}
   metaLabel={headerMetaLabel}
+  headerTitle={headerTitle}
   statItems={statItems}
   footerNote={footerNote}
 >
-  <section class="archive-intro">
-    <p class="page-label">Start here</p>
-    <h1 class="page-title archive-intro__title">Choose a trip, then open the overview.</h1>
-    <p class="page-intro archive-intro__body">
-      Every trip opens with a calm summary first. Fast links still get organizers into the full
-      planner in one tap.
-    </p>
+  <section class="all-trips-intro">
+    <p class="page-label">{intro.label}</p>
+    <h1 class="page-title all-trips-intro__title">{intro.title}</h1>
+    <p class="page-intro all-trips-intro__body">{intro.body}</p>
   </section>
 
   {
-    archiveSections.map((section) => (
-      <section class="archive-section">
+    allTripsSections.map((section) => (
+      <section class="all-trips-section">
         <SectionHeader
           label={sectionLabelByStatus[section.status]}
           countLabel={section.countLabel}
         />
 
         {section.trips.length > 0 ? (
-          <div class="trip-grid">
+          <div class:list={['trip-grid', section.trips.length === 1 && 'trip-grid--single']}>
             {section.trips.map((trip) => (
               <TripCard
                 trip={trip}
-                insights={trip.status === 'planning' ? getTripInsights(trip.groupId, trip.id) : []}
+                copy={card}
+                insights={
+                  trip.status === 'planning' ? getTripCardInsights(trip.groupId, trip.id) : []
+                }
               />
             ))}
           </div>
@@ -72,4 +74,4 @@ function getTripInsights(groupId: string, tripId: string) {
       </section>
     ))
   }
-</ArchiveShell>
+</AllTripsShell>

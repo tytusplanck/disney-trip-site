@@ -76,7 +76,7 @@ describe('auth route handlers', () => {
     });
   });
 
-  it('falls back to the archive when next points to an external site', async () => {
+  it('falls back to All Trips when next points to an external site', async () => {
     const cookies = new MockCookies();
     const context = createApiContext(
       'https://example.com/api/auth/login',

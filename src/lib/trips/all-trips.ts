@@ -1,6 +1,6 @@
 import type {
-  ArchiveSection,
-  ArchiveStats,
+  AllTripsSection,
+  AllTripsStats,
   TripDataModule,
   TripBarStat,
   TripSection,
@@ -19,7 +19,7 @@ function formatMetricValue(value: number | null): string {
   return value === null ? MISSING_VALUE : String(value);
 }
 
-export function getArchiveSections(trips: TripSummary[]): ArchiveSection[] {
+export function getAllTripsSections(trips: TripSummary[]): AllTripsSection[] {
   return SECTION_ORDER.map((status) => {
     const sectionTrips = trips.filter((trip) => trip.status === status);
 
@@ -32,7 +32,7 @@ export function getArchiveSections(trips: TripSummary[]): ArchiveSection[] {
   });
 }
 
-export function getArchiveStats(trips: TripSummary[]): ArchiveStats {
+export function getAllTripsStats(trips: TripSummary[]): AllTripsStats {
   const nextPlanningTrip = trips.find((trip) => trip.status === 'planning');
 
   return {
@@ -44,7 +44,7 @@ export function getArchiveStats(trips: TripSummary[]): ArchiveStats {
   };
 }
 
-export function findArchiveTrip(
+export function findTripSummary(
   trips: TripSummary[],
   groupId: string,
   tripId: string,
@@ -84,4 +84,8 @@ export function getTripBarStats(trip: TripSummary): TripBarStat[] {
     { label: 'Attractions', value: formatMetricValue(trip.attractionCount) },
     { label: 'Parks', value: formatMetricValue(trip.parkLabels.length || null) },
   ];
+}
+
+export function getTripMobileFacts(trip: TripSummary): TripBarStat[] {
+  return [{ label: 'Dates', value: trip.dateLabel }, ...getTripBarStats(trip)];
 }

@@ -40,7 +40,7 @@ describe('middleware', () => {
     expect(response.headers.get('x-frame-options')).toBe('DENY');
   });
 
-  it('redirects authenticated login requests back to the archive', async () => {
+  it('redirects authenticated login requests back to All Trips', async () => {
     const cookies = new MockCookies({
       [AUTH_COOKIE_NAME]: createSessionCookieValue(SITE_PASSWORD, '2026-02-28T00:00:00.000Z'),
     });
@@ -81,7 +81,7 @@ describe('middleware', () => {
     });
     const context = createMiddlewareContext('https://example.com/', cookies);
 
-    const response = await onRequest(context, () => Promise.resolve(new Response('archive')));
+    const response = await onRequest(context, () => Promise.resolve(new Response('all-trips')));
     assertResponse(response);
 
     expect(response.status).toBe(200);

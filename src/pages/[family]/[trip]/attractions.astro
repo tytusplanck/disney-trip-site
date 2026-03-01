@@ -1,24 +1,25 @@
 ---
-import AttractionHeatmap from '../../../components/AttractionHeatmap.astro';
-import ConsensusBars from '../../../components/ConsensusBars.astro';
-import DetailStatGrid from '../../../components/DetailStatGrid.astro';
+import AttractionsScoreGuide from '../../../components/AttractionsScoreGuide.astro';
+import AttractionsExplorer from '../../../components/AttractionsExplorer';
 import DisclosurePanel from '../../../components/DisclosurePanel.astro';
 import TripPageShell from '../../../components/shells/TripPageShell.astro';
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
-import { tripArchiveData } from '../../../data/trip-archive';
+import { allTripsData } from '../../../data/all-trips';
 import { planningStubStatus, tripStubPages, upcomingStubStatus } from '../../../data/trip-stubs';
 import {
-  getAttractionHeatmapRows,
-  getAttractionMustDoVoteCount,
-  getRankedAttractions,
-} from '../../../lib/trips/details';
-import { findArchiveTrip, findTripDataModule } from '../../../lib/trips/archive';
+  buildAttractionsExplorerData,
+  deriveAttractionsExplorerView,
+} from '../../../lib/trips/attractions-explorer';
+import { getPreferenceTierPoints } from '../../../lib/trips/data';
+import { getPreferenceMeta } from '../../../lib/trips/details';
+import { findTripSummary, findTripDataModule } from '../../../lib/trips/all-trips';
+import { hasTripSectionContent } from '../../../lib/trips/readiness';
 import { tripSectionPages } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
-const trip = findArchiveTrip(tripArchiveData.trips, familyId, tripId);
-const tripModule = findTripDataModule(tripArchiveData.modules, familyId, tripId);
+const trip = findTripSummary(allTripsData.trips, familyId, tripId);
+const tripModule = findTripDataModule(allTripsData.modules, familyId, tripId);
 
 if (!trip || !tripModule) {
   return Astro.redirect('/');
@@ -27,38 +28,26 @@ if (!trip || !tripModule) {
 const page = tripSectionPages.attractions;
 const stubPage = tripStubPages.attractions;
 const statusCopy = trip.status === 'upcoming' ? upcomingStubStatus : planningStubStatus;
-const heatmapRows = getAttractionHeatmapRows(tripModule.party, tripModule.attractions);
-const rankedAttractions = getRankedAttractions(tripModule.attractions, tripModule.party.length);
-const spotlightAttractions = rankedAttractions.slice(0, 3);
-const attractionStats = [
-  {
-    label: 'Top score',
-    value: spotlightAttractions[0]
-      ? `${spotlightAttractions[0].consensusScore}/${spotlightAttractions[0].maxScore}`
-      : '--',
-    detail: spotlightAttractions[0]?.attractionLabel ?? 'No attraction data loaded',
-  },
-  {
-    label: 'Must-do votes',
-    value: String(getAttractionMustDoVoteCount(tripModule.attractions)),
-    detail: 'Tier 1 calls across the current preference worksheet',
-  },
-  {
-    label: 'Scored attractions',
-    value: String(tripModule.attractions.length),
-    detail: `${tripModule.summary.parkLabels.length} parks currently represented`,
-  },
-  {
-    label: 'Party rated',
-    value: String(tripModule.party.length),
-    detail: 'Every traveler already appears in the ride planner',
-  },
-];
+const tripIsStub = !hasTripSectionContent(tripModule, 'attractions');
+const explorerData = buildAttractionsExplorerData(tripModule);
+const defaultExplorerView = deriveAttractionsExplorerView(explorerData, {
+  selectedDayId: null,
+  parkLabel: null,
+  areaLabel: null,
+  memberId: null,
+  sentiment: 'all',
+  search: '',
+});
+const spotlightAttractions = defaultExplorerView.topPicks.slice(0, 3);
 const maxScoreLabel = spotlightAttractions[0]?.maxScore ?? tripModule.party.length * 5;
+const scoreGuide = ([1, 2, 3, 4, 5] as const).map((tier) => ({
+  ...getPreferenceMeta(tier),
+  points: getPreferenceTierPoints(tier),
+}));
 ---
 
 {
-  trip.status === 'upcoming' ? (
+  tripIsStub ? (
     <TripStubShell
       title={`${trip.title} | Attractions`}
       description={`Protected placeholder attractions route for ${trip.title}.`}
@@ -82,7 +71,30 @@ const maxScoreLabel = spotlightAttractions[0]?.maxScore ?? tripModule.party.leng
       pageTitle={page.title}
       pageIntro={page.intro}
     >
-      <DetailStatGrid items={attractionStats} />
+      <section class="trip-page-section">
+        <div class="trip-page-section__header">
+          <div class="trip-page-section__copy">
+            <p class="page-label">Scoring system</p>
+            <h2 class="section-title">How the board turns preferences into points</h2>
+          </div>
+          <p class="trip-page-section__note">
+            Every attraction is scored with the same five-tier scale.
+          </p>
+        </div>
+
+        <DisclosurePanel
+          label="Scoring system"
+          summary="Open the points guide"
+          detail={`How ${tripModule.party.length} ballots become ${maxScoreLabel} max points`}
+          defaultOpen={false}
+        >
+          <AttractionsScoreGuide
+            maxScoreLabel={maxScoreLabel}
+            partySize={tripModule.party.length}
+            scoreGuide={scoreGuide}
+          />
+        </DisclosurePanel>
+      </section>
 
       <section class="trip-page-section">
         <div class="trip-page-section__header">
@@ -113,31 +125,15 @@ const maxScoreLabel = spotlightAttractions[0]?.maxScore ?? tripModule.party.leng
       <section class="trip-page-section">
         <div class="trip-page-section__header">
           <div class="trip-page-section__copy">
-            <p class="page-label">Rankings</p>
-            <h2 class="section-title">Open the deeper attraction board when you need it</h2>
+            <p class="page-label">Decision board</p>
+            <h2 class="section-title">Filter down to the right ride stack for the day</h2>
           </div>
           <p class="trip-page-section__note">
-            The overview stays readable; the dense planner is still here in full.
+            Start broad, then cut the board down by park day, area, traveler, and group signal.
           </p>
         </div>
 
-        <DisclosurePanel
-          label="Detailed rankings"
-          summary="Open the full attraction rankings"
-          detail="Top 14 attractions sorted by group enthusiasm"
-          mobileCollapsed
-        >
-          <ConsensusBars items={rankedAttractions.slice(0, 14)} />
-        </DisclosurePanel>
-
-        <DisclosurePanel
-          label="Full matrix"
-          summary="Open the full attraction matrix"
-          detail={`${heatmapRows.length} attractions x ${tripModule.party.length} travelers`}
-          mobileCollapsed
-        >
-          <AttractionHeatmap party={tripModule.party} rows={heatmapRows} />
-        </DisclosurePanel>
+        <AttractionsExplorer client:load data={explorerData} />
       </section>
     </TripPageShell>
   )

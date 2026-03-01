@@ -3,7 +3,13 @@ interface MetaContent {
   description: string;
 }
 
-interface ArchiveStatsCopy {
+interface AllTripsIntroCopy {
+  label: string;
+  title: string;
+  body: string;
+}
+
+interface AllTripsStatsCopy {
   tripsLabel: string;
   planningTripsLabel: string;
   ridesLabel: string;
@@ -11,28 +17,44 @@ interface ArchiveStatsCopy {
   parksLabel: string;
 }
 
-interface ArchiveSectionsCopy {
+interface AllTripsSectionsCopy {
   planningLabel: string;
   upcomingLabel: string;
   completedLabel: string;
   completedEmptyState: string;
 }
 
-export interface ArchivePage {
+export interface AllTripsCardCopy {
+  primaryActionLabel: string;
+  shortcutLabel: string;
+  shortcutIntro: string;
+  futureNote: string;
+}
+
+export interface AllTripsPage {
   meta: MetaContent;
   headerMetaLabel: string;
-  stats: ArchiveStatsCopy;
-  sections: ArchiveSectionsCopy;
+  headerTitle: string;
+  intro: AllTripsIntroCopy;
+  stats: AllTripsStatsCopy;
+  sections: AllTripsSectionsCopy;
+  card: AllTripsCardCopy;
   footerNote: string;
 }
 
-export const archivePage: ArchivePage = {
+export const allTripsPage: AllTripsPage = {
   meta: {
     title: 'Disney Planned by Tytus',
     description:
-      'Protected Disney trip archive with calm overview pages and one-tap access to the full planner.',
+      'Protected Disney trip collection with calm overview pages and one-tap access to the full planner.',
   },
-  headerMetaLabel: 'Trip Archive',
+  headerMetaLabel: 'All Trips',
+  headerTitle: 'Trip archive',
+  intro: {
+    label: 'All Trips',
+    title: 'Choose a trip, then start with the overview.',
+    body: 'The overview is the default first stop for dates, park lineup, and top family picks before anyone dives into the full planner.',
+  },
   stats: {
     tripsLabel: 'Trips',
     planningTripsLabel: 'Planning Trips',
@@ -45,8 +67,14 @@ export const archivePage: ArchivePage = {
     upcomingLabel: 'Future Trips',
     completedLabel: 'Completed',
     completedEmptyState:
-      'No completed trips yet - archive history will appear here after the first itinerary wraps.',
+      'No completed trips yet - trip history will appear here after the first itinerary wraps.',
+  },
+  card: {
+    primaryActionLabel: 'Start with overview',
+    shortcutLabel: 'Skip ahead',
+    shortcutIntro: 'Already know what you need? Open a planner section directly.',
+    futureNote: 'Planning will open here first once this trip starts taking shape.',
   },
   footerNote:
-    'Open a trip overview for the essentials, then jump into attractions, schedule, or party details when you need the full planner.',
+    'Start with the overview for the essentials, then skip ahead into attractions, schedule, or party details when you need the full planner.',
 };

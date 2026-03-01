@@ -1,8 +1,9 @@
 import type { TripDataModule } from './types';
 import { describe, expect, it } from 'vitest';
 import { casschwlanck2026TripData } from '../../data/trips/casschwlanck-2026';
+import { futureTripData } from '../../data/trips/future-trip';
 import {
-  getArchiveTripInsights,
+  getAllTripsCardInsights,
   getAttractionHeatmapRows,
   getAttractionMustDoVoteCount,
   getPartyOverview,
@@ -70,23 +71,101 @@ const fallbackTripData: TripDataModule = {
   ],
 };
 
-const emptyTripData: TripDataModule = {
+const personaFixtureTripData: TripDataModule = {
   summary: {
-    attractionCount: 0,
+    attractionCount: 9,
     dateLabel: 'TBD',
     dayCount: 0,
     groupId: 'casschwlanck',
-    id: 'empty-test',
-    parkLabels: [],
-    partySize: 0,
-    status: 'upcoming',
-    themeId: 'secondary',
-    title: 'Empty Test',
-    topPick: null,
+    id: 'persona-fixture',
+    parkLabels: ['Magic Kingdom'],
+    partySize: 4,
+    status: 'planning',
+    themeId: 'primary',
+    title: 'Persona Fixture',
+    topPick: 'Ride 1',
   },
-  party: [],
+  party: [
+    { id: 'big', name: 'Big Swing' },
+    { id: 'classic', name: 'Classic Comfort' },
+    { id: 'balanced', name: 'Balanced Explorer' },
+    { id: 'floater', name: 'Flexible Floater' },
+  ],
   schedule: [],
-  attractions: [],
+  attractions: [
+    {
+      areaLabel: 'Tomorrowland',
+      attractionLabel: 'Ride 1',
+      consensusScore: 8,
+      id: 'ride-1',
+      parkLabel: 'Magic Kingdom',
+      preferenceByPartyMemberId: { balanced: 2, big: 1, classic: 2, floater: 3 },
+    },
+    {
+      areaLabel: 'Tomorrowland',
+      attractionLabel: 'Ride 2',
+      consensusScore: 8,
+      id: 'ride-2',
+      parkLabel: 'Magic Kingdom',
+      preferenceByPartyMemberId: { balanced: 2, big: 2, classic: 2, floater: 3 },
+    },
+    {
+      areaLabel: 'Fantasyland',
+      attractionLabel: 'Ride 3',
+      consensusScore: 6,
+      id: 'ride-3',
+      parkLabel: 'Magic Kingdom',
+      preferenceByPartyMemberId: { balanced: 2, big: 3, classic: 2, floater: 2 },
+    },
+    {
+      areaLabel: 'Fantasyland',
+      attractionLabel: 'Ride 4',
+      consensusScore: 5,
+      id: 'ride-4',
+      parkLabel: 'Magic Kingdom',
+      preferenceByPartyMemberId: { balanced: 3, big: 4, classic: 3, floater: 3 },
+    },
+    {
+      areaLabel: 'Adventureland',
+      attractionLabel: 'Ride 5',
+      consensusScore: 4,
+      id: 'ride-5',
+      parkLabel: 'Magic Kingdom',
+      preferenceByPartyMemberId: { balanced: 4, big: 4, classic: 3, floater: 4 },
+    },
+    {
+      areaLabel: 'Adventureland',
+      attractionLabel: 'Ride 6',
+      consensusScore: 3,
+      id: 'ride-6',
+      parkLabel: 'Magic Kingdom',
+      preferenceByPartyMemberId: { balanced: 3, big: 5, classic: 3, floater: 3 },
+    },
+    {
+      areaLabel: 'Liberty Square',
+      attractionLabel: 'Ride 7',
+      consensusScore: 6,
+      id: 'ride-7',
+      parkLabel: 'Magic Kingdom',
+      preferenceByPartyMemberId: { balanced: 2, big: 3, classic: 2, floater: 3 },
+    },
+    {
+      areaLabel: 'Frontierland',
+      attractionLabel: 'Ride 8',
+      consensusScore: 4,
+      id: 'ride-8',
+      parkLabel: 'Magic Kingdom',
+      preferenceByPartyMemberId: { balanced: 3, big: 3, classic: 4, floater: 5 },
+    },
+    {
+      areaLabel: 'Main Street, U.S.A.',
+      attractionLabel: 'Ride 9',
+      consensusScore: 5,
+      id: 'ride-9',
+      parkLabel: 'Magic Kingdom',
+      preferenceByPartyMemberId: { balanced: 4, big: 3, classic: 3, floater: 3 },
+    },
+  ],
 };
 
 describe('trip detail helpers', () => {
@@ -106,6 +185,8 @@ describe('trip detail helpers', () => {
     const overview = getPartyOverview(summaries);
 
     expect(summaries).toHaveLength(10);
+    expect(summaries[0]).toHaveProperty('styleId');
+    expect(summaries[0]).toHaveProperty('styleDescription');
     expect(summaries.find((summary) => summary.member.name === 'Tytus')?.topChoices[0]).toBe(
       'Fantasmic!',
     );
@@ -136,17 +217,58 @@ describe('trip detail helpers', () => {
     expect(getAttractionMustDoVoteCount(casschwlanck2026TripData.attractions)).toBeGreaterThan(0);
   });
 
-  it('builds compact archive insights for the planning card', () => {
-    const insights = getArchiveTripInsights(casschwlanck2026TripData);
+  it('derives schedule summaries for an itinerary-only upcoming trip', () => {
+    const overview = getScheduleOverview(futureTripData.schedule);
+    const days = getScheduleDaySummaries(futureTripData.schedule);
+
+    expect(overview).toEqual({
+      parkDays: 4,
+      resortDays: 3,
+      travelDays: 2,
+      scheduledNotes: 5,
+      parkLineup: [
+        "Disney's Animal Kingdom",
+        'EPCOT',
+        'Magic Kingdom',
+        "Disney's Hollywood Studios",
+      ],
+    });
+    expect(days[0]?.weekdayLabel).toBe('Sat');
+    expect(days[0]?.dateLabel).toBe('Nov 7');
+    expect(days[4]?.entry.notes).toBe('Chef Mickeys');
+  });
+
+  it('keeps party summaries useful when only the traveler list is loaded', () => {
+    const summaries = getPartySummaries(futureTripData);
+    const overview = getPartyOverview(summaries);
+
+    expect(summaries).toHaveLength(14);
+    expect(summaries[0]).toMatchObject({
+      mustDoCount: 0,
+      enthusiasmCount: 0,
+      avoidCount: 0,
+      styleLabel: 'Balanced explorer',
+      topChoices: [],
+    });
+    expect(overview).toEqual({
+      averageMustDoCount: 0,
+      memberCount: 14,
+      mostEnthusiasticMember: null,
+      mostSelectiveMember: null,
+    });
+  });
+
+  it('builds richer all-trips card insights for the planning card', () => {
+    const insights = getAllTripsCardInsights(casschwlanck2026TripData);
 
     expect(insights).toHaveLength(3);
     expect(insights.map((insight) => insight.label)).toEqual([
       'Cadence',
-      'Crew Pulse',
-      'Consensus',
+      'Crew pulse',
+      'Shared favorite',
     ]);
-    expect(insights[0]?.value).toContain('park');
-    expect(insights[2]?.detail).toContain('Led by');
+    expect(insights[0]?.detail).toContain('park days');
+    expect(insights[2]?.detail).toContain('Kilimanjaro Safaris');
   });
 
   it('derives legend metadata and heatmap rows with indifferent fallbacks', () => {
@@ -192,13 +314,35 @@ describe('trip detail helpers', () => {
     ]);
   });
 
-  it('handles empty overview and insight states', () => {
+  it('handles empty overview states', () => {
     expect(getPartyOverview([])).toEqual({
       averageMustDoCount: 0,
       memberCount: 0,
       mostEnthusiasticMember: null,
       mostSelectiveMember: null,
     });
-    expect(getArchiveTripInsights(emptyTripData)).toEqual([]);
+  });
+
+  it('emits the expanded persona model with the new personas and descriptions', () => {
+    const summaries = getPartySummaries(personaFixtureTripData);
+
+    expect(summaries.find((summary) => summary.member.id === 'big')).toMatchObject({
+      styleDescription:
+        'Has a few intense priorities and a sharper no-thanks list than the rest of the group.',
+      styleId: 'big_swing_chaser',
+      styleLabel: 'Big-swing chaser',
+    });
+    expect(summaries.find((summary) => summary.member.id === 'classic')).toMatchObject({
+      styleDescription: 'Stacks up dependable favorites without needing a huge must-do list.',
+      styleId: 'classic_comfort_cruiser',
+      styleLabel: 'Classic comfort cruiser',
+    });
+  });
+
+  it('produces at least four distinct persona labels for the current 2026 trip', () => {
+    const summaries = getPartySummaries(casschwlanck2026TripData);
+    const uniqueStyles = new Set(summaries.map((summary) => summary.styleLabel));
+
+    expect(uniqueStyles.size).toBeGreaterThanOrEqual(4);
   });
 });

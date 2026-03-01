@@ -5,7 +5,8 @@ export interface SiteShellData {
 }
 
 export const siteShellData: SiteShellData = {
-  brandLinkLabel: 'Go to the Disney Planned by Tytus archive',
+  brandLinkLabel: 'Go to the Disney Planned by Tytus All Trips page',
   skipLinkLabel: 'Skip to main content',
-  defaultDescription: 'Private Disney trip planning archive and trip workspace.',
+  defaultDescription:
+    'Private Disney trip planning site with an All Trips page and trip workspace.',
 };

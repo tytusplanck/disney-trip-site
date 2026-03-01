@@ -1,0 +1,80 @@
+---
+import type { PreferenceTier } from '../lib/trips/types';
+
+interface ScoreGuideItem {
+  tier: PreferenceTier;
+  shortLabel: string;
+  label: string;
+  points: number;
+}
+
+interface Props {
+  maxScoreLabel: number;
+  partySize: number;
+  scoreGuide: ScoreGuideItem[];
+}
+
+const { maxScoreLabel, partySize, scoreGuide } = Astro.props;
+---
+
+<div class="attractions-score-grid">
+  <article class="attractions-score-card">
+    <p class="attractions-score-card__eyebrow">The formula</p>
+    <h3 class="attractions-score-card__title">
+      One ballot per traveler, one shared total per ride
+    </h3>
+    <p class="attractions-score-card__body">
+      Each traveler marks every attraction on a five-tier preference scale. The planner converts
+      those tiers into points, adds them together, and sorts the board by the total consensus score.
+    </p>
+    <p class="attractions-score-card__callout">
+      With {partySize} travelers, the maximum possible score is {maxScoreLabel} points.
+    </p>
+  </article>
+
+  <article class="attractions-score-card">
+    <p class="attractions-score-card__eyebrow">What to read</p>
+    <h3 class="attractions-score-card__title">Score tells you support, not just hype</h3>
+    <ul class="attractions-score-card__list">
+      <li>
+        <strong>Consensus score</strong>
+        Total points from the whole party. Higher means broader support.
+      </li>
+      <li>
+        <strong>Must-do votes</strong>
+        The number of travelers who marked a ride as tier 1.
+      </li>
+      <li>
+        <strong>Preferred votes</strong>
+        A softer signal that shows where a ride still has wide approval.
+      </li>
+    </ul>
+  </article>
+
+  <article class="attractions-score-card attractions-score-card--tiers">
+    <p class="attractions-score-card__eyebrow">Point map</p>
+    <h3 class="attractions-score-card__title">Every tier converts the same way</h3>
+    <ul class="attractions-score-list">
+      {
+        scoreGuide.map((item) => (
+          <li class="attractions-score-row">
+            <span class:list={['trip-tier-token', `trip-tier-token--${item.tier}`]}>
+              {item.shortLabel}
+            </span>
+            <div class="attractions-score-row__copy">
+              <span class="attractions-score-row__label">{item.label}</span>
+              <span class="attractions-score-row__detail">
+                {item.tier <= 2
+                  ? 'Pushes the attraction up the board'
+                  : item.tier === 3
+                    ? 'Neutral middle score'
+                    : 'Pulls the attraction down the board'}
+              </span>
+            </div>
+            <span class="attractions-score-row__points">{item.points} pts</span>
+          </li>
+        ))
+      }
+    </ul>
+  </article>
+</div>

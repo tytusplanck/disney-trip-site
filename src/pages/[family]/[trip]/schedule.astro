@@ -1,20 +1,20 @@
 ---
 import ChipList from '../../../components/ChipList.astro';
-import DetailStatGrid from '../../../components/DetailStatGrid.astro';
 import DisclosurePanel from '../../../components/DisclosurePanel.astro';
 import ScheduleDayCard from '../../../components/ScheduleDayCard.astro';
 import TripPageShell from '../../../components/shells/TripPageShell.astro';
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
-import { tripArchiveData } from '../../../data/trip-archive';
+import { allTripsData } from '../../../data/all-trips';
 import { planningStubStatus, tripStubPages, upcomingStubStatus } from '../../../data/trip-stubs';
-import { findArchiveTrip, findTripDataModule } from '../../../lib/trips/archive';
+import { findTripSummary, findTripDataModule } from '../../../lib/trips/all-trips';
 import { getScheduleDaySummaries, getScheduleOverview } from '../../../lib/trips/details';
+import { hasTripSectionContent } from '../../../lib/trips/readiness';
 import { tripSectionPages } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
-const trip = findArchiveTrip(tripArchiveData.trips, familyId, tripId);
-const tripModule = findTripDataModule(tripArchiveData.modules, familyId, tripId);
+const trip = findTripSummary(allTripsData.trips, familyId, tripId);
+const tripModule = findTripDataModule(allTripsData.modules, familyId, tripId);
 
 if (!trip || !tripModule) {
   return Astro.redirect('/');
@@ -23,6 +23,7 @@ if (!trip || !tripModule) {
 const page = tripSectionPages.schedule;
 const stubPage = tripStubPages.schedule;
 const statusCopy = trip.status === 'upcoming' ? upcomingStubStatus : planningStubStatus;
+const tripIsStub = !hasTripSectionContent(tripModule, 'schedule');
 const scheduleOverview = getScheduleOverview(tripModule.schedule);
 const scheduleDays = getScheduleDaySummaries(tripModule.schedule);
 const scheduleSummaryText = `${scheduleOverview.parkDays} park day${
@@ -32,32 +33,10 @@ const scheduleSummaryText = `${scheduleOverview.parkDays} park day${
 }, with ${scheduleOverview.travelDays} travel day${
   scheduleOverview.travelDays === 1 ? '' : 's'
 } holding the edges of the trip. The park lineup is already clear even before timed reservations are locked.`;
-const scheduleStats = [
-  {
-    label: 'Park days',
-    value: String(scheduleOverview.parkDays),
-    detail: `${scheduleOverview.parkLineup.length} unique parks planned`,
-  },
-  {
-    label: 'Resort resets',
-    value: String(scheduleOverview.resortDays),
-    detail: 'Quiet days between the heavier park pushes',
-  },
-  {
-    label: 'Travel days',
-    value: String(scheduleOverview.travelDays),
-    detail: 'Arrival and departure hold the edges of the trip',
-  },
-  {
-    label: 'Logged notes',
-    value: String(scheduleOverview.scheduledNotes),
-    detail: 'Meals, holds, and reminders carried over from the CSV',
-  },
-];
 ---
 
 {
-  trip.status === 'upcoming' ? (
+  tripIsStub ? (
     <TripStubShell
       title={`${trip.title} | Schedule`}
       description={`Protected placeholder schedule route for ${trip.title}.`}
@@ -81,15 +60,12 @@ const scheduleStats = [
       pageTitle={page.title}
       pageIntro={page.intro}
     >
-      <DetailStatGrid items={scheduleStats} />
-
       <section class="trip-page-section">
         <div class="trip-page-section__header">
           <div class="trip-page-section__copy">
             <p class="page-label">Trip rhythm</p>
             <h2 class="section-title">Park cadence and reset days</h2>
           </div>
-          <p class="trip-page-section__note">Built directly from the current itinerary sheet.</p>
         </div>
 
         <article class="schedule-summary-card">
@@ -107,9 +83,6 @@ const scheduleStats = [
             <p class="page-label">Daily board</p>
             <h2 class="section-title">Open the full itinerary when you need every day card</h2>
           </div>
-          <p class="trip-page-section__note">
-            Day cards stay close to the source sheet but collapse down cleanly on phones.
-          </p>
         </div>
 
         <DisclosurePanel

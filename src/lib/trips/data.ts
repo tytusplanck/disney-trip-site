@@ -16,6 +16,10 @@ const PREFERENCE_SCORE_BY_TIER: Record<PreferenceTier, number> = {
   5: 0,
 };
 
+export function getPreferenceTierPoints(tier: PreferenceTier): number {
+  return PREFERENCE_SCORE_BY_TIER[tier];
+}
+
 export function buildAttractionPreferences(
   party: readonly Pick<TripPartyMember, 'id'>[],
   rows: readonly RawAttractionPreferenceRow[],
@@ -44,10 +48,7 @@ export function buildAttractionPreferences(
       parkLabel,
       areaLabel,
       attractionLabel,
-      consensusScore: ratings.reduce(
-        (total, rating) => total + PREFERENCE_SCORE_BY_TIER[rating],
-        0,
-      ),
+      consensusScore: ratings.reduce((total, rating) => total + getPreferenceTierPoints(rating), 0),
       preferenceByPartyMemberId,
     };
   });

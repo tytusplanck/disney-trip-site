@@ -14,6 +14,86 @@
   margin-bottom: 1.1rem;
 }
 
+.trip-shell__page-title-row {
+  display: block;
+}
+
+.trip-shell__page-intro-tooltip {
+  display: none;
+}
+
+.trip-shell__page-intro-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  list-style: none;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    transform 150ms ease;
+}
+
+.trip-shell__page-intro-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.trip-shell__page-intro-trigger:hover {
+  transform: translateY(-1px);
+  border-color: rgba(200, 169, 110, 0.45);
+  background: rgba(200, 169, 110, 0.12);
+}
+
+.trip-shell__page-intro-tooltip[open] .trip-shell__page-intro-trigger {
+  border-color: rgba(200, 169, 110, 0.45);
+  background: rgba(200, 169, 110, 0.12);
+}
+
+.trip-shell__page-intro-bubble {
+  display: none;
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  right: 0;
+  z-index: 8;
+  width: min(18rem, calc(100vw - 2rem));
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 0.9rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent), rgba(17, 19, 24, 0.98);
+  box-shadow: var(--shadow-soft);
+}
+
+.trip-shell__page-intro-tooltip[open] .trip-shell__page-intro-bubble {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.trip-shell__page-intro-bubble-label {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.trip-shell__page-intro-bubble .page-intro {
+  font-size: 0.94rem;
+  line-height: 1.65;
+}
+
 .trip-shell__page-tabs {
   margin-bottom: 1.75rem;
 }
@@ -84,5 +164,39 @@
 @media (max-width: 960px) {
   .stub-panel {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .trip-shell__page-header {
+    gap: 0.75rem;
+  }
+
+  .trip-shell__page-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.8rem;
+  }
+
+  .trip-shell__page-title-row .page-title {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .trip-shell__page-header .page-label,
+  .trip-shell__page-tabs {
+    display: none;
+  }
+
+  .trip-shell__page-intro-desktop {
+    display: none;
+  }
+
+  .trip-shell__page-intro-tooltip {
+    position: relative;
+    display: block;
+    flex-shrink: 0;
+    margin-top: 0.25rem;
   }
 }

@@ -61,11 +61,11 @@ export const tripStubPages: Record<TripSection, TripStubPage> = {
 export const planningStubStatus: TripStubStatusCopy = {
   eyebrow: 'Phase 02',
   title: 'Component route reserved',
-  body: 'This protected route is live now so the archive, breadcrumb, tabs, and stat bar can be exercised end to end.',
+  body: 'This protected route is live now so the All Trips page, breadcrumb, tabs, and stat bar can be exercised end to end.',
 };
 
 export const upcomingStubStatus: TripStubStatusCopy = {
   eyebrow: 'Planning Window',
   title: 'Planning begins soon',
-  body: 'The trip stays in placeholder mode until dates, parks, and party details are ready for real page content.',
+  body: 'Each section stays in placeholder mode until that part of the trip data is ready for real page content.',
 };

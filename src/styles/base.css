@@ -8,6 +8,8 @@ html,
 body {
   min-height: 100%;
   margin: 0;
+  width: 100%;
+  overflow-x: clip;
 }
 
 html {
@@ -15,9 +17,7 @@ html {
 }
 
 body {
-  background:
-    radial-gradient(circle at top left, rgba(200, 169, 110, 0.08), transparent 26%),
-    radial-gradient(circle at bottom right, rgba(96, 165, 250, 0.05), transparent 24%), var(--bg);
+  background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
   font-size: 16px;
@@ -29,9 +29,7 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 16rem),
-    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.015), transparent 24rem);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.018), transparent 12rem);
   pointer-events: none;
 }
 
@@ -56,11 +54,12 @@ img {
 .app-shell {
   position: relative;
   min-height: 100vh;
+  overflow-x: clip;
 }
 
 .skip-link {
-  position: absolute;
-  top: -3rem;
+  position: fixed;
+  top: 1rem;
   left: 1rem;
   z-index: 500;
   padding: 0.75rem 1rem;
@@ -69,11 +68,12 @@ img {
   background: var(--surface);
   color: var(--text);
   text-decoration: none;
-  transition: top 160ms ease;
+  transform: translateY(calc(-100% - 1rem));
+  transition: transform 160ms ease;
 }
 
 .skip-link:focus-visible {
-  top: 1rem;
+  transform: translateY(0);
 }
 
 @media (prefers-reduced-motion: reduce) {

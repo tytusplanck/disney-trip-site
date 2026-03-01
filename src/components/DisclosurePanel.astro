@@ -4,15 +4,16 @@ interface Props {
   summary: string;
   detail: string;
   mobileCollapsed?: boolean | undefined;
+  defaultOpen?: boolean | undefined;
 }
 
-const { label, summary, detail, mobileCollapsed = false } = Astro.props;
+const { label, summary, detail, mobileCollapsed = false, defaultOpen = true } = Astro.props;
 ---
 
 <details
   class:list={['disclosure-panel', mobileCollapsed && 'disclosure-panel--mobile-collapsed']}
   data-mobile-collapsed={mobileCollapsed ? 'true' : undefined}
-  open
+  open={defaultOpen}
 >
   <summary class="disclosure-panel__summary">
     <span class="disclosure-panel__summary-copy">

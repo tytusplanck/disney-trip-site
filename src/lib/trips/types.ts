@@ -22,14 +22,14 @@ export interface TripSummary {
   themeId: TripThemeId;
 }
 
-export interface ArchiveSection {
+export interface AllTripsSection {
   status: TripStatus;
   tripCount: number;
   countLabel: string;
   trips: TripSummary[];
 }
 
-export interface ArchiveStats {
+export interface AllTripsStats {
   totalTrips: string;
   planningTrips: string;
   ridesScouted: string;

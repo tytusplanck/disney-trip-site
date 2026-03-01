@@ -1,5 +1,14 @@
 :root {
-  --bg: #0b0c10;
+  --bg-option-ink: #0b0c10;
+  --bg-option-graphite: #101116;
+  --bg-option-amber-smoke: #12100d;
+  --bg-option-wine-night: #141117;
+  --bg-option-ink-rgb: 11 12 16;
+  --bg-option-graphite-rgb: 16 17 22;
+  --bg-option-amber-smoke-rgb: 18 16 13;
+  --bg-option-wine-night-rgb: 20 17 23;
+  --bg: var(--bg-option-ink);
+  --bg-rgb: var(--bg-option-ink-rgb);
   --surface: #111318;
   --surface2: #191c26;
   --border: rgba(255, 255, 255, 0.07);

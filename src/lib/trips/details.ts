@@ -5,6 +5,11 @@ import type {
   TripPartyMember,
   TripScheduleEntry,
 } from './types';
+import {
+  getPartyPersonaProfile,
+  getPartyPreferenceCounts,
+  type PartyPersonaId,
+} from './party-insights';
 
 export interface PreferenceMeta {
   tier: PreferenceTier;
@@ -45,7 +50,9 @@ export interface PartyTierSummary {
 
 export interface PartyMemberSummary {
   member: TripPartyMember;
+  styleId: PartyPersonaId;
   styleLabel: string;
+  styleDescription: string;
   topChoices: string[];
   mustDoCount: number;
   enthusiasmCount: number;
@@ -75,9 +82,8 @@ export interface ScheduleDaySummary {
   entry: TripScheduleEntry;
 }
 
-export interface ArchiveTripInsight {
+export interface AllTripsCardInsight {
   label: string;
-  value: string;
   detail: string;
 }
 
@@ -98,33 +104,6 @@ function getPreferenceTierCount(
 ): number {
   return Object.values(attraction.preferenceByPartyMemberId).filter((value) => value === tier)
     .length;
-}
-
-function derivePartyStyleLabel(
-  counts: Record<PreferenceTier, number>,
-  totalAttractions: number,
-): string {
-  const enthusiasmRatio = (counts[1] + counts[2]) / totalAttractions;
-  const avoidRatio = (counts[4] + counts[5]) / totalAttractions;
-  const indifferentRatio = counts[3] / totalAttractions;
-
-  if (counts[1] >= 15) {
-    return 'Headline hunter';
-  }
-
-  if (avoidRatio >= 0.28) {
-    return 'Selective rider';
-  }
-
-  if (enthusiasmRatio >= 0.58) {
-    return 'All-in planner';
-  }
-
-  if (indifferentRatio >= 0.42) {
-    return 'Flexible floater';
-  }
-
-  return 'Balanced explorer';
 }
 
 function getTopChoicesForMember(
@@ -229,22 +208,14 @@ export function getPartySummaries(module: TripDataModule): PartyMemberSummary[] 
   const totalAttractions = module.attractions.length;
 
   return module.party.map((member) => {
-    const counts: Record<PreferenceTier, number> = {
-      1: 0,
-      2: 0,
-      3: 0,
-      4: 0,
-      5: 0,
-    };
-
-    module.attractions.forEach((attraction) => {
-      const tier = attraction.preferenceByPartyMemberId[member.id] ?? 3;
-      counts[tier] += 1;
-    });
+    const counts = getPartyPreferenceCounts(member.id, module.attractions);
+    const persona = getPartyPersonaProfile(counts, totalAttractions);
 
     return {
       member,
-      styleLabel: derivePartyStyleLabel(counts, totalAttractions),
+      styleId: persona.id,
+      styleLabel: persona.label,
+      styleDescription: persona.description,
       topChoices: getTopChoicesForMember(member.id, module.attractions),
       mustDoCount: counts[1],
       enthusiasmCount: counts[1] + counts[2],
@@ -260,18 +231,25 @@ export function getPartySummaries(module: TripDataModule): PartyMemberSummary[] 
 }
 
 export function getPartyOverview(summaries: PartyMemberSummary[]): PartyOverview {
+  const maxAvoidCount = Math.max(0, ...summaries.map((summary) => summary.avoidCount));
+  const maxEnthusiasmCount = Math.max(0, ...summaries.map((summary) => summary.enthusiasmCount));
+
   const mostSelectiveMember =
-    [...summaries].sort(
-      (left, right) =>
-        right.avoidCount - left.avoidCount || left.member.name.localeCompare(right.member.name),
-    )[0]?.member.name ?? null;
+    maxAvoidCount === 0
+      ? null
+      : ([...summaries].sort(
+          (left, right) =>
+            right.avoidCount - left.avoidCount || left.member.name.localeCompare(right.member.name),
+        )[0]?.member.name ?? null);
 
   const mostEnthusiasticMember =
-    [...summaries].sort(
-      (left, right) =>
-        right.enthusiasmCount - left.enthusiasmCount ||
-        left.member.name.localeCompare(right.member.name),
-    )[0]?.member.name ?? null;
+    maxEnthusiasmCount === 0
+      ? null
+      : ([...summaries].sort(
+          (left, right) =>
+            right.enthusiasmCount - left.enthusiasmCount ||
+            left.member.name.localeCompare(right.member.name),
+        )[0]?.member.name ?? null);
 
   const averageMustDoCount =
     summaries.length === 0
@@ -313,7 +291,7 @@ export function getScheduleDaySummaries(schedule: TripScheduleEntry[]): Schedule
   });
 }
 
-export function getArchiveTripInsights(module: TripDataModule): ArchiveTripInsight[] {
+export function getAllTripsCardInsights(module: TripDataModule): AllTripsCardInsight[] {
   if (
     module.attractions.length === 0 &&
     module.schedule.length === 0 &&
@@ -326,6 +304,7 @@ export function getArchiveTripInsights(module: TripDataModule): ArchiveTripInsig
   const partySummaries = getPartySummaries(module);
   const partyOverview = getPartyOverview(partySummaries);
   const rankedAttractions = getRankedAttractions(module.attractions, module.party.length);
+  const sharedFavorite = rankedAttractions[0];
   const highConsensusCount = rankedAttractions.filter(
     (attraction) => attraction.consensusScore >= 45,
   ).length;
@@ -333,18 +312,15 @@ export function getArchiveTripInsights(module: TripDataModule): ArchiveTripInsig
   return [
     {
       label: 'Cadence',
-      value: `${String(scheduleOverview.parkDays)} park / ${String(scheduleOverview.resortDays)} resort`,
-      detail: `${String(scheduleOverview.travelDays)} travel day${scheduleOverview.travelDays === 1 ? '' : 's'} on the edges`,
+      detail: `${String(scheduleOverview.parkDays)} park days, ${String(scheduleOverview.resortDays)} resort days, and ${String(scheduleOverview.travelDays)} travel days shape the trip.`,
     },
     {
-      label: 'Crew Pulse',
-      value: partyOverview.mostEnthusiasticMember ?? '--',
-      detail: `${String(partyOverview.averageMustDoCount)} average must-do calls`,
+      label: 'Crew pulse',
+      detail: `${partyOverview.mostEnthusiasticMember ?? 'The group'} leads the board with ${String(partyOverview.averageMustDoCount)} average must-do calls.`,
     },
     {
-      label: 'Consensus',
-      value: `${String(highConsensusCount)} rides at 45+`,
-      detail: `Led by ${rankedAttractions[0]?.attractionLabel ?? 'the top pick'}`,
+      label: 'Shared favorite',
+      detail: `${sharedFavorite?.attractionLabel ?? 'The top pick'} leads ${String(highConsensusCount)} rides already scoring 45+.`,
     },
   ];
 }

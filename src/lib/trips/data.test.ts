@@ -1,6 +1,11 @@
 import type { PreferenceTier } from './types';
 import { describe, expect, it } from 'vitest';
-import { buildAttractionPreferences, getTopAttractionPick, getTripParkLabels } from './data';
+import {
+  buildAttractionPreferences,
+  getPreferenceTierPoints,
+  getTopAttractionPick,
+  getTripParkLabels,
+} from './data';
 
 describe('trip data helpers', () => {
   it('maps raw preference rows into scored attraction records', () => {
@@ -62,5 +67,11 @@ describe('trip data helpers', () => {
 
     expect(getTripParkLabels(attractions)).toEqual(['Magic Kingdom', "Disney's Animal Kingdom"]);
     expect(getTopAttractionPick(attractions)).toBe('Kilimanjaro Safaris');
+  });
+
+  it('exposes the point value for each preference tier', () => {
+    expect(([1, 2, 3, 4, 5] as const).map((tier) => getPreferenceTierPoints(tier))).toEqual([
+      5, 4, 3, 1, 0,
+    ]);
   });
 });

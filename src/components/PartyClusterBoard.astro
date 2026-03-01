@@ -1,0 +1,102 @@
+---
+import type { PartyClusterView } from '../lib/trips/party-insights';
+
+interface Props {
+  view: PartyClusterView;
+}
+
+const { view } = Astro.props;
+---
+
+<div class="party-cluster-board">
+  {
+    view.headlineInsight ? (
+      <article class="party-cluster-highlight">
+        <p class="party-cluster-highlight__eyebrow">{view.headlineInsight.eyebrow}</p>
+        <h3 class="party-cluster-highlight__title">{view.headlineInsight.title}</h3>
+        <p class="party-cluster-highlight__detail">{view.headlineInsight.detail}</p>
+      </article>
+    ) : null
+  }
+
+  <div class="party-cluster-board__clusters">
+    {
+      view.clusters.map((cluster) => (
+        <article class="party-cluster-card">
+          <div class="party-cluster-card__topline">
+            <p class="party-cluster-card__eyebrow">{cluster.eyebrow}</p>
+          </div>
+
+          <div class="party-cluster-card__heading">
+            <h3 class="party-cluster-card__title">{cluster.title}</h3>
+            <p class="party-cluster-card__description">{cluster.description}</p>
+          </div>
+
+          <div class="party-cluster-card__members" aria-label={`${cluster.title} travelers`}>
+            {cluster.memberNames.map((memberName) => (
+              <span class="party-cluster-card__member-chip">{memberName}</span>
+            ))}
+          </div>
+
+          <div class="party-cluster-card__meter">
+            <div class="party-cluster-card__meter-copy">
+              <span class="party-cluster-card__meter-label">Affinity</span>
+              <span class="party-cluster-card__meter-value">
+                {cluster.size === 1
+                  ? 'Solo lane'
+                  : `${String(cluster.averageAffinityScore)}% aligned`}
+              </span>
+            </div>
+            <progress
+              class="party-cluster-card__meter-progress"
+              max="100"
+              value={cluster.averageAffinityScore}
+            />
+          </div>
+
+          <div class="party-cluster-card__favorites">
+            <p class="party-cluster-card__favorites-label">Shared picks</p>
+            {cluster.sharedFavorites.length > 0 ? (
+              <ul class="party-cluster-card__favorites-list">
+                {cluster.sharedFavorites.slice(0, 3).map((favorite) => (
+                  <li>
+                    <strong>{favorite.attractionLabel}</strong>
+                    <span>
+                      {favorite.priorityVotes}/{cluster.size} priority calls in {favorite.parkLabel}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p class="party-cluster-card__fallback">
+                No majority favorite yet. <strong>{cluster.topAnchorAttraction}</strong> is the
+                closest anchor right now.
+              </p>
+            )}
+          </div>
+        </article>
+      ))
+    }
+  </div>
+
+  <aside class="party-cluster-rail">
+    <div class="party-cluster-rail__header">
+      <p class="party-cluster-rail__eyebrow">{view.railEyebrow}</p>
+      <h3 class="party-cluster-rail__title">{view.railTitle}</h3>
+    </div>
+
+    <ol class="party-cluster-rail__list">
+      {
+        view.railItems.map((item) => (
+          <li>
+            <span class="party-cluster-rail__rank">{item.badge}</span>
+            <div class="party-cluster-rail__item-copy">
+              <strong>{item.title}</strong>
+              <span>{item.detail}</span>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </aside>
+</div>
