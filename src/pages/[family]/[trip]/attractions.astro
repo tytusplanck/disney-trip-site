@@ -99,6 +99,20 @@ const scoreGuide = ([1, 2, 3, 4, 5] as const).map((tier) => ({
       <section class="trip-page-section">
         <div class="trip-page-section__header">
           <div class="trip-page-section__copy">
+            <p class="page-label">Decision board</p>
+            <h2 class="section-title">Filter down to the right ride stack for the day</h2>
+          </div>
+          <p class="trip-page-section__note">
+            Start broad, then cut the board down by park day, area, traveler, and group signal.
+          </p>
+        </div>
+
+        <AttractionsExplorer client:load data={explorerData} />
+      </section>
+
+      <section class="trip-page-section">
+        <div class="trip-page-section__header">
+          <div class="trip-page-section__copy">
             <p class="page-label">Best bets</p>
             <h2 class="section-title">Highest-confidence picks</h2>
           </div>
@@ -120,20 +134,6 @@ const scoreGuide = ([1, 2, 3, 4, 5] as const).map((tier) => ({
             </article>
           ))}
         </div>
-      </section>
-
-      <section class="trip-page-section">
-        <div class="trip-page-section__header">
-          <div class="trip-page-section__copy">
-            <p class="page-label">Decision board</p>
-            <h2 class="section-title">Filter down to the right ride stack for the day</h2>
-          </div>
-          <p class="trip-page-section__note">
-            Start broad, then cut the board down by park day, area, traveler, and group signal.
-          </p>
-        </div>
-
-        <AttractionsExplorer client:load data={explorerData} />
       </section>
     </TripPageShell>
   )

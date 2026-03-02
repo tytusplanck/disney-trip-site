@@ -34,7 +34,6 @@ export interface AllTripsCardCopy {
 export interface AllTripsPage {
   meta: MetaContent;
   headerMetaLabel: string;
-  headerTitle: string;
   intro: AllTripsIntroCopy;
   stats: AllTripsStatsCopy;
   sections: AllTripsSectionsCopy;
@@ -49,7 +48,6 @@ export const allTripsPage: AllTripsPage = {
       'Protected Disney trip collection with calm overview pages and one-tap access to the full planner.',
   },
   headerMetaLabel: 'All Trips',
-  headerTitle: 'Trip archive',
   intro: {
     label: 'All Trips',
     title: 'Choose a trip, then start with the overview.',

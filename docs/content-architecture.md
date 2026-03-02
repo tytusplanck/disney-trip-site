@@ -22,7 +22,9 @@
 - Visible page chrome lives in page-level shell components such as All Trips, auth, and trip shells.
 - The trip root route is the overview landing page, with the full planner sections continuing under attractions, schedule, and party routes.
 - Planning trip tabs render through a dedicated content shell so the shared header, breadcrumb, and tab chrome stay consistent across overview, attractions, schedule, and party pages.
+- Desktop trip pages use a lean shared header for breadcrumb and tabs, while the section title, intro copy, and compact inline trip facts live in the page-content header.
 - Trip shells use a compact mobile header pattern: breadcrumbs collapse to a back link, trip facts move into an inline disclosure, and section tabs move into the sticky mobile header row.
+- Mobile trip pages keep an inline page-title row in main content for the section title and `About this page` disclosure.
 - Trip page intros stay visible on larger screens, but collapse into a small `About this page` disclosure on phones.
 - Dense planning views stay fully available, but sections such as the full attraction matrix, full itinerary, and traveler cards collapse through disclosure panels on smaller screens.
 - This split keeps route layouts flexible without duplicating document scaffolding.

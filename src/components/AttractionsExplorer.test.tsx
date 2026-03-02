@@ -11,6 +11,29 @@ function renderExplorer() {
 }
 
 describe('AttractionsExplorer', () => {
+  it('keeps the top picks ahead of the summary, supporting signals, and matrix disclosure in DOM order', () => {
+    renderExplorer();
+
+    const topPicksHeading = screen.getByRole('heading', {
+      name: 'The best options in the current slice',
+    });
+    const summaryLabel = screen.getByText('Matching rides');
+    const signalsHeading = screen.getByRole('heading', {
+      name: 'Patterns worth noticing before you commit',
+    });
+    const matrixDisclosure = screen.getByText('Open the filtered traveler matrix');
+
+    expect(
+      topPicksHeading.compareDocumentPosition(summaryLabel) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0);
+    expect(
+      topPicksHeading.compareDocumentPosition(signalsHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0);
+    expect(
+      topPicksHeading.compareDocumentPosition(matrixDisclosure) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0);
+  });
+
   it('updates the board when the EPCOT day chip is selected', async () => {
     renderExplorer();
 

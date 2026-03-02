@@ -12,8 +12,7 @@ interface Props {
   headerKind: HeaderKind;
   railLabel: string;
   statItems: StatItem[];
-  railTitle?: string | undefined;
-  sticky?: boolean | undefined;
+  stickyMode?: 'none' | 'all' | 'mobile' | undefined;
   mobileTitle?: string | undefined;
   mobileBackHref?: string | undefined;
   mobileBackLabel?: string | undefined;
@@ -25,20 +24,26 @@ const {
   headerKind,
   railLabel,
   statItems,
-  railTitle,
-  sticky = false,
+  stickyMode = 'none',
   mobileTitle,
   mobileBackHref,
   mobileBackLabel,
   mobileFactsLabel,
   mobileFactsItems = [],
 } = Astro.props;
-const hasRailTitle = typeof railTitle === 'string' && railTitle.length > 0;
+const hasDesktopTabs = Astro.slots.has('desktop-tabs');
 const hasMobileFacts = mobileFactsItems.length > 0 && typeof mobileFactsLabel === 'string';
-const fullMobileTitle = railTitle ?? mobileTitle;
+const fullMobileTitle = mobileTitle ?? railLabel;
 ---
 
-<header class:list={['site-header', sticky && 'site-header--sticky']} data-header-kind={headerKind}>
+<header
+  class:list={[
+    'site-header',
+    stickyMode === 'all' && 'site-header--sticky-all',
+    stickyMode === 'mobile' && 'site-header--sticky-mobile',
+  ]}
+  data-header-kind={headerKind}
+>
   <div class="site-header__desktop">
     <div class="site-header__top">
       <BrandMark />
@@ -47,35 +52,26 @@ const fullMobileTitle = railTitle ?? mobileTitle;
       </div>
     </div>
 
-    <section
-      class:list={['site-header__rail', hasRailTitle && 'site-header__rail--with-title']}
-      aria-label={railLabel}
-    >
-      {
-        hasRailTitle && (
-          <>
-            <p class="site-header__rail-title">{railTitle}</p>
-            <div class="site-header__rail-separator" aria-hidden="true" />
-          </>
+    {
+      headerKind === 'trip' ? (
+        hasDesktopTabs && (
+          <div class="site-header__desktop-tabs">
+            <slot name="desktop-tabs" />
+          </div>
         )
-      }
-
-      <div
-        class:list={[
-          'site-header__stats',
-          hasRailTitle ? 'site-header__stats--inline' : 'site-header__stats--grid',
-        ]}
-      >
-        {
-          statItems.map((item) => (
-            <div class="site-header__stat">
-              <strong class="site-header__rail-value">{item.value}</strong>
-              <span class="site-header__rail-label">{item.label}</span>
-            </div>
-          ))
-        }
-      </div>
-    </section>
+      ) : (
+        <section class="site-header__rail" aria-label={railLabel}>
+          <div class="site-header__stats site-header__stats--grid">
+            {statItems.map((item) => (
+              <div class="site-header__stat">
+                <strong class="site-header__rail-value">{item.value}</strong>
+                <span class="site-header__rail-label">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )
+    }
   </div>
 
   {

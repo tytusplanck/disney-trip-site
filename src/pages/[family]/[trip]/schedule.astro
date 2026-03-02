@@ -1,5 +1,4 @@
 ---
-import ChipList from '../../../components/ChipList.astro';
 import DisclosurePanel from '../../../components/DisclosurePanel.astro';
 import ScheduleDayCard from '../../../components/ScheduleDayCard.astro';
 import TripPageShell from '../../../components/shells/TripPageShell.astro';
@@ -7,7 +6,7 @@ import TripStubShell from '../../../components/shells/TripStubShell.astro';
 import { allTripsData } from '../../../data/all-trips';
 import { planningStubStatus, tripStubPages, upcomingStubStatus } from '../../../data/trip-stubs';
 import { findTripSummary, findTripDataModule } from '../../../lib/trips/all-trips';
-import { getScheduleDaySummaries, getScheduleOverview } from '../../../lib/trips/details';
+import { getScheduleDaySummaries } from '../../../lib/trips/details';
 import { hasTripSectionContent } from '../../../lib/trips/readiness';
 import { tripSectionPages } from './trip-sections.page';
 
@@ -24,15 +23,7 @@ const page = tripSectionPages.schedule;
 const stubPage = tripStubPages.schedule;
 const statusCopy = trip.status === 'upcoming' ? upcomingStubStatus : planningStubStatus;
 const tripIsStub = !hasTripSectionContent(tripModule, 'schedule');
-const scheduleOverview = getScheduleOverview(tripModule.schedule);
 const scheduleDays = getScheduleDaySummaries(tripModule.schedule);
-const scheduleSummaryText = `${scheduleOverview.parkDays} park day${
-  scheduleOverview.parkDays === 1 ? '' : 's'
-} are buffered by ${scheduleOverview.resortDays} resort day${
-  scheduleOverview.resortDays === 1 ? '' : 's'
-}, with ${scheduleOverview.travelDays} travel day${
-  scheduleOverview.travelDays === 1 ? '' : 's'
-} holding the edges of the trip. The park lineup is already clear even before timed reservations are locked.`;
 ---
 
 {
@@ -60,23 +51,6 @@ const scheduleSummaryText = `${scheduleOverview.parkDays} park day${
       pageTitle={page.title}
       pageIntro={page.intro}
     >
-      <section class="trip-page-section">
-        <div class="trip-page-section__header">
-          <div class="trip-page-section__copy">
-            <p class="page-label">Trip rhythm</p>
-            <h2 class="section-title">Park cadence and reset days</h2>
-          </div>
-        </div>
-
-        <article class="schedule-summary-card">
-          <p class="schedule-summary-card__text">{scheduleSummaryText}</p>
-
-          <div class="schedule-summary-card__chips">
-            <ChipList items={scheduleOverview.parkLineup} />
-          </div>
-        </article>
-      </section>
-
       <section class="trip-page-section">
         <div class="trip-page-section__header">
           <div class="trip-page-section__copy">

@@ -11,23 +11,22 @@ export const tripSectionPages: Record<TripSection, TripSectionPageCopy> = {
   overview: {
     section: 'overview',
     pageLabel: 'Overview',
-    title: 'Trip overview',
+    title: 'Choose where to explore next',
     intro:
-      'Start here for the dates, park lineup, top family picks, and the fastest routes into the full planner.',
+      'Pick one section below to open the part of the trip you want. Start with Attractions for the quickest look at what the group cares about most.',
   },
   attractions: {
     section: 'attractions',
     pageLabel: 'Attractions',
     title: 'Ride picks',
     intro:
-      'Start with the trip-wide signal, then drill into park day, area, traveler, and full-matrix filters when it is time to make ride calls.',
+      'Start with the scoring guide, then drill into park day, area, traveler, and full-matrix filters when it is time to make ride calls.',
   },
   schedule: {
     section: 'schedule',
     pageLabel: 'Schedule',
     title: 'Day-by-day plan',
-    intro:
-      'Start with the trip rhythm and park lineup, then open the full itinerary when you need every day card.',
+    intro: 'Go straight to the full itinerary when you need every day card, note, and park label.',
   },
   party: {
     section: 'party',

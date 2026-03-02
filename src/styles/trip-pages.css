@@ -40,8 +40,7 @@
 }
 
 .detail-stat-card,
-.overview-callout,
-.overview-route-card,
+.overview-action-card,
 .featured-attraction,
 .disclosure-panel,
 .trip-heatmap,
@@ -69,22 +68,13 @@
   color: var(--muted);
 }
 
-.overview-glance-grid,
-.overview-route-grid,
+.overview-action-list,
 .featured-grid,
 .schedule-grid,
 .party-detail-grid,
 .attractions-score-grid {
   display: grid;
   gap: 0.9rem;
-}
-
-.overview-glance-grid {
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-}
-
-.overview-route-grid {
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
 }
 
 .featured-grid {
@@ -95,8 +85,7 @@
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.15fr) minmax(16rem, 0.9fr);
 }
 
-.overview-callout,
-.overview-route-card,
+.overview-action-card,
 .featured-attraction,
 .attractions-score-card {
   position: relative;
@@ -104,8 +93,7 @@
   padding: 1.25rem 1.25rem 1.1rem;
 }
 
-.overview-callout::before,
-.overview-route-card::before,
+.overview-action-card::before,
 .featured-attraction::before,
 .attractions-score-card::before {
   content: '';
@@ -116,8 +104,6 @@
   background: var(--family-gradient);
 }
 
-.overview-callout__eyebrow,
-.overview-route-card__eyebrow,
 .featured-attraction__eyebrow,
 .attractions-score-card__eyebrow {
   margin: 0 0 0.65rem;
@@ -128,8 +114,6 @@
   color: var(--accent);
 }
 
-.overview-callout__title,
-.overview-route-card__title,
 .featured-attraction__title,
 .attractions-score-card__title {
   margin: 0;
@@ -140,8 +124,6 @@
   letter-spacing: -0.03em;
 }
 
-.overview-callout__body,
-.overview-route-card__summary,
 .featured-attraction__meta,
 .featured-attraction__score,
 .attractions-score-card__body,
@@ -150,65 +132,99 @@
   color: var(--muted);
 }
 
-.overview-callout__body,
-.overview-route-card__summary {
-  margin-top: 0.55rem;
-}
-
-.overview-callout__chips {
-  margin-top: 1rem;
-}
-
-.overview-priority-list {
+.overview-hub {
   display: grid;
-  gap: 0.8rem;
-  margin: 1rem 0 0;
-  padding-left: 1.1rem;
+  gap: 1rem;
+  width: min(100%, 46rem);
 }
 
-.overview-priority-list li {
-  display: grid;
-  gap: 0.18rem;
+.overview-hub__prompt {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--muted);
 }
 
-.overview-priority-list strong {
-  color: var(--text);
-  font-weight: 500;
+.overview-action-card {
+  display: grid;
+  gap: 0.95rem;
 }
 
-.overview-route-card__stat {
-  margin: 1rem 0 0;
+.overview-action-card--primary {
+  border-color: rgba(200, 169, 110, 0.52);
+  background:
+    linear-gradient(180deg, rgba(200, 169, 110, 0.08), transparent 48%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent), var(--surface);
+}
+
+.overview-action-card__header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.9rem;
+}
+
+.overview-action-card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 2.3vw, 1.95rem);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.overview-action-card__status {
+  margin: 0;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface2);
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--accent);
+  white-space: nowrap;
 }
 
-.overview-route-card__link {
-  display: inline-flex;
+.overview-action-card__status--pending {
+  color: var(--muted);
+}
+
+.overview-action-card__summary {
+  margin: 0;
+  color: var(--muted);
+}
+
+.overview-action-card__link {
+  display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.9rem;
-  margin-top: 1rem;
-  padding: 0.8rem 1rem;
-  border: 1px solid rgba(200, 169, 110, 0.45);
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(200, 169, 110, 0.54);
   border-radius: 0.8rem;
-  background: rgba(200, 169, 110, 0.14);
+  background: rgba(200, 169, 110, 0.2);
   color: var(--text);
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
   transition:
     transform 150ms ease,
     border-color 150ms ease,
-    background-color 150ms ease;
+    background-color 150ms ease,
+    box-shadow 150ms ease;
 }
 
-.overview-route-card__link:hover {
+.overview-action-card__link:hover,
+.overview-action-card__link:focus-visible {
   transform: translateY(-1px);
-  border-color: rgba(200, 169, 110, 0.7);
-  background: rgba(200, 169, 110, 0.22);
+  border-color: rgba(200, 169, 110, 0.78);
+  background: rgba(200, 169, 110, 0.28);
+  box-shadow: 0 0 0 3px rgba(200, 169, 110, 0.14);
+  outline: none;
 }
 
 .featured-attraction__meta {
@@ -1440,20 +1456,45 @@
   text-wrap: balance;
 }
 
-.attractions-explorer__columns {
+.attractions-explorer__results {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(18rem, 1fr);
   gap: 1rem;
   align-items: start;
+  grid-template-areas:
+    'summary summary'
+    'top-picks signals'
+    'full-rankings area'
+    'matrix .';
 }
 
-.attractions-explorer__column {
-  display: grid;
-  gap: 1rem;
+.attractions-explorer__results > * {
+  min-width: 0;
+}
+
+.attractions-explorer__summary-grid {
+  grid-area: summary;
+}
+
+.attractions-explorer__card--top-picks {
+  grid-area: top-picks;
 }
 
 .attractions-explorer__card--signals {
+  grid-area: signals;
   gap: 1.1rem;
+}
+
+.attractions-explorer__card--areas {
+  grid-area: area;
+}
+
+.attractions-explorer__disclosure--rankings {
+  grid-area: full-rankings;
+}
+
+.attractions-explorer__disclosure--matrix {
+  grid-area: matrix;
 }
 
 .attractions-explorer__signal-group {
@@ -1581,14 +1622,31 @@
     flex-direction: column;
   }
 
+  .overview-action-card__header {
+    flex-direction: column;
+  }
+
   .attractions-explorer__panel-header {
     flex-direction: column;
   }
 
   .party-cluster-board,
   .attractions-explorer__control-grid,
-  .attractions-explorer__columns {
+  .attractions-explorer__results {
     grid-template-columns: 1fr;
+  }
+
+  .attractions-explorer__results {
+    grid-template-areas: none;
+  }
+
+  .attractions-explorer__summary-grid,
+  .attractions-explorer__card--top-picks,
+  .attractions-explorer__card--signals,
+  .attractions-explorer__card--areas,
+  .attractions-explorer__disclosure--rankings,
+  .attractions-explorer__disclosure--matrix {
+    grid-area: auto;
   }
 
   .party-cluster-rail__list li {
@@ -1603,8 +1661,6 @@
   }
 
   .detail-stat-grid,
-  .overview-glance-grid,
-  .overview-route-grid,
   .featured-grid,
   .schedule-grid,
   .party-detail-grid,
@@ -1623,7 +1679,8 @@
   }
 
   .attractions-explorer__panel,
-  .attractions-explorer__card {
+  .attractions-explorer__card,
+  .overview-action-card {
     padding: 1rem;
   }
 

@@ -98,14 +98,16 @@ function DisclosurePanel({
   summary,
   detail,
   children,
+  className,
 }: {
   label: string;
   summary: string;
   detail: string;
   children: ReactNode;
+  className?: string;
 }) {
   return (
-    <details className="disclosure-panel" open>
+    <details className={['disclosure-panel', className].filter(Boolean).join(' ')} open>
       <summary className="disclosure-panel__summary">
         <span className="disclosure-panel__summary-copy">
           <span className="disclosure-panel__label">{label}</span>
@@ -138,6 +140,17 @@ export default function AttractionsExplorer({ data }: Props) {
     state.memberId === null &&
     state.sentiment === 'all' &&
     state.search.length === 0;
+  const summaryCards = (
+    <div className="detail-stat-grid attractions-explorer__summary-grid">
+      {view.summaryCards.map((item) => (
+        <article className="detail-stat-card" key={item.label}>
+          <p className="detail-label">{item.label}</p>
+          <p className="detail-value attractions-explorer__summary-value">{item.value}</p>
+          <p className="detail-note">{item.detail}</p>
+        </article>
+      ))}
+    </div>
+  );
 
   function updateState(
     nextState: (previousState: AttractionsExplorerState) => AttractionsExplorerState,
@@ -441,124 +454,118 @@ export default function AttractionsExplorer({ data }: Props) {
         </div>
       </article>
 
-      <div className="detail-stat-grid attractions-explorer__summary-grid">
-        {view.summaryCards.map((item) => (
-          <article className="detail-stat-card" key={item.label}>
-            <p className="detail-label">{item.label}</p>
-            <p className="detail-value attractions-explorer__summary-value">{item.value}</p>
-            <p className="detail-note">{item.detail}</p>
-          </article>
-        ))}
-      </div>
-
       {view.hasResults ? (
-        <div className="attractions-explorer__columns">
-          <div className="attractions-explorer__column attractions-explorer__column--primary">
-            <article className="attractions-explorer__card">
-              <div className="trip-page-section__copy">
-                <p className="page-label">Top picks</p>
-                <h3 className="section-title">The best options in the current slice</h3>
-              </div>
+        <div className="attractions-explorer__results">
+          <article className="attractions-explorer__card attractions-explorer__card--top-picks">
+            <div className="trip-page-section__copy">
+              <p className="page-label">Top picks</p>
+              <h3 className="section-title">The best options in the current slice</h3>
+            </div>
 
-              <p className="attractions-explorer__card-note">
-                Showing the first {view.topPicks.length} rides from the active ranking stack.
+            <p className="attractions-explorer__card-note">
+              Showing the first {view.topPicks.length} rides from the active ranking stack.
+            </p>
+
+            <ConsensusBars items={view.topPicks} />
+          </article>
+
+          <DisclosurePanel
+            className="attractions-explorer__disclosure--rankings"
+            detail={`${String(view.rankedAttractions.length)} rides matched after filtering`}
+            label="Detailed rankings"
+            summary="Open the full filtered rankings"
+          >
+            <ConsensusBars items={view.rankedAttractions} />
+          </DisclosurePanel>
+
+          {summaryCards}
+
+          <article className="attractions-explorer__card attractions-explorer__card--signals">
+            <div className="trip-page-section__copy">
+              <p className="page-label">Interesting signals</p>
+              <h3 className="section-title">Patterns worth noticing before you commit</h3>
+            </div>
+
+            <SignalList
+              emptyText="No broad-approval rides remain after the current filters."
+              items={view.broadApproval}
+              title="Broad approval"
+              variant="approval"
+            />
+
+            <SignalList
+              emptyText="No split-decision rides remain after the current filters."
+              items={view.splitDecisions}
+              title="Split decisions"
+              variant="division"
+            />
+          </article>
+
+          <article className="attractions-explorer__card attractions-explorer__card--areas">
+            <div className="trip-page-section__copy">
+              <p className="page-label">Area breakdown</p>
+              <h3 className="section-title">Where the strongest pocket of rides lives</h3>
+            </div>
+
+            {view.areaBreakdown.length > 0 ? (
+              <div className="attractions-explorer__area-grid">
+                {view.areaBreakdown.map((area) => (
+                  <article className="attractions-explorer__area-card" key={area.areaLabel}>
+                    <p className="attractions-explorer__area-name">{area.areaLabel}</p>
+                    <div className="attractions-explorer__area-stats">
+                      <p className="attractions-explorer__area-score">
+                        {area.averageScorePercent}
+                        <span>% avg</span>
+                      </p>
+                      <p className="attractions-explorer__area-meta">
+                        {area.attractionCount} rides / {area.highConsensusCount} high-confidence
+                      </p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="attractions-explorer__signal-empty">
+                Area breakdown returns once at least one attraction matches the current filters.
               </p>
+            )}
+          </article>
 
-              <ConsensusBars items={view.topPicks} />
-            </article>
-
-            <DisclosurePanel
-              detail={`${String(view.rankedAttractions.length)} rides matched after filtering`}
-              label="Detailed rankings"
-              summary="Open the full filtered rankings"
-            >
-              <ConsensusBars items={view.rankedAttractions} />
-            </DisclosurePanel>
-
-            <DisclosurePanel
-              detail={`${String(view.heatmapRows.length)} attractions x ${String(data.party.length)} travelers`}
-              label="Full matrix"
-              summary="Open the filtered traveler matrix"
-            >
-              <AttractionHeatmap
-                highlightMemberId={view.activeMember?.id ?? null}
-                party={data.party}
-                rows={view.heatmapRows}
-              />
-            </DisclosurePanel>
-          </div>
-
-          <div className="attractions-explorer__column attractions-explorer__column--secondary">
-            <article className="attractions-explorer__card attractions-explorer__card--signals">
-              <div className="trip-page-section__copy">
-                <p className="page-label">Interesting signals</p>
-                <h3 className="section-title">Patterns worth noticing before you commit</h3>
-              </div>
-
-              <SignalList
-                emptyText="No broad-approval rides remain after the current filters."
-                items={view.broadApproval}
-                title="Broad approval"
-                variant="approval"
-              />
-
-              <SignalList
-                emptyText="No split-decision rides remain after the current filters."
-                items={view.splitDecisions}
-                title="Split decisions"
-                variant="division"
-              />
-            </article>
-
-            <article className="attractions-explorer__card">
-              <div className="trip-page-section__copy">
-                <p className="page-label">Area breakdown</p>
-                <h3 className="section-title">Where the strongest pocket of rides lives</h3>
-              </div>
-
-              {view.areaBreakdown.length > 0 ? (
-                <div className="attractions-explorer__area-grid">
-                  {view.areaBreakdown.map((area) => (
-                    <article className="attractions-explorer__area-card" key={area.areaLabel}>
-                      <p className="attractions-explorer__area-name">{area.areaLabel}</p>
-                      <div className="attractions-explorer__area-stats">
-                        <p className="attractions-explorer__area-score">
-                          {area.averageScorePercent}
-                          <span>% avg</span>
-                        </p>
-                        <p className="attractions-explorer__area-meta">
-                          {area.attractionCount} rides / {area.highConsensusCount} high-confidence
-                        </p>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              ) : (
-                <p className="attractions-explorer__signal-empty">
-                  Area breakdown returns once at least one attraction matches the current filters.
-                </p>
-              )}
-            </article>
-          </div>
+          <DisclosurePanel
+            className="attractions-explorer__disclosure--matrix"
+            detail={`${String(view.heatmapRows.length)} attractions x ${String(data.party.length)} travelers`}
+            label="Full matrix"
+            summary="Open the filtered traveler matrix"
+          >
+            <AttractionHeatmap
+              highlightMemberId={view.activeMember?.id ?? null}
+              party={data.party}
+              rows={view.heatmapRows}
+            />
+          </DisclosurePanel>
         </div>
       ) : (
-        <article className="attractions-explorer__card attractions-explorer__card--empty">
-          <div className="empty-state">
-            <p className="empty-state__text">No attractions matched the current filter stack.</p>
-          </div>
+        <>
+          {summaryCards}
 
-          <p className="attractions-explorer__empty-detail">
-            Clear the traveler, sentiment, or search filters to get the board moving again.
-          </p>
+          <article className="attractions-explorer__card attractions-explorer__card--empty">
+            <div className="empty-state">
+              <p className="empty-state__text">No attractions matched the current filter stack.</p>
+            </div>
 
-          <button
-            className="attractions-explorer__reset attractions-explorer__reset--inline"
-            onClick={handleReset}
-            type="button"
-          >
-            Reset filters
-          </button>
-        </article>
+            <p className="attractions-explorer__empty-detail">
+              Clear the traveler, sentiment, or search filters to get the board moving again.
+            </p>
+
+            <button
+              className="attractions-explorer__reset attractions-explorer__reset--inline"
+              onClick={handleReset}
+              type="button"
+            >
+              Reset filters
+            </button>
+          </article>
+        </>
       )}
     </section>
   );

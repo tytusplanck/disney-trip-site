@@ -19,6 +19,21 @@ function formatMetricValue(value: number | null): string {
   return value === null ? MISSING_VALUE : String(value);
 }
 
+function formatInlineMetric(
+  value: number | null,
+  singularLabel: string,
+  pluralLabel: string,
+  missingLabel: string,
+): string {
+  if (value === null) {
+    return missingLabel;
+  }
+
+  const label = value === 1 ? singularLabel : pluralLabel;
+
+  return `${String(value)} ${label}`;
+}
+
 export function getAllTripsSections(trips: TripSummary[]): AllTripsSection[] {
   return SECTION_ORDER.map((status) => {
     const sectionTrips = trips.filter((trip) => trip.status === status);
@@ -83,6 +98,18 @@ export function getTripBarStats(trip: TripSummary): TripBarStat[] {
     { label: 'Days', value: formatMetricValue(trip.dayCount) },
     { label: 'Attractions', value: formatMetricValue(trip.attractionCount) },
     { label: 'Parks', value: formatMetricValue(trip.parkLabels.length || null) },
+  ];
+}
+
+export function getTripInlineFacts(trip: TripSummary): string[] {
+  return [
+    trip.dateLabel,
+    formatInlineMetric(trip.partySize, 'person', 'people', 'Party TBD'),
+    formatInlineMetric(trip.dayCount, 'day', 'days', 'Length TBD'),
+    formatInlineMetric(trip.attractionCount, 'attraction', 'attractions', 'Attractions TBD'),
+    trip.parkLabels.length > 0
+      ? `${String(trip.parkLabels.length)} ${trip.parkLabels.length === 1 ? 'park' : 'parks'}`
+      : 'Parks TBD',
   ];
 }
 

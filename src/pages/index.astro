@@ -8,8 +8,7 @@ import { findTripDataModule, getAllTripsSections, getAllTripsStats } from '../li
 import { getAllTripsCardInsights } from '../lib/trips/details';
 import { allTripsPage } from './index.page';
 
-const { card, footerNote, headerMetaLabel, headerTitle, intro, meta, sections, stats } =
-  allTripsPage;
+const { card, footerNote, headerMetaLabel, intro, meta, sections, stats } = allTripsPage;
 const allTripsSections = getAllTripsSections(allTripsData.trips);
 const allTripsStats = getAllTripsStats(allTripsData.trips);
 
@@ -38,7 +37,6 @@ function getTripCardInsights(groupId: string, tripId: string) {
   title={meta.title}
   description={meta.description}
   metaLabel={headerMetaLabel}
-  headerTitle={headerTitle}
   statItems={statItems}
   footerNote={footerNote}
 >

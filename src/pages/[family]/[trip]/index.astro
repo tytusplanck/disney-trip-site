@@ -1,6 +1,4 @@
 ---
-import ChipList from '../../../components/ChipList.astro';
-import DetailStatGrid from '../../../components/DetailStatGrid.astro';
 import TripPageShell from '../../../components/shells/TripPageShell.astro';
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
 import { allTripsData } from '../../../data/all-trips';
@@ -10,14 +8,7 @@ import {
   findTripDataModule,
   getTripSectionPath,
 } from '../../../lib/trips/all-trips';
-import {
-  getPartyOverview,
-  getPartySummaries,
-  getRankedAttractions,
-  getScheduleOverview,
-  getSharedPriorityAttractions,
-} from '../../../lib/trips/details';
-import { hasTripOverviewContent } from '../../../lib/trips/readiness';
+import { hasTripOverviewContent, hasTripSectionContent } from '../../../lib/trips/readiness';
 import { tripSectionPages } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
@@ -32,84 +23,37 @@ if (!trip) {
 const page = tripSectionPages.overview;
 const stubPage = tripStubPages.overview;
 const tripIsStub = !tripModule || !hasTripOverviewContent(tripModule);
-
-const rankedAttractions = tripModule
-  ? getRankedAttractions(tripModule.attractions, tripModule.party.length)
+const actions = tripModule
+  ? [
+      {
+        title: 'Attractions',
+        section: 'attractions' as const,
+        summary: 'See ride priorities and browse what stands out for the group.',
+        cta: 'Open Attractions',
+        featured: true,
+      },
+      {
+        title: 'Schedule',
+        section: 'schedule' as const,
+        summary: 'See the trip day by day and open the full itinerary when you need it.',
+        cta: 'Open Schedule',
+        featured: false,
+      },
+      {
+        title: 'Party',
+        section: 'party' as const,
+        summary: "See each traveler's preferences and where the group may differ.",
+        cta: 'Open Party',
+        featured: false,
+      },
+    ].map((action) => ({
+      ...action,
+      href: getTripSectionPath(trip, action.section),
+      readinessLabel: hasTripSectionContent(tripModule, action.section)
+        ? 'Ready now'
+        : 'Still being filled in',
+    }))
   : [];
-const sharedPriorityAttractions = tripModule
-  ? getSharedPriorityAttractions(tripModule.attractions, tripModule.party.length, 3)
-  : [];
-const scheduleOverview = tripModule
-  ? getScheduleOverview(tripModule.schedule)
-  : {
-      parkDays: 0,
-      resortDays: 0,
-      travelDays: 0,
-      scheduledNotes: 0,
-      parkLineup: [],
-    };
-const partyOverview = tripModule
-  ? getPartyOverview(getPartySummaries(tripModule))
-  : {
-      memberCount: 0,
-      averageMustDoCount: 0,
-      mostSelectiveMember: null,
-      mostEnthusiasticMember: null,
-    };
-const parkLineup =
-  scheduleOverview.parkLineup.length > 0 ? scheduleOverview.parkLineup : trip.parkLabels;
-const topAttraction = rankedAttractions[0];
-const overviewStats = [
-  {
-    label: 'Travel window',
-    value: trip.dateLabel,
-    detail: `${trip.dayCount ?? 0} days are currently mapped in the planner`,
-  },
-  {
-    label: 'Parks lined up',
-    value: String(parkLineup.length),
-    detail: parkLineup.length > 0 ? parkLineup.join(' / ') : 'Park lineup still taking shape',
-  },
-  {
-    label: 'Top family pick',
-    value: topAttraction?.attractionLabel ?? '--',
-    detail: topAttraction
-      ? `${topAttraction.mustDoVotes} must-do calls currently lead the board`
-      : 'No attraction data loaded yet',
-  },
-  {
-    label: 'Party pulse',
-    value: partyOverview.mostEnthusiasticMember ?? '--',
-    detail: `${partyOverview.memberCount} travelers already appear in the planner`,
-  },
-];
-
-const quickRoutes = [
-  {
-    title: 'Attractions',
-    href: getTripSectionPath(trip, 'attractions'),
-    eyebrow: 'Organizer view',
-    summary:
-      'Best bets first, then the full matrix and the full rankings when you need every rating.',
-    stat: `${trip.attractionCount ?? 0} rides scored`,
-  },
-  {
-    title: 'Schedule',
-    href: getTripSectionPath(trip, 'schedule'),
-    eyebrow: 'Day-by-day',
-    summary:
-      'Trip rhythm up top, with the complete itinerary tucked into a collapsible daily board.',
-    stat: `${scheduleOverview.parkDays} park days / ${scheduleOverview.resortDays} resort days`,
-  },
-  {
-    title: 'Party',
-    href: getTripSectionPath(trip, 'party'),
-    eyebrow: 'Traveler cards',
-    summary:
-      'Group pressure points first, then every traveler card when you need the full preference breakdown.',
-    stat: `${partyOverview.memberCount} travelers tracked`,
-  },
-];
 ---
 
 {
@@ -137,74 +81,39 @@ const quickRoutes = [
       pageTitle={page.title}
       pageIntro={page.intro}
     >
-      <DetailStatGrid items={overviewStats} />
-
       <section class="trip-page-section">
-        <div class="trip-page-section__header">
-          <div class="trip-page-section__copy">
-            <p class="page-label">Start here</p>
-            <h2 class="section-title">What matters most right now</h2>
+        <div class="overview-hub">
+          <p class="overview-hub__prompt">Pick a section</p>
+
+          <div class="overview-action-list">
+            {actions.map((action) => (
+              <article
+                class:list={[
+                  'overview-action-card',
+                  action.featured && 'overview-action-card--primary',
+                ]}
+              >
+                <div class="overview-action-card__header">
+                  <h2 class="overview-action-card__title">{action.title}</h2>
+                  <p
+                    class:list={[
+                      'overview-action-card__status',
+                      action.readinessLabel !== 'Ready now' &&
+                        'overview-action-card__status--pending',
+                    ]}
+                  >
+                    {action.readinessLabel}
+                  </p>
+                </div>
+
+                <p class="overview-action-card__summary">{action.summary}</p>
+
+                <a class="overview-action-card__link" href={action.href}>
+                  {action.cta}
+                </a>
+              </article>
+            ))}
           </div>
-        </div>
-
-        <div class="overview-glance-grid">
-          <article class="overview-callout">
-            <p class="overview-callout__eyebrow">Park lineup</p>
-            <h3 class="overview-callout__title">Parks already on deck</h3>
-            <p class="overview-callout__body">
-              The schedule already points to a clear park rotation, so casual readers can orient
-              fast before they open the full day-by-day plan.
-            </p>
-            <div class="overview-callout__chips">
-              <ChipList items={parkLineup.length > 0 ? parkLineup : ['Parks TBD']} />
-            </div>
-          </article>
-
-          <article class="overview-callout">
-            <p class="overview-callout__eyebrow">Shared must-dos</p>
-            <h3 class="overview-callout__title">The rides pulling the trip forward</h3>
-            {sharedPriorityAttractions.length > 0 ? (
-              <ol class="overview-priority-list">
-                {sharedPriorityAttractions.map((attraction) => (
-                  <li>
-                    <strong>{attraction.attractionLabel}</strong>
-                    <span>
-                      {attraction.mustDoVotes} must-do calls / {attraction.consensusScore} total
-                      score
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            ) : (
-              <p class="overview-callout__body">
-                Attraction preferences are still in placeholder mode, so the ride board will fill in
-                after the first ballots land.
-              </p>
-            )}
-          </article>
-        </div>
-      </section>
-
-      <section class="trip-page-section">
-        <div class="trip-page-section__header">
-          <div class="trip-page-section__copy">
-            <p class="page-label">Quick routes</p>
-            <h2 class="section-title">Jump into the full planner</h2>
-          </div>
-        </div>
-
-        <div class="overview-route-grid">
-          {quickRoutes.map((route) => (
-            <article class="overview-route-card">
-              <p class="overview-route-card__eyebrow">{route.eyebrow}</p>
-              <h3 class="overview-route-card__title">{route.title}</h3>
-              <p class="overview-route-card__summary">{route.summary}</p>
-              <p class="overview-route-card__stat">{route.stat}</p>
-              <a class="overview-route-card__link" href={route.href}>
-                Open {route.title}
-              </a>
-            </article>
-          ))}
         </div>
       </section>
     </TripPageShell>

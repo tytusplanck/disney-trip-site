@@ -11,12 +11,11 @@ interface Props {
   title: string;
   description: string;
   metaLabel: string;
-  headerTitle: string;
   statItems: StatItem[];
   footerNote: string;
 }
 
-const { title, description, metaLabel, headerTitle, statItems, footerNote } = Astro.props;
+const { title, description, metaLabel, statItems, footerNote } = Astro.props;
 ---
 
 <BaseLayout title={title} description={description}>
@@ -24,7 +23,6 @@ const { title, description, metaLabel, headerTitle, statItems, footerNote } = As
     <SiteHeader
       headerKind="archive"
       railLabel="All trips archive summary"
-      railTitle={headerTitle}
       statItems={statItems}
       mobileFactsLabel="All Trips Facts"
       mobileFactsItems={statItems}

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { allTripsData } from '../../data/all-trips';
+import type { TripSummary } from './types';
 import {
   findTripSummary,
   findTripDataModule,
@@ -7,6 +8,7 @@ import {
   getAllTripsStats,
   getTripBarStats,
   getTripBasePath,
+  getTripInlineFacts,
   getTripLandingPath,
   getTripMobileFacts,
 } from './all-trips';
@@ -92,6 +94,54 @@ describe('all trips helpers', () => {
       { label: 'Days', value: '9' },
       { label: 'Attractions', value: '87' },
       { label: 'Parks', value: '4' },
+    ]);
+  });
+
+  it('builds the inline facts row for planning and upcoming trips', () => {
+    const planningTrip = findTripSummary(allTripsData.trips, 'casschwlanck', '2026');
+    const upcomingTrip = findTripSummary(allTripsData.trips, 'casschwlanck', 'future-trip');
+
+    if (!planningTrip || !upcomingTrip) {
+      throw new Error('Expected seeded planning and upcoming trips to exist.');
+    }
+
+    expect(getTripInlineFacts(planningTrip)).toEqual([
+      'Mar 28 - Apr 5, 2026',
+      '10 people',
+      '9 days',
+      '87 attractions',
+      '4 parks',
+    ]);
+    expect(getTripInlineFacts(upcomingTrip)).toEqual([
+      'Nov 7 - Nov 15, 2026',
+      '14 people',
+      '9 days',
+      'Attractions TBD',
+      '4 parks',
+    ]);
+  });
+
+  it('uses TBD copy for missing inline fact values', () => {
+    const draftTrip: TripSummary = {
+      groupId: 'test',
+      id: 'draft',
+      title: 'Draft Trip',
+      dateLabel: 'Dates TBD',
+      parkLabels: [],
+      partySize: null,
+      dayCount: null,
+      attractionCount: null,
+      status: 'planning',
+      topPick: null,
+      themeId: 'primary',
+    };
+
+    expect(getTripInlineFacts(draftTrip)).toEqual([
+      'Dates TBD',
+      'Party TBD',
+      'Length TBD',
+      'Attractions TBD',
+      'Parks TBD',
     ]);
   });
 });
