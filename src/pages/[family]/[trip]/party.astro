@@ -53,13 +53,6 @@ const clusterView = getPartyClusterView(tripModule);
       pageTitle={pageTitle}
     >
       <section class="trip-page-section">
-        <div class="trip-page-section__header">
-          <div class="trip-page-section__copy">
-            <p class="page-label">Kids vs adults</p>
-            <h2 class="section-title">How the younger and older halves pull the plan apart</h2>
-          </div>
-        </div>
-
         {hasAttractionPreferences ? (
           <PartyClusterBoard view={clusterView} />
         ) : (

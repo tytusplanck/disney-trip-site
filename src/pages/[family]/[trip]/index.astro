@@ -12,5 +12,9 @@ if (!trip) {
 
 const tripLandingPath = getTripLandingPath(trip);
 
+if (tripLandingPath === '') {
+  return Astro.redirect('/');
+}
+
 return Astro.redirect(tripLandingPath);
 ---

@@ -8,15 +8,16 @@ const source = readFileSync(
 );
 
 describe('attractions page section order', () => {
-  it('keeps scoring system first, decision board second, and best bets third', () => {
-    const scoringSystemIndex = source.indexOf('<p class="page-label">Scoring system</p>');
-    const decisionBoardIndex = source.indexOf('<p class="page-label">Decision board</p>');
-    const bestBetsIndex = source.indexOf('<p class="page-label">Best bets</p>');
+  it('keeps the scoring system ahead of the decision board', () => {
+    const scoringSystemIndex = source.indexOf('<DisclosurePanel');
+    const decisionBoardIndex = source.indexOf(
+      '<AttractionsExplorer client:load data={explorerData} />',
+    );
 
     expect(scoringSystemIndex).toBeGreaterThan(-1);
     expect(decisionBoardIndex).toBeGreaterThan(-1);
-    expect(bestBetsIndex).toBeGreaterThan(-1);
     expect(scoringSystemIndex).toBeLessThan(decisionBoardIndex);
-    expect(decisionBoardIndex).toBeLessThan(bestBetsIndex);
+    expect(source.includes('How the board turns preferences into points')).toBe(false);
+    expect(source.includes('Filter down to the right ride stack for the day')).toBe(false);
   });
 });

@@ -49,8 +49,8 @@ export const allTripsPage: AllTripsPage = {
   headerMetaLabel: 'All Trips',
   intro: {
     label: 'All Trips',
-    title: 'Choose a trip, then open the planner.',
-    body: 'Trips now open directly into the live planning surfaces, so you can jump straight to rides, the schedule, or traveler preferences.',
+    title: 'Pick a trip.',
+    body: "See the schedule, rides, and who's going.",
   },
   stats: {
     tripsLabel: 'Trips',
@@ -72,6 +72,5 @@ export const allTripsPage: AllTripsPage = {
     shortcutIntro: 'Already know what you need? Open a planner section directly.',
     futureNote: 'Planner sections will open here once this trip starts taking shape.',
   },
-  footerNote:
-    'Trips now land on the planner itself, and you can still skip straight into attractions, schedule, or party details when you know what you need.',
+  footerNote: 'I do it for fun. Relax.',
 };

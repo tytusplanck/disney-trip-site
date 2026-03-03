@@ -8,6 +8,7 @@ describe('trip root redirect', () => {
   it('redirects the base trip path to the first planner section', () => {
     expect(source.includes('import { findTripSummary, getTripLandingPath }')).toBe(true);
     expect(source.includes('const tripLandingPath = getTripLandingPath(trip);')).toBe(true);
+    expect(source.includes("if (tripLandingPath === '')")).toBe(true);
     expect(source.includes('return Astro.redirect(tripLandingPath);')).toBe(true);
     expect(source.includes('TripPageShell')).toBe(false);
   });

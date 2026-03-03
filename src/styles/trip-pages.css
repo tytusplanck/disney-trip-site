@@ -40,7 +40,6 @@
 }
 
 .detail-stat-card,
-.featured-attraction,
 .disclosure-panel,
 .trip-heatmap,
 .schedule-summary-card,
@@ -67,7 +66,6 @@
   color: var(--muted);
 }
 
-.featured-grid,
 .schedule-grid,
 .party-detail-grid,
 .attractions-score-grid {
@@ -75,22 +73,16 @@
   gap: 0.9rem;
 }
 
-.featured-grid {
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-}
-
 .attractions-score-grid {
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.15fr) minmax(16rem, 0.9fr);
 }
 
-.featured-attraction,
 .attractions-score-card {
   position: relative;
   overflow: hidden;
   padding: 1.25rem 1.25rem 1.1rem;
 }
 
-.featured-attraction::before,
 .attractions-score-card::before {
   content: '';
   position: absolute;
@@ -100,7 +92,6 @@
   background: var(--family-gradient);
 }
 
-.featured-attraction__eyebrow,
 .attractions-score-card__eyebrow {
   margin: 0 0 0.65rem;
   font-family: var(--font-mono);
@@ -110,7 +101,6 @@
   color: var(--accent);
 }
 
-.featured-attraction__title,
 .attractions-score-card__title {
   margin: 0;
   font-family: var(--font-display);
@@ -120,25 +110,10 @@
   letter-spacing: -0.03em;
 }
 
-.featured-attraction__meta,
-.featured-attraction__score,
 .attractions-score-card__body,
 .attractions-score-card__callout {
   margin: 0;
   color: var(--muted);
-}
-
-.featured-attraction__meta {
-  margin-top: 0.4rem;
-  font-size: 0.9rem;
-}
-
-.featured-attraction__score {
-  margin-top: 0.95rem;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 
 .attractions-score-card {
@@ -290,7 +265,7 @@
 }
 
 .disclosure-panel__body {
-  padding: 0 1.15rem 1.15rem;
+  padding: 1rem 1.15rem 1.15rem;
   border-top: 1px solid var(--border);
 }
 
@@ -1558,7 +1533,6 @@
   }
 
   .detail-stat-grid,
-  .featured-grid,
   .schedule-grid,
   .party-detail-grid,
   .party-cluster-board__clusters,

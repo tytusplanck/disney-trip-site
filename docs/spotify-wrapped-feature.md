@@ -71,7 +71,7 @@ Useful recap copy should make clear that:
 
 ## Retired Attraction Spotlight
 
-The attractions page also used to show a three-card spotlight section in [`/src/pages/[family]/[trip]/attractions.astro`](../src/pages/[family]/[trip]/attractions.astro):
+The attractions page no longer shows the three-card spotlight section that had been restored in [`/src/pages/[family]/[trip]/attractions.astro`](../src/pages/[family]/[trip]/attractions.astro):
 
 - `#1 group signal`
 - `#2 group signal`
@@ -93,6 +93,8 @@ For `Casschwlanck 2026`, the spotlight section showed:
 - `#3`: `Mickey & Minnie's Runaway Railway` in `Disney's Hollywood Studios / Hollywood Boulevard` at `46/50` with `7` must-do calls
 
 The recap value here was not just the winner. It showed the strongest shared stack at a glance, including where those rides lived and how much of the score came from explicit must-do support.
+
+Keep this note even though the live page no longer surfaces those cards, because the top-three stack is still a useful candidate for a future recap or shareable summary.
 
 ## Retired Party Stats
 
