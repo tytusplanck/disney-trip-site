@@ -31,7 +31,6 @@ const {
   mobileFactsLabel,
   mobileFactsItems = [],
 } = Astro.props;
-const hasDesktopTabs = Astro.slots.has('desktop-tabs');
 const hasMobileFacts = mobileFactsItems.length > 0 && typeof mobileFactsLabel === 'string';
 const fullMobileTitle = mobileTitle ?? railLabel;
 ---
@@ -53,13 +52,7 @@ const fullMobileTitle = mobileTitle ?? railLabel;
     </div>
 
     {
-      headerKind === 'trip' ? (
-        hasDesktopTabs && (
-          <div class="site-header__desktop-tabs">
-            <slot name="desktop-tabs" />
-          </div>
-        )
-      ) : (
+      headerKind !== 'trip' && (
         <section class="site-header__rail" aria-label={railLabel}>
           <div class="site-header__stats site-header__stats--grid">
             {statItems.map((item) => (
@@ -100,9 +93,6 @@ const fullMobileTitle = mobileTitle ?? railLabel;
             </div>
           </>
         )}
-        <div class="site-header__mobile-tabs">
-          <slot name="mobile-tabs" />
-        </div>
       </div>
     ) : (
       <div class="site-header__mobile site-header__mobile--archive">

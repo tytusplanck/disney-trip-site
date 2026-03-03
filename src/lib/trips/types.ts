@@ -1,6 +1,6 @@
 export type TripStatus = 'planning' | 'upcoming' | 'completed';
 
-export type TripSection = 'overview' | 'attractions' | 'schedule' | 'party';
+export type TripSection = 'attractions' | 'schedule' | 'party';
 
 export type TripThemeId = 'primary' | 'secondary';
 
@@ -44,9 +44,7 @@ export interface TripBarStat {
 
 export interface TripStubPage {
   section: TripSection;
-  pageLabel: string;
   title: string;
-  intro: string;
   calloutTitle: string;
   calloutBody: string;
   checklist: string[];

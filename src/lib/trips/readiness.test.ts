@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { TripDataModule } from './types';
-import { hasTripOverviewContent, hasTripSectionContent } from './readiness';
+import { hasTripSectionContent } from './readiness';
 
 const emptyTripData: TripDataModule = {
   summary: {
@@ -36,16 +36,9 @@ const scheduleOnlyTripData: TripDataModule = {
 
 describe('trip section readiness helpers', () => {
   it('keeps fully empty trips in placeholder mode', () => {
-    expect(hasTripOverviewContent(emptyTripData)).toBe(false);
-    expect(hasTripSectionContent(emptyTripData, 'overview')).toBe(false);
     expect(hasTripSectionContent(emptyTripData, 'schedule')).toBe(false);
     expect(hasTripSectionContent(emptyTripData, 'party')).toBe(false);
     expect(hasTripSectionContent(emptyTripData, 'attractions')).toBe(false);
-  });
-
-  it('unlocks overview content as soon as any planner data exists', () => {
-    expect(hasTripOverviewContent(scheduleOnlyTripData)).toBe(true);
-    expect(hasTripSectionContent(scheduleOnlyTripData, 'overview')).toBe(true);
   });
 
   it('keeps unrelated sections stubbed until their own data is loaded', () => {

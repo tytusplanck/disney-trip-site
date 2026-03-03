@@ -44,14 +44,13 @@ export interface AllTripsPage {
 export const allTripsPage: AllTripsPage = {
   meta: {
     title: 'Disney Planned by Tytus',
-    description:
-      'Protected Disney trip collection with calm overview pages and one-tap access to the full planner.',
+    description: 'Protected Disney trip collection with one-tap access to the full planner.',
   },
   headerMetaLabel: 'All Trips',
   intro: {
     label: 'All Trips',
-    title: 'Choose a trip, then start with the overview.',
-    body: 'The overview is the default first stop for dates, park lineup, and top family picks before anyone dives into the full planner.',
+    title: 'Choose a trip, then open the planner.',
+    body: 'Trips now open directly into the live planning surfaces, so you can jump straight to rides, the schedule, or traveler preferences.',
   },
   stats: {
     tripsLabel: 'Trips',
@@ -68,11 +67,11 @@ export const allTripsPage: AllTripsPage = {
       'No completed trips yet - trip history will appear here after the first itinerary wraps.',
   },
   card: {
-    primaryActionLabel: 'Start with overview',
+    primaryActionLabel: 'Open planner',
     shortcutLabel: 'Skip ahead',
     shortcutIntro: 'Already know what you need? Open a planner section directly.',
-    futureNote: 'Planning will open here first once this trip starts taking shape.',
+    futureNote: 'Planner sections will open here once this trip starts taking shape.',
   },
   footerNote:
-    'Start with the overview for the essentials, then skip ahead into attractions, schedule, or party details when you need the full planner.',
+    'Trips now land on the planner itself, and you can still skip straight into attractions, schedule, or party details when you know what you need.',
 };

@@ -10,6 +10,7 @@ import type {
 
 const SECTION_ORDER: TripStatus[] = ['planning', 'upcoming', 'completed'];
 const MISSING_VALUE = '--';
+const DEFAULT_TRIP_SECTION: TripSection = 'attractions';
 
 function formatCountLabel(count: number): string {
   return `${String(count)} ${count === 1 ? 'trip' : 'trips'}`;
@@ -81,11 +82,11 @@ export function getTripSectionPath(
   trip: Pick<TripSummary, 'groupId' | 'id'>,
   section: TripSection,
 ): string {
-  return section === 'overview' ? getTripBasePath(trip) : `${getTripBasePath(trip)}/${section}`;
+  return `${getTripBasePath(trip)}/${section}`;
 }
 
 export function getTripLandingPath(trip: Pick<TripSummary, 'groupId' | 'id'>): string {
-  return getTripBasePath(trip);
+  return getTripSectionPath(trip, DEFAULT_TRIP_SECTION);
 }
 
 export function getTripBasePath(trip: Pick<TripSummary, 'groupId' | 'id'>): string {

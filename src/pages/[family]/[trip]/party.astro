@@ -11,7 +11,7 @@ import { findTripSummary, findTripDataModule } from '../../../lib/trips/all-trip
 import { getPartySummaries } from '../../../lib/trips/details';
 import { getPartyClusterView } from '../../../lib/trips/party-insights';
 import { hasTripSectionContent } from '../../../lib/trips/readiness';
-import { tripSectionPages } from './trip-sections.page';
+import { tripSectionTitles } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
@@ -22,8 +22,8 @@ if (!trip || !tripModule) {
   return Astro.redirect('/');
 }
 
-const page = tripSectionPages.party;
 const stubPage = tripStubPages.party;
+const pageTitle = tripSectionTitles.party;
 const statusCopy = trip.status === 'upcoming' ? upcomingStubStatus : planningStubStatus;
 const tripIsStub = !hasTripSectionContent(tripModule, 'party');
 const hasAttractionPreferences = tripModule.attractions.length > 0;
@@ -38,9 +38,7 @@ const clusterView = getPartyClusterView(tripModule);
       description={`Protected placeholder party route for ${trip.title}.`}
       trip={trip}
       activeSection="party"
-      pageEyebrow={stubPage.pageLabel}
       pageTitle={stubPage.title}
-      pageIntro={`${stubPage.intro} Planning begins soon.`}
       panelEyebrow={statusCopy.eyebrow}
       panelTitle={stubPage.calloutTitle}
       panelBody={`${statusCopy.body} ${stubPage.calloutBody}`}
@@ -52,9 +50,7 @@ const clusterView = getPartyClusterView(tripModule);
       description={`Party view for ${trip.title}.`}
       trip={trip}
       activeSection="party"
-      pageEyebrow={page.pageLabel}
-      pageTitle={page.title}
-      pageIntro={page.intro}
+      pageTitle={pageTitle}
     >
       <section class="trip-page-section">
         <div class="trip-page-section__header">

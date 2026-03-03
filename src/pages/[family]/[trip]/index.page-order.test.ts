@@ -4,22 +4,11 @@ import { describe, expect, it } from 'vitest';
 
 const source = readFileSync(join(process.cwd(), 'src/pages/[family]/[trip]/index.astro'), 'utf-8');
 
-describe('overview page action order', () => {
-  it('keeps attractions first, schedule second, and party third', () => {
-    const attractionsIndex = source.indexOf("title: 'Attractions'");
-    const scheduleIndex = source.indexOf("title: 'Schedule'");
-    const partyIndex = source.indexOf("title: 'Party'");
-
-    expect(attractionsIndex).toBeGreaterThan(-1);
-    expect(scheduleIndex).toBeGreaterThan(-1);
-    expect(partyIndex).toBeGreaterThan(-1);
-    expect(attractionsIndex).toBeLessThan(scheduleIndex);
-    expect(scheduleIndex).toBeLessThan(partyIndex);
-  });
-
-  it('removes the legacy overview summaries', () => {
-    expect(source.includes('Park lineup')).toBe(false);
-    expect(source.includes('Shared must-dos')).toBe(false);
-    expect(source.includes('Quick routes')).toBe(false);
+describe('trip root redirect', () => {
+  it('redirects the base trip path to the first planner section', () => {
+    expect(source.includes('import { findTripSummary, getTripLandingPath }')).toBe(true);
+    expect(source.includes('const tripLandingPath = getTripLandingPath(trip);')).toBe(true);
+    expect(source.includes('return Astro.redirect(tripLandingPath);')).toBe(true);
+    expect(source.includes('TripPageShell')).toBe(false);
   });
 });

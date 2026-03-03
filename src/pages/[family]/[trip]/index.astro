@@ -1,121 +1,16 @@
 ---
-import TripPageShell from '../../../components/shells/TripPageShell.astro';
-import TripStubShell from '../../../components/shells/TripStubShell.astro';
 import { allTripsData } from '../../../data/all-trips';
-import { tripStubPages, upcomingStubStatus } from '../../../data/trip-stubs';
-import {
-  findTripSummary,
-  findTripDataModule,
-  getTripSectionPath,
-} from '../../../lib/trips/all-trips';
-import { hasTripOverviewContent, hasTripSectionContent } from '../../../lib/trips/readiness';
-import { tripSectionPages } from './trip-sections.page';
+import { findTripSummary, getTripLandingPath } from '../../../lib/trips/all-trips';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
 const trip = findTripSummary(allTripsData.trips, familyId, tripId);
-const tripModule = findTripDataModule(allTripsData.modules, familyId, tripId);
 
 if (!trip) {
   return Astro.redirect('/');
 }
 
-const page = tripSectionPages.overview;
-const stubPage = tripStubPages.overview;
-const tripIsStub = !tripModule || !hasTripOverviewContent(tripModule);
-const actions = tripModule
-  ? [
-      {
-        title: 'Attractions',
-        section: 'attractions' as const,
-        summary: 'See ride priorities and browse what stands out for the group.',
-        cta: 'Open Attractions',
-        featured: true,
-      },
-      {
-        title: 'Schedule',
-        section: 'schedule' as const,
-        summary: 'See the trip day by day and open the full itinerary when you need it.',
-        cta: 'Open Schedule',
-        featured: false,
-      },
-      {
-        title: 'Party',
-        section: 'party' as const,
-        summary: "See each traveler's preferences and where the group may differ.",
-        cta: 'Open Party',
-        featured: false,
-      },
-    ].map((action) => ({
-      ...action,
-      href: getTripSectionPath(trip, action.section),
-      readinessLabel: hasTripSectionContent(tripModule, action.section)
-        ? 'Ready now'
-        : 'Still being filled in',
-    }))
-  : [];
+const tripLandingPath = getTripLandingPath(trip);
+
+return Astro.redirect(tripLandingPath);
 ---
-
-{
-  tripIsStub ? (
-    <TripStubShell
-      title={`${trip.title} | Trip Overview`}
-      description={`Protected overview route for ${trip.title}.`}
-      trip={trip}
-      activeSection="overview"
-      pageEyebrow={stubPage.pageLabel}
-      pageTitle={stubPage.title}
-      pageIntro={stubPage.intro}
-      panelEyebrow={upcomingStubStatus.eyebrow}
-      panelTitle={stubPage.calloutTitle}
-      panelBody={`${upcomingStubStatus.body} ${stubPage.calloutBody}`}
-      checklist={stubPage.checklist}
-    />
-  ) : (
-    <TripPageShell
-      title={`${trip.title} | Overview`}
-      description={`Overview for ${trip.title}.`}
-      trip={trip}
-      activeSection="overview"
-      pageEyebrow={page.pageLabel}
-      pageTitle={page.title}
-      pageIntro={page.intro}
-    >
-      <section class="trip-page-section">
-        <div class="overview-hub">
-          <p class="overview-hub__prompt">Pick a section</p>
-
-          <div class="overview-action-list">
-            {actions.map((action) => (
-              <article
-                class:list={[
-                  'overview-action-card',
-                  action.featured && 'overview-action-card--primary',
-                ]}
-              >
-                <div class="overview-action-card__header">
-                  <h2 class="overview-action-card__title">{action.title}</h2>
-                  <p
-                    class:list={[
-                      'overview-action-card__status',
-                      action.readinessLabel !== 'Ready now' &&
-                        'overview-action-card__status--pending',
-                    ]}
-                  >
-                    {action.readinessLabel}
-                  </p>
-                </div>
-
-                <p class="overview-action-card__summary">{action.summary}</p>
-
-                <a class="overview-action-card__link" href={action.href}>
-                  {action.cta}
-                </a>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-    </TripPageShell>
-  )
-}

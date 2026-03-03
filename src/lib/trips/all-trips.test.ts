@@ -11,6 +11,7 @@ import {
   getTripInlineFacts,
   getTripLandingPath,
   getTripMobileFacts,
+  getTripSectionPath,
 } from './all-trips';
 
 describe('all trips helpers', () => {
@@ -44,7 +45,7 @@ describe('all trips helpers', () => {
     });
   });
 
-  it('routes both planning and upcoming trips to the trip overview page', () => {
+  it('routes both planning and upcoming trips to the first planner section', () => {
     const planningTrip = findTripSummary(allTripsData.trips, 'casschwlanck', '2026');
     const upcomingTrip = findTripSummary(allTripsData.trips, 'casschwlanck', 'future-trip');
 
@@ -55,8 +56,9 @@ describe('all trips helpers', () => {
       throw new Error('Expected seeded planning and upcoming trips to exist.');
     }
 
-    expect(getTripLandingPath(planningTrip)).toBe('/casschwlanck/2026');
-    expect(getTripLandingPath(upcomingTrip)).toBe('/casschwlanck/future-trip');
+    expect(getTripLandingPath(planningTrip)).toBe('/casschwlanck/2026/attractions');
+    expect(getTripLandingPath(upcomingTrip)).toBe('/casschwlanck/future-trip/attractions');
+    expect(getTripSectionPath(planningTrip, 'schedule')).toBe('/casschwlanck/2026/schedule');
   });
 
   it('finds trip modules and derives shared trip chrome stats', () => {

@@ -8,7 +8,7 @@ Keep the helper logic even when the live UI no longer shows these cards.
 
 ## Retired Overview Landing Summaries
 
-The overview page used to open with a four-card stat strip in [`/src/pages/[family]/[trip]/index.astro`](../src/pages/[family]/[trip]/index.astro):
+Before the trip root route was simplified into a redirect, the old overview landing page in [`/src/pages/[family]/[trip]/index.astro`](../src/pages/[family]/[trip]/index.astro) opened with a four-card stat strip:
 
 - `Travel window`
 - `Parks lined up`

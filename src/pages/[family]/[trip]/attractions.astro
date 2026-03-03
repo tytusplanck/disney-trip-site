@@ -14,7 +14,7 @@ import { getPreferenceTierPoints } from '../../../lib/trips/data';
 import { getPreferenceMeta } from '../../../lib/trips/details';
 import { findTripSummary, findTripDataModule } from '../../../lib/trips/all-trips';
 import { hasTripSectionContent } from '../../../lib/trips/readiness';
-import { tripSectionPages } from './trip-sections.page';
+import { tripSectionTitles } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
@@ -25,8 +25,8 @@ if (!trip || !tripModule) {
   return Astro.redirect('/');
 }
 
-const page = tripSectionPages.attractions;
 const stubPage = tripStubPages.attractions;
+const pageTitle = tripSectionTitles.attractions;
 const statusCopy = trip.status === 'upcoming' ? upcomingStubStatus : planningStubStatus;
 const tripIsStub = !hasTripSectionContent(tripModule, 'attractions');
 const explorerData = buildAttractionsExplorerData(tripModule);
@@ -53,9 +53,7 @@ const scoreGuide = ([1, 2, 3, 4, 5] as const).map((tier) => ({
       description={`Protected placeholder attractions route for ${trip.title}.`}
       trip={trip}
       activeSection="attractions"
-      pageEyebrow={stubPage.pageLabel}
       pageTitle={stubPage.title}
-      pageIntro={`${stubPage.intro} Planning begins soon.`}
       panelEyebrow={statusCopy.eyebrow}
       panelTitle={stubPage.calloutTitle}
       panelBody={`${statusCopy.body} ${stubPage.calloutBody}`}
@@ -67,9 +65,7 @@ const scoreGuide = ([1, 2, 3, 4, 5] as const).map((tier) => ({
       description={`Attractions view for ${trip.title}.`}
       trip={trip}
       activeSection="attractions"
-      pageEyebrow={page.pageLabel}
-      pageTitle={page.title}
-      pageIntro={page.intro}
+      pageTitle={pageTitle}
     >
       <section class="trip-page-section">
         <div class="trip-page-section__header">
