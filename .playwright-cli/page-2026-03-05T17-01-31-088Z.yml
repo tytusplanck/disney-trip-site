@@ -1,0 +1,114 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - link "Go to the Disney Planned by Tytus All Trips page" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - generic [ref=e8]: Disney
+          - generic [ref=e9]: /
+          - generic [ref=e10]: Planned by
+          - generic [ref=e11]: Tytus
+        - group [ref=e12]:
+          - generic "All Trips Facts" [ref=e13] [cursor=pointer]
+    - main [ref=e14]:
+      - generic [ref=e15]:
+        - paragraph [ref=e16]: All Trips
+        - heading "Pick a trip." [level=1] [ref=e17]
+        - paragraph [ref=e18]: See the schedule, rides, and who's going.
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - heading "Next Up" [level=2] [ref=e21]
+          - paragraph [ref=e23]: 1 trip
+        - article [ref=e25]:
+          - generic [ref=e27]:
+            - generic [ref=e28]:
+              - generic [ref=e29]:
+                - paragraph [ref=e30]: Planning
+                - heading "Casschwlanck 2026" [level=3] [ref=e32]
+                - paragraph [ref=e33]: Mar 28 - Apr 5, 2026
+              - list [ref=e35]:
+                - listitem [ref=e36]: Magic Kingdom
+                - listitem [ref=e37]: EPCOT
+                - listitem [ref=e38]: Disney's Hollywood Studios
+                - listitem [ref=e39]: Disney's Animal Kingdom
+              - generic [ref=e41]:
+                - generic [ref=e42]:
+                  - term [ref=e43]: Cadence
+                  - definition [ref=e44]: 4 park days, 3 resort days, and 2 travel days shape the trip.
+                - generic [ref=e45]:
+                  - term [ref=e46]: Crew pulse
+                  - definition [ref=e47]: Kayla leads the board with 14 average must-do calls.
+                - generic [ref=e48]:
+                  - term [ref=e49]: Shared favorite
+                  - definition [ref=e50]: Kilimanjaro Safaris leads 4 rides already scoring 45+.
+            - generic [ref=e51]:
+              - generic [ref=e52]:
+                - generic [ref=e53]:
+                  - term [ref=e54]: People
+                  - definition [ref=e55]: "10"
+                - generic [ref=e56]:
+                  - term [ref=e57]: Days
+                  - definition [ref=e58]: "9"
+                - generic [ref=e59]:
+                  - term [ref=e60]: Parks
+                  - definition [ref=e61]: "4"
+              - link "Open planner" [ref=e62] [cursor=pointer]:
+                - /url: /casschwlanck/2026/attractions
+          - group [ref=e63]:
+            - generic "Skip ahead +" [ref=e64] [cursor=pointer]
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - heading "Future Trips" [level=2] [ref=e67]
+          - paragraph [ref=e69]: 1 trip
+        - article [ref=e71]:
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - generic [ref=e75]:
+                - paragraph [ref=e76]: Upcoming
+                - heading "Planck Mega Disney trip" [level=3] [ref=e78]
+                - paragraph [ref=e79]: Nov 7 - Nov 15, 2026
+              - list [ref=e81]:
+                - listitem [ref=e82]: Disney's Animal Kingdom
+                - listitem [ref=e83]: EPCOT
+                - listitem [ref=e84]: Magic Kingdom
+                - listitem [ref=e85]: Disney's Hollywood Studios
+              - paragraph [ref=e86]: Planner sections will open here once this trip starts taking shape.
+            - generic [ref=e87]:
+              - generic [ref=e88]:
+                - generic [ref=e89]:
+                  - term [ref=e90]: People
+                  - definition [ref=e91]: "14"
+                - generic [ref=e92]:
+                  - term [ref=e93]: Days
+                  - definition [ref=e94]: "9"
+                - generic [ref=e95]:
+                  - term [ref=e96]: Parks
+                  - definition [ref=e97]: "4"
+              - link "Open planner" [ref=e98] [cursor=pointer]:
+                - /url: /casschwlanck/future-trip/attractions
+          - paragraph [ref=e100]: Planner sections will open here once this trip starts taking shape.
+      - generic [ref=e101]:
+        - generic [ref=e102]:
+          - heading "Completed" [level=2] [ref=e103]
+          - paragraph [ref=e105]: 0 trips
+        - paragraph [ref=e107]: No completed trips yet - trip history will appear here after the first itinerary wraps.
+    - contentinfo [ref=e108]:
+      - paragraph [ref=e109]: Disney Planned by Tytus
+      - paragraph [ref=e110]: I do it for fun. Relax.
+  - generic [ref=e113]:
+    - button "Menu" [ref=e114]:
+      - img [ref=e116]
+      - generic: Menu
+    - button "Inspect" [ref=e120]:
+      - img [ref=e122]
+      - generic: Inspect
+    - button "Audit" [ref=e124]:
+      - generic [ref=e125]:
+        - img [ref=e126]
+        - img [ref=e129]
+      - generic: Audit
+    - button "Settings" [ref=e132]:
+      - img [ref=e134]
+      - generic: Settings

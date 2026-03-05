@@ -80,6 +80,47 @@ export default function AttractionHeatmap({ party, rows, highlightMemberId = nul
         </table>
       </div>
 
+      <div className="trip-heatmap__mobile" aria-label="Traveler ratings by attraction">
+        <ul className="trip-heatmap__mobile-list">
+          {rows.map((row) => (
+            <li className="trip-heatmap__mobile-card" key={row.id}>
+              <div className="trip-heatmap__mobile-header">
+                <div>
+                  <p className="trip-heatmap__mobile-title">{row.attractionLabel}</p>
+                  <p className="trip-heatmap__mobile-meta">
+                    {row.parkLabel} / {row.areaLabel}
+                  </p>
+                </div>
+                <p className="trip-heatmap__mobile-score">
+                  Score {row.consensusScore}/{row.ratings.length * 5}
+                </p>
+              </div>
+
+              <ul className="trip-heatmap__mobile-members">
+                {row.ratings.map((rating) => {
+                  const meta = getPreferenceMeta(rating.tier);
+
+                  return (
+                    <li
+                      className="trip-heatmap__mobile-member"
+                      key={`${row.id}-${rating.memberId}`}
+                    >
+                      <p className="trip-heatmap__mobile-member-name">{rating.memberName}</p>
+                      <span className="trip-heatmap__mobile-member-rating">
+                        <span className={`trip-tier-token trip-tier-token--${String(rating.tier)}`}>
+                          {meta.shortLabel}
+                        </span>
+                        <span>{meta.label}</span>
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </li>
+          ))}
+        </ul>
+      </div>
+
       <div className="trip-heatmap__legend">
         <span className="trip-heatmap__legend-label">Legend</span>
         <ul className="trip-heatmap__legend-list">

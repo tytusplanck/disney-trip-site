@@ -1,0 +1,132 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - link "Back to trips" [ref=e7] [cursor=pointer]:
+          - /url: /
+        - paragraph [ref=e8]: Casschwlanck 2026
+        - group [ref=e9]:
+          - generic "Trip facts" [ref=e10] [cursor=pointer]
+    - main [ref=e11]:
+      - heading "Traveler preferences" [level=1] [ref=e12]
+      - navigation "Trip sections" [ref=e13]:
+        - link "Attractions" [ref=e14] [cursor=pointer]:
+          - /url: /casschwlanck/2026/attractions
+        - link "Schedule" [ref=e15] [cursor=pointer]:
+          - /url: /casschwlanck/2026/schedule
+        - link "Party" [ref=e16] [cursor=pointer]:
+          - /url: /casschwlanck/2026/party
+      - generic [ref=e18]:
+        - article [ref=e19]:
+          - paragraph [ref=e20]: Sharpest split
+          - heading "Adults lean hardest toward Happily Ever After" [level=3] [ref=e21]
+          - paragraph [ref=e22]: 6/6 Adults marked it Must Do or Preferred, versus 0/4 Kids.
+        - generic [ref=e23]:
+          - article [ref=e24]:
+            - paragraph [ref=e26]: Kids
+            - generic [ref=e27]:
+              - heading "Fantasmic! cluster" [level=3] [ref=e28]
+              - paragraph [ref=e29]: Kids line up most closely around Fantasmic!, with Magic Kingdom carrying the strongest overlap.
+            - generic "Fantasmic! cluster travelers" [ref=e30]:
+              - generic [ref=e31]: Cassian
+              - generic [ref=e32]: Charlie
+              - generic [ref=e33]: Margot
+              - generic [ref=e34]: Truman
+            - generic [ref=e35]:
+              - generic [ref=e36]:
+                - generic [ref=e37]: Affinity
+                - generic [ref=e38]: 52% aligned
+              - progressbar "Fantasmic! cluster affinity score 52 out of 100" [ref=e39]
+            - generic [ref=e40]:
+              - paragraph [ref=e41]: Shared picks
+              - list [ref=e42]:
+                - listitem [ref=e43]:
+                  - strong [ref=e44]: Fantasmic!
+                  - generic [ref=e45]: 4/4 priority calls in Disney's Hollywood Studios
+                - listitem [ref=e46]:
+                  - strong [ref=e47]: The Many Adventures of Winnie the Pooh
+                  - generic [ref=e48]: 4/4 priority calls in Magic Kingdom
+                - listitem [ref=e49]:
+                  - strong [ref=e50]: Kilimanjaro Safaris
+                  - generic [ref=e51]: 3/4 priority calls in Disney's Animal Kingdom
+          - article [ref=e52]:
+            - paragraph [ref=e54]: Adults
+            - generic [ref=e55]:
+              - heading "Kilimanjaro Safaris cluster" [level=3] [ref=e56]
+              - paragraph [ref=e57]: Adults line up most closely around Kilimanjaro Safaris, with Magic Kingdom carrying the strongest overlap.
+            - generic "Kilimanjaro Safaris cluster travelers" [ref=e58]:
+              - generic [ref=e59]: Collin
+              - generic [ref=e60]: Kayla
+              - generic [ref=e61]: Kelsey
+              - generic [ref=e62]: Lisa
+              - generic [ref=e63]: Tim
+              - generic [ref=e64]: Tytus
+            - generic [ref=e65]:
+              - generic [ref=e66]:
+                - generic [ref=e67]: Affinity
+                - generic [ref=e68]: 59% aligned
+              - progressbar "Kilimanjaro Safaris cluster affinity score 59 out of 100" [ref=e69]
+            - generic [ref=e70]:
+              - paragraph [ref=e71]: Shared picks
+              - list [ref=e72]:
+                - listitem [ref=e73]:
+                  - strong [ref=e74]: Kilimanjaro Safaris
+                  - generic [ref=e75]: 6/6 priority calls in Disney's Animal Kingdom
+                - listitem [ref=e76]:
+                  - strong [ref=e77]: Mickey & Minnie's Runaway Railway
+                  - generic [ref=e78]: 6/6 priority calls in Disney's Hollywood Studios
+                - listitem [ref=e79]:
+                  - strong [ref=e80]: Happily Ever After
+                  - generic [ref=e81]: 6/6 priority calls in Magic Kingdom
+        - complementary [ref=e82]:
+          - generic [ref=e83]:
+            - paragraph [ref=e84]: Kid vs adult gaps
+            - heading "Where the two groups pull the day in different directions" [level=3] [ref=e85]
+          - list [ref=e86]:
+            - listitem [ref=e87]:
+              - generic [ref=e88]: Adults
+              - generic [ref=e89]:
+                - strong [ref=e90]: Happily Ever After
+                - generic [ref=e91]: 6/6 Adults priority • 0/4 Kids priority • Magic Kingdom
+            - listitem [ref=e92]:
+              - generic [ref=e93]: Kids
+              - generic [ref=e94]:
+                - strong [ref=e95]: Beauty and the Beast - Live on Stage
+                - generic [ref=e96]: 3/4 Kids priority • 0/6 Adults priority • Disney's Hollywood Studios
+            - listitem [ref=e97]:
+              - generic [ref=e98]: Adults
+              - generic [ref=e99]:
+                - strong [ref=e100]: Avatar Flight of Passage
+                - generic [ref=e101]: 5/6 Adults priority • 0/4 Kids priority • Disney's Animal Kingdom
+            - listitem [ref=e102]:
+              - generic [ref=e103]: Adults
+              - generic [ref=e104]:
+                - strong [ref=e105]: "Guardians of the Galaxy: Cosmic Rewind"
+                - generic [ref=e106]: 5/6 Adults priority • 0/4 Kids priority • EPCOT
+      - generic [ref=e107]:
+        - generic [ref=e109]:
+          - paragraph [ref=e110]: Traveler cards
+          - heading "Open the full traveler breakdown when you need it" [level=2] [ref=e111]
+        - group [ref=e112]:
+          - generic "Traveler cards Open every traveler profile 10 travelers with full preference counts" [ref=e113] [cursor=pointer]:
+            - generic [ref=e114]:
+              - generic [ref=e115]: Traveler cards
+              - generic [ref=e116]: Open every traveler profile
+              - generic [ref=e117]: 10 travelers with full preference counts
+  - generic [ref=e121]:
+    - button "Menu" [ref=e122]:
+      - img [ref=e124]
+      - generic: Menu
+    - button "Inspect" [ref=e128]:
+      - img [ref=e130]
+      - generic: Inspect
+    - button "Audit" [ref=e132]:
+      - generic [ref=e133]:
+        - img [ref=e134]
+        - img [ref=e137]
+      - generic: Audit
+    - button "Settings" [ref=e140]:
+      - img [ref=e142]
+      - generic: Settings

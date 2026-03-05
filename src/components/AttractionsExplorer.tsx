@@ -1,4 +1,11 @@
-import { startTransition, useDeferredValue, useId, useState, type ChangeEvent } from 'react';
+import {
+  startTransition,
+  useDeferredValue,
+  useId,
+  useMemo,
+  useState,
+  type ChangeEvent,
+} from 'react';
 import AttractionHeatmap from './AttractionHeatmap';
 import ConsensusBars from './ConsensusBars';
 import DisclosurePanel from './islands/DisclosurePanel';
@@ -92,10 +99,17 @@ export default function AttractionsExplorer({ data }: Props) {
   const deferredSearch = useDeferredValue(state.search);
   const travelerFieldId = useId();
   const searchFieldId = useId();
-  const view = deriveAttractionsExplorerView(data, {
-    ...state,
-    search: deferredSearch,
-  });
+  const deferredState = useMemo(
+    () => ({
+      ...state,
+      search: deferredSearch,
+    }),
+    [state, deferredSearch],
+  );
+  const view = useMemo(
+    () => deriveAttractionsExplorerView(data, deferredState),
+    [data, deferredState],
+  );
   const sentimentOptions =
     view.mode === 'group' ? GROUP_SENTIMENT_OPTIONS : TRAVELER_SENTIMENT_OPTIONS;
   const resetDisabled =
@@ -105,16 +119,19 @@ export default function AttractionsExplorer({ data }: Props) {
     state.memberId === null &&
     state.sentiment === 'all' &&
     state.search.length === 0;
-  const summaryCards = (
-    <div className="detail-stat-grid attractions-explorer__summary-grid">
-      {view.summaryCards.map((item) => (
-        <article className="detail-stat-card" key={item.label}>
-          <p className="detail-label">{item.label}</p>
-          <p className="detail-value attractions-explorer__summary-value">{item.value}</p>
-          <p className="detail-note">{item.detail}</p>
-        </article>
-      ))}
-    </div>
+  const summaryCards = useMemo(
+    () => (
+      <div className="detail-stat-grid attractions-explorer__summary-grid">
+        {view.summaryCards.map((item) => (
+          <article className="detail-stat-card" key={item.label}>
+            <p className="detail-label">{item.label}</p>
+            <p className="detail-value attractions-explorer__summary-value">{item.value}</p>
+            <p className="detail-note">{item.detail}</p>
+          </article>
+        ))}
+      </div>
+    ),
+    [view.summaryCards],
   );
 
   function updateState(

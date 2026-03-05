@@ -137,7 +137,7 @@
 
 .trip-card__essential-label {
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
@@ -155,7 +155,7 @@
   display: grid;
   gap: 0.65rem;
   padding-left: 0.95rem;
-  border-left: 1px solid rgba(200, 169, 110, 0.24);
+  border-left: 1px solid var(--accent-border-soft);
 }
 
 .trip-card__summary-copy,
@@ -210,9 +210,9 @@
   width: 100%;
   min-height: 3.1rem;
   padding: 0.85rem 1rem;
-  border: 1px solid rgba(200, 169, 110, 0.45);
+  border: 1px solid var(--accent-border-strong);
   border-radius: 0.8rem;
-  background: rgba(200, 169, 110, 0.14);
+  background: var(--accent-fill-card);
   color: var(--text);
   font-weight: 500;
   text-decoration: none;
@@ -224,8 +224,8 @@
 
 .trip-card__button:hover {
   transform: translateY(-1px);
-  border-color: rgba(200, 169, 110, 0.7);
-  background: rgba(200, 169, 110, 0.22);
+  border-color: var(--accent-border-emphasis);
+  background: var(--accent-fill-hover);
 }
 
 .trip-card__footer-note,
@@ -322,7 +322,7 @@
 .trip-card__shortcut-title,
 .trip-card__shortcut-action {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }

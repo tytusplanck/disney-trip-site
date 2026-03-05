@@ -44,6 +44,7 @@ const initial = summary.member.name.slice(0, 1).toUpperCase();
             <span class="party-detail-card__tier-count">{tierSummary.count}</span>
           </div>
           <progress
+            aria-label={`${summary.member.name} ${tierSummary.label}: ${String(tierSummary.count)} of ${String(tierSummary.maxCount)}`}
             class:list={[
               'party-detail-card__tier-progress',
               `party-detail-card__tier-progress--${tierSummary.tier}`,

@@ -48,6 +48,7 @@ const { view } = Astro.props;
               </span>
             </div>
             <progress
+              aria-label={`${cluster.title} affinity score ${String(cluster.averageAffinityScore)} out of 100`}
               class="party-cluster-card__meter-progress"
               max="100"
               value={cluster.averageAffinityScore}

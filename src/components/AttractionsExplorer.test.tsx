@@ -1,13 +1,19 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import AttractionsExplorer from './AttractionsExplorer';
-import { buildAttractionsExplorerData } from '../lib/trips/attractions-explorer';
+import * as attractionsExplorerModel from '../lib/trips/attractions-explorer';
 import { attractionsExplorerFixtureTrip } from '../test/attractions-explorer.fixture';
 
 function renderExplorer() {
   return render(
-    <AttractionsExplorer data={buildAttractionsExplorerData(attractionsExplorerFixtureTrip)} />,
+    <AttractionsExplorer
+      data={attractionsExplorerModel.buildAttractionsExplorerData(attractionsExplorerFixtureTrip)}
+    />,
   );
+}
+
+function createExplorerData() {
+  return attractionsExplorerModel.buildAttractionsExplorerData(attractionsExplorerFixtureTrip);
 }
 
 describe('AttractionsExplorer', () => {
@@ -109,5 +115,17 @@ describe('AttractionsExplorer', () => {
     });
 
     expect(screen.getAllByRole('button', { name: 'Reset filters' }).length).toBeGreaterThan(0);
+  });
+
+  it('memoizes derived views when parent rerenders with unchanged data', () => {
+    const data = createExplorerData();
+    const deriveSpy = vi.spyOn(attractionsExplorerModel, 'deriveAttractionsExplorerView');
+    const { rerender } = render(<AttractionsExplorer data={data} />);
+    const initialCalls = deriveSpy.mock.calls.length;
+
+    rerender(<AttractionsExplorer data={data} />);
+
+    expect(deriveSpy.mock.calls.length).toBe(initialCalls);
+    deriveSpy.mockRestore();
   });
 });

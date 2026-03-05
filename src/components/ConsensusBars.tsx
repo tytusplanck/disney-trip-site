@@ -21,6 +21,7 @@ export default function ConsensusBars({ items }: Props) {
 
           <div className="consensus-row__track">
             <progress
+              aria-label={`${item.attractionLabel} consensus score ${String(item.consensusScore)} out of ${String(item.maxScore)}`}
               className={`consensus-progress consensus-progress--${item.tone}`}
               max={item.maxScore}
               value={item.consensusScore}

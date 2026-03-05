@@ -1,0 +1,41 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e4]:
+    - banner [ref=e5]:
+      - generic [ref=e6]:
+        - link "Back to trips" [ref=e7] [cursor=pointer]:
+          - /url: /
+        - paragraph [ref=e8]: Casschwlanck 2026
+        - group [ref=e9]:
+          - generic "Trip facts" [ref=e10] [cursor=pointer]
+    - main [ref=e11]:
+      - heading "Day-by-day plan" [level=1] [ref=e12]
+      - navigation "Trip sections" [ref=e13]:
+        - link "Attractions" [ref=e14] [cursor=pointer]:
+          - /url: /casschwlanck/2026/attractions
+        - link "Schedule" [ref=e15] [cursor=pointer]:
+          - /url: /casschwlanck/2026/schedule
+        - link "Party" [ref=e16] [cursor=pointer]:
+          - /url: /casschwlanck/2026/party
+      - group [ref=e18]:
+        - generic "Full itinerary Open every day card 9 trip days with notes and park labels" [ref=e19] [cursor=pointer]:
+          - generic [ref=e20]:
+            - generic [ref=e21]: Full itinerary
+            - generic [ref=e22]: Open every day card
+            - generic [ref=e23]: 9 trip days with notes and park labels
+  - generic [ref=e27]:
+    - button "Menu" [ref=e28]:
+      - img [ref=e30]
+      - generic: Menu
+    - button "Inspect" [ref=e34]:
+      - img [ref=e36]
+      - generic: Inspect
+    - button "Audit" [ref=e38]:
+      - generic [ref=e39]:
+        - img [ref=e40]
+        - img [ref=e43]
+      - generic: Audit
+    - button "Settings" [ref=e46]:
+      - img [ref=e48]
+      - generic: Settings

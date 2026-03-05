@@ -47,8 +47,7 @@
 .party-cluster-card,
 .party-cluster-rail,
 .attractions-explorer__panel,
-.attractions-explorer__card,
-.attractions-explorer__area-card {
+.attractions-explorer__card {
   border: 1px solid var(--border2);
   border-radius: 0.9rem;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent), var(--surface);
@@ -361,7 +360,7 @@
   width: 2rem;
   height: 2rem;
   border-radius: 0.45rem;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   letter-spacing: 0.08em;
   font-weight: 700;
 }
@@ -430,6 +429,94 @@
   font-size: 0.86rem;
 }
 
+.trip-heatmap__mobile {
+  display: none;
+}
+
+.trip-heatmap__mobile-list {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0;
+  padding: 1rem;
+  list-style: none;
+}
+
+.trip-heatmap__mobile-card {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.85rem 0.9rem 0.95rem;
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  background: rgb(var(--bg-rgb) / 0.3);
+}
+
+.trip-heatmap__mobile-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.trip-heatmap__mobile-title,
+.trip-heatmap__mobile-meta,
+.trip-heatmap__mobile-score,
+.trip-heatmap__mobile-member-name {
+  margin: 0;
+}
+
+.trip-heatmap__mobile-title {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.trip-heatmap__mobile-meta {
+  margin-top: 0.16rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.trip-heatmap__mobile-score {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.trip-heatmap__mobile-members {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trip-heatmap__mobile-member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.trip-heatmap__mobile-member-name {
+  min-width: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.trip-heatmap__mobile-member-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
 .consensus-bars {
   display: grid;
   gap: 0.85rem;
@@ -473,11 +560,11 @@
   flex-shrink: 0;
   align-items: center;
   padding: 0.14rem 0.35rem;
-  border: 1px solid rgba(200, 169, 110, 0.24);
+  border: 1px solid var(--accent-border-soft);
   border-radius: 999px;
-  background: rgba(200, 169, 110, 0.08);
+  background: var(--accent-fill-soft);
   font-family: var(--font-mono);
-  font-size: 0.62rem;
+  font-size: 0.72rem;
   letter-spacing: 0.12em;
   white-space: nowrap;
   text-transform: uppercase;
@@ -614,7 +701,7 @@
       135deg,
       rgb(var(--tone-slate-rgb) / 0.12),
       rgb(var(--tone-aubergine-rgb) / 0.08) 44%,
-      rgba(200, 169, 110, 0.06)
+      var(--accent-fill-faint)
     ),
     var(--surface);
   box-shadow: var(--shadow-soft);
@@ -632,7 +719,7 @@
 .party-cluster-highlight__eyebrow {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--accent);
@@ -672,7 +759,7 @@
   gap: 1rem;
   padding: 1.2rem 1.2rem 1.1rem;
   background:
-    radial-gradient(circle at top right, rgba(200, 169, 110, 0.16), transparent 38%),
+    radial-gradient(circle at top right, var(--accent-fill-spotlight), transparent 38%),
     linear-gradient(
       180deg,
       rgb(var(--tone-slate-rgb) / 0.08),
@@ -738,7 +825,7 @@
 .party-cluster-card__favorites-label,
 .party-cluster-rail__eyebrow,
 .party-cluster-rail__rank {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   letter-spacing: 0.12em;
 }
 
@@ -854,7 +941,7 @@
   gap: 1rem;
   padding: 1.15rem;
   background:
-    linear-gradient(180deg, rgba(200, 169, 110, 0.08), rgba(255, 255, 255, 0.02) 26%, transparent),
+    linear-gradient(180deg, var(--accent-fill-soft), rgba(255, 255, 255, 0.02) 26%, transparent),
     var(--surface);
 }
 
@@ -870,9 +957,9 @@
   min-width: 2.2rem;
   min-height: 2.2rem;
   padding: 0.35rem 0.65rem;
-  border: 1px solid rgba(200, 169, 110, 0.24);
+  border: 1px solid var(--accent-border-soft);
   border-radius: 0.75rem;
-  background: rgba(200, 169, 110, 0.1);
+  background: var(--accent-fill-muted);
 }
 
 .schedule-grid {
@@ -954,7 +1041,7 @@
 }
 
 .schedule-card[data-kind='resort'] {
-  border-color: rgba(200, 169, 110, 0.2);
+  border-color: var(--accent-border-subtle);
 }
 
 .schedule-card[data-kind='travel'] {
@@ -1052,7 +1139,7 @@
 
 .party-detail-card__tier-label,
 .party-detail-card__tier-count {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   letter-spacing: 0.1em;
   color: var(--muted);
 }
@@ -1243,11 +1330,11 @@
 
 .attractions-explorer__chip:hover {
   transform: translateY(-1px);
-  border-color: rgba(200, 169, 110, 0.4);
+  border-color: var(--accent-border-hover);
 }
 
 .attractions-explorer__chip--compact {
-  min-height: 0;
+  min-height: 2.75rem;
   padding: 0.6rem 0.75rem;
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -1256,11 +1343,11 @@
 }
 
 .attractions-explorer__chip--active {
-  border-color: rgba(200, 169, 110, 0.6);
+  border-color: var(--accent-border-active);
   background:
-    linear-gradient(180deg, rgba(200, 169, 110, 0.12), rgb(var(--tone-slate-rgb) / 0.08)),
+    linear-gradient(180deg, var(--accent-fill-base), rgb(var(--tone-slate-rgb) / 0.08)),
     rgba(255, 255, 255, 0.03);
-  box-shadow: 0 0 0 1px rgba(200, 169, 110, 0.15);
+  box-shadow: 0 0 0 1px var(--accent-fill-ring);
 }
 
 .attractions-explorer__chip-label {
@@ -1269,7 +1356,7 @@
 }
 
 .attractions-explorer__chip-meta {
-  font-size: 0.64rem;
+  font-size: 0.72rem;
   letter-spacing: 0.1em;
   color: var(--muted);
 }
@@ -1298,9 +1385,9 @@
 .attractions-explorer__reset {
   min-height: 2.9rem;
   padding: 0.8rem 1rem;
-  border: 1px solid rgba(200, 169, 110, 0.45);
+  border: 1px solid var(--accent-border-strong);
   border-radius: 0.8rem;
-  background: rgba(200, 169, 110, 0.14);
+  background: var(--accent-fill-card);
   color: var(--text);
   cursor: pointer;
   font-weight: 500;
@@ -1313,8 +1400,8 @@
 
 .attractions-explorer__reset:hover:not(:disabled) {
   transform: translateY(-1px);
-  border-color: rgba(200, 169, 110, 0.7);
-  background: rgba(200, 169, 110, 0.22);
+  border-color: var(--accent-border-emphasis);
+  background: var(--accent-fill-hover);
 }
 
 .attractions-explorer__reset:disabled {
@@ -1429,7 +1516,7 @@
 
 .attractions-explorer__signal-stat,
 .attractions-explorer__area-meta {
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   letter-spacing: 0.1em;
   color: var(--muted);
 }
@@ -1441,8 +1528,14 @@
 
 .attractions-explorer__area-card {
   display: grid;
-  gap: 0.6rem;
-  padding: 0.9rem 0.95rem;
+  gap: 0.45rem;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.attractions-explorer__area-card:first-child {
+  border-top: none;
+  padding-top: 0;
 }
 
 .attractions-explorer__area-stats {
@@ -1484,7 +1577,7 @@
 .attractions-explorer__reset:focus-visible,
 .attractions-explorer__select:focus-visible,
 .attractions-explorer__input:focus-visible {
-  outline: 2px solid rgba(200, 169, 110, 0.65);
+  outline: 2px solid var(--accent-focus-outline);
   outline-offset: 3px;
 }
 
@@ -1538,6 +1631,18 @@
   .party-cluster-board__clusters,
   .attractions-score-grid {
     grid-template-columns: 1fr;
+  }
+
+  .trip-heatmap__scroll {
+    display: none;
+  }
+
+  .trip-heatmap__mobile {
+    display: block;
+  }
+
+  .trip-heatmap__mobile-list {
+    padding: 0.95rem;
   }
 
   .trip-heatmap__legend {
