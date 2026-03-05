@@ -1,3 +1,5 @@
+import type { TripStatus } from '../lib/trips/types';
+
 interface MetaContent {
   title: string;
   description: string;
@@ -25,10 +27,27 @@ interface AllTripsSectionsCopy {
 }
 
 export interface AllTripsCardCopy {
-  primaryActionLabel: string;
+  primaryActionLabelByStatus: Record<TripStatus, string>;
+  fallbackNoteByStatus: Record<TripStatus, string>;
   shortcutLabel: string;
   shortcutIntro: string;
-  futureNote: string;
+}
+
+export interface AllTripsCardPresentation {
+  primaryActionLabel: string;
+  fallbackNote: string;
+  showShortcutLinks: boolean;
+}
+
+export function getAllTripsCardPresentation(
+  copy: AllTripsCardCopy,
+  status: TripStatus,
+): AllTripsCardPresentation {
+  return {
+    primaryActionLabel: copy.primaryActionLabelByStatus[status],
+    fallbackNote: copy.fallbackNoteByStatus[status],
+    showShortcutLinks: status === 'planning',
+  };
 }
 
 export interface AllTripsPage {
@@ -67,10 +86,19 @@ export const allTripsPage: AllTripsPage = {
       'No completed trips yet - trip history will appear here after the first itinerary wraps.',
   },
   card: {
-    primaryActionLabel: 'Open planner',
+    primaryActionLabelByStatus: {
+      planning: 'Open planner',
+      upcoming: 'Open planner',
+      completed: 'Open archive',
+    },
+    fallbackNoteByStatus: {
+      planning:
+        'Planner insights will appear here once the ride scores, itinerary, and traveler signals are loaded.',
+      upcoming: 'Planner sections will open here once this trip starts taking shape.',
+      completed: 'Archive notes and the final planner state will stay here once this trip wraps.',
+    },
     shortcutLabel: 'Skip ahead',
     shortcutIntro: 'Already know what you need? Open a planner section directly.',
-    futureNote: 'Planner sections will open here once this trip starts taking shape.',
   },
   footerNote: 'I do it for fun. Relax.',
 };

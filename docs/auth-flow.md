@@ -49,7 +49,8 @@ Middleware verifies the signature before treating the request as authenticated.
 - HTTP-only cookie
 - `SameSite=Strict`
 - session-scoped lifetime (no persistent max age)
-- secure cookie in HTTPS/production contexts
+- secure cookie only for HTTPS requests
+- non-secure cookie for local HTTP loopback hosts such as `localhost` and `127.0.0.1`
 - `noindex` and `X-Robots-Tag` protections
 - `Cache-Control: private, no-store, max-age=0` on login, auth redirects, and protected page responses
 - framework-managed caching preserved for public build assets such as `/_astro/*`

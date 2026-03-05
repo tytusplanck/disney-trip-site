@@ -9,4 +9,19 @@ export const casschwlanck2026TripData: TripDataModule = {
   party: casschwlanck2026Party,
   schedule: casschwlanck2026Schedule,
   attractions: casschwlanck2026Attractions,
+  partyGrouping: {
+    kind: 'named-cohorts',
+    cohorts: [
+      {
+        id: 'kids',
+        label: 'Kids',
+        memberIds: ['truman', 'charlie', 'margot', 'cassian'],
+      },
+      {
+        id: 'adults',
+        label: 'Adults',
+        memberIds: ['tytus', 'kelsey', 'tim', 'lisa', 'kayla', 'collin'],
+      },
+    ],
+  },
 };

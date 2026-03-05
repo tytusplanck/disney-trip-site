@@ -76,6 +76,23 @@ describe('auth route handlers', () => {
     });
   });
 
+  it('uses non-secure cookie options for loopback IP development logins', async () => {
+    const cookies = new MockCookies();
+    const context = createApiContext(
+      'http://127.0.0.1/api/auth/login',
+      cookies,
+      buildLoginForm({
+        password: SITE_PASSWORD,
+      }),
+    );
+
+    await loginPost(context);
+
+    expect(cookies.setCalls[0]?.options).toMatchObject({
+      secure: false,
+    });
+  });
+
   it('falls back to All Trips when next points to an external site', async () => {
     const cookies = new MockCookies();
     const context = createApiContext(
@@ -143,6 +160,22 @@ describe('auth route handlers', () => {
         httpOnly: true,
         path: '/',
         sameSite: 'strict',
+        secure: false,
+      },
+    });
+  });
+
+  it('uses non-secure cookie options for loopback IP development logouts', async () => {
+    const cookies = new MockCookies({
+      [AUTH_COOKIE_NAME]: 'existing-cookie',
+    });
+    const context = createApiContext('http://127.0.0.1/api/auth/logout', cookies);
+
+    await logoutPost(context);
+
+    expect(cookies.deleteCalls[0]).toMatchObject({
+      name: AUTH_COOKIE_NAME,
+      options: {
         secure: false,
       },
     });

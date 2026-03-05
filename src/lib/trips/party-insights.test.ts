@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import { casschwlanck2026TripData } from '../../data/trips/casschwlanck-2026';
 import type { TripDataModule } from './types';
-import { getPartyClusterView, getPartyPersonaProfile } from './party-insights';
+import { getPartyClusterAnalysis, getPartyPersonaProfile } from './party-analytics';
+import { buildPartyClusterBoardView } from './party-view';
+
+function analyzeParty(module: TripDataModule) {
+  return getPartyClusterAnalysis(module);
+}
+
+function buildBoardView(module: TripDataModule) {
+  return buildPartyClusterBoardView(module);
+}
 
 const affinityFixture: TripDataModule = {
   summary: {
@@ -491,6 +500,45 @@ const cohortFixture: TripDataModule = {
       },
     },
   ],
+  partyGrouping: {
+    kind: 'named-cohorts',
+    cohorts: [
+      {
+        id: 'kids',
+        label: 'Kids',
+        memberIds: ['truman', 'charlie', 'margot', 'cassian'],
+      },
+      {
+        id: 'adults',
+        label: 'Adults',
+        memberIds: ['tytus', 'kelsey'],
+      },
+    ],
+  },
+};
+
+const invalidNamedCohortFixture: TripDataModule = {
+  ...affinityFixture,
+  summary: {
+    ...affinityFixture.summary,
+    id: 'invalid-cohort-fixture',
+    title: 'Invalid Cohort Fixture',
+  },
+  partyGrouping: {
+    kind: 'named-cohorts',
+    cohorts: [
+      {
+        id: 'group-a',
+        label: 'Group A',
+        memberIds: ['ava', 'ben', 'cara'],
+      },
+      {
+        id: 'group-b',
+        label: 'Group B',
+        memberIds: ['cara', 'drew', 'missing-member'],
+      },
+    ],
+  },
 };
 
 const soloMergeWithoutAttractionsFixture: TripDataModule = {
@@ -536,44 +584,44 @@ const emptyFixture: TripDataModule = {
   attractions: [],
 };
 
-describe('party insights', () => {
+describe('party analytics and view helpers', () => {
   it('orders stronger affinity pairs ahead of weaker overlap', () => {
-    const view = getPartyClusterView(affinityFixture);
-    const weakCrossGroupPair = view.pairs.find(
+    const analysis = analyzeParty(affinityFixture);
+    const weakCrossGroupPair = analysis.pairs.find(
       (pair) => pair.memberNames[0] === 'Ben' && pair.memberNames[1] === 'Drew',
     );
 
-    expect(view.pairs[0]?.memberNames).toEqual(['Ava', 'Ben']);
-    expect(view.pairs[0]?.similarityScore).toBeGreaterThan(
+    expect(analysis.pairs[0]?.memberNames).toEqual(['Ava', 'Ben']);
+    expect(analysis.pairs[0]?.similarityScore).toBeGreaterThan(
       weakCrossGroupPair?.similarityScore ?? 0,
     );
   });
 
   it('builds a 3-person cluster, a 2-person cluster, and a solo lane', () => {
-    const view = getPartyClusterView(affinityFixture);
+    const analysis = analyzeParty(affinityFixture);
 
-    expect(view.clusters.map((cluster) => cluster.memberNames)).toEqual([
+    expect(analysis.clusters.map((cluster) => cluster.memberNames)).toEqual([
       ['Ava', 'Ben', 'Cara'],
       ['Drew', 'Elle'],
       ['Finn'],
     ]);
-    expect(view.clusters.map((cluster) => cluster.size)).toEqual([3, 2, 1]);
+    expect(analysis.clusters.map((cluster) => cluster.size)).toEqual([3, 2, 1]);
   });
 
   it('uses stable alphabetical tie-breaking for equal-strength pairs', () => {
-    const view = getPartyClusterView(tieBreakFixture);
+    const analysis = analyzeParty(tieBreakFixture);
 
-    expect(view.pairs.slice(0, 2).map((pair) => pair.memberNames)).toEqual([
+    expect(analysis.pairs.slice(0, 2).map((pair) => pair.memberNames)).toEqual([
       ['Amy', 'Ben'],
       ['Cara', 'Drew'],
     ]);
   });
 
   it('derives shared favorites and title fallbacks for cluster cards', () => {
-    const affinityView = getPartyClusterView(affinityFixture);
+    const affinityView = buildBoardView(affinityFixture);
     const leadCluster = affinityView.clusters[0];
     const soloCluster = affinityView.clusters[2];
-    const longTitleView = getPartyClusterView(longTitleFixture);
+    const longTitleView = buildBoardView(longTitleFixture);
 
     expect(leadCluster?.title).toBe('Pirates + Mansion');
     expect(leadCluster?.sharedFavorites.map((favorite) => favorite.attractionLabel)).toEqual([
@@ -586,22 +634,22 @@ describe('party insights', () => {
   });
 
   it('assigns a leftover traveler into the nearest seeded cluster when they miss the seed threshold', () => {
-    const view = getPartyClusterView(leftoverAssignmentFixture);
+    const analysis = analyzeParty(leftoverAssignmentFixture);
 
-    expect(view.clusters).toHaveLength(1);
-    expect(view.clusters[0]?.memberNames).toEqual(['Alma', 'Beck', 'Casey']);
+    expect(analysis.clusters).toHaveLength(1);
+    expect(analysis.clusters[0]?.memberNames).toEqual(['Alma', 'Beck', 'Casey']);
   });
 
   it('merges extra solo clusters back down to three groups', () => {
-    const view = getPartyClusterView(mergeSoloFixture);
+    const analysis = analyzeParty(mergeSoloFixture);
 
-    expect(view.clusters).toHaveLength(3);
-    expect(view.clusters.some((cluster) => cluster.memberNames.includes('Gina'))).toBe(true);
-    expect(view.clusters.some((cluster) => cluster.size === 3)).toBe(true);
+    expect(analysis.clusters).toHaveLength(3);
+    expect(analysis.clusters.some((cluster) => cluster.memberNames.includes('Gina'))).toBe(true);
+    expect(analysis.clusters.some((cluster) => cluster.size === 3)).toBe(true);
   });
 
   it('falls back to a best-available anchor when a cluster has no shared favorites', () => {
-    const view = getPartyClusterView(noSharedFavoriteFixture);
+    const view = buildBoardView(noSharedFavoriteFixture);
     const cluster = view.clusters[0];
 
     expect(cluster?.sharedFavorites).toEqual([]);
@@ -611,24 +659,40 @@ describe('party insights', () => {
   });
 
   it('switches into cohort mode when the configured kid roster is present', () => {
-    const view = getPartyClusterView(cohortFixture);
+    const analysis = analyzeParty(cohortFixture);
+    const view = buildBoardView(cohortFixture);
 
-    expect(view.mode).toBe('cohorts');
-    expect(view.clusters.map((cluster) => cluster.eyebrow)).toEqual(['Kids', 'Adults']);
+    expect(analysis.mode).toBe('named-cohorts');
+    expect(analysis.clusters.map((cluster) => cluster.label)).toEqual(['Kids', 'Adults']);
     expect(view.railEyebrow).toBe('Kid vs adult gaps');
     expect(view.headlineInsight?.eyebrow).toBe('Sharpest split');
     expect(view.railItems.length).toBeGreaterThan(0);
   });
 
-  it('merges extra solo clusters down to three lanes when no attractions are loaded yet', () => {
-    const view = getPartyClusterView(soloMergeWithoutAttractionsFixture);
+  it('falls back to automatic clustering when a named cohort config is invalid', () => {
+    const analysis = analyzeParty(invalidNamedCohortFixture);
 
-    expect(view.mode).toBe('clusters');
-    expect(view.clusters).toHaveLength(3);
+    expect(analysis.mode).toBe('clusters');
+    expect(analysis.cohortContrasts).toBeNull();
+    expect(analysis.clusters.flatMap((cluster) => cluster.memberIds).sort()).toEqual([
+      'ava',
+      'ben',
+      'cara',
+      'drew',
+      'elle',
+      'finn',
+    ]);
+  });
+
+  it('merges extra solo clusters down to three lanes when no attractions are loaded yet', () => {
+    const analysis = analyzeParty(soloMergeWithoutAttractionsFixture);
+
+    expect(analysis.mode).toBe('clusters');
+    expect(analysis.clusters).toHaveLength(3);
     expect(
-      view.clusters.map((cluster) => cluster.size).sort((left, right) => left - right),
+      analysis.clusters.map((cluster) => cluster.size).sort((left, right) => left - right),
     ).toEqual([1, 1, 2]);
-    expect(view.clusters.flatMap((cluster) => cluster.memberNames).sort()).toEqual([
+    expect(analysis.clusters.flatMap((cluster) => cluster.memberNames).sort()).toEqual([
       'Adam',
       'Beth',
       'Cara',
@@ -637,17 +701,22 @@ describe('party insights', () => {
   });
 
   it('returns empty cluster data for an empty trip module', () => {
-    const view = getPartyClusterView(emptyFixture);
+    const analysis = analyzeParty(emptyFixture);
+    const view = buildBoardView(emptyFixture);
 
+    expect(analysis).toEqual({
+      clusters: [],
+      cohortContrasts: null,
+      mode: 'clusters',
+      pairs: [],
+      sharedPriorityAttractions: [],
+    });
     expect(view).toEqual({
       clusters: [],
       headlineInsight: null,
-      mode: 'clusters',
-      pairs: [],
       railEyebrow: 'Shared priorities',
       railItems: [],
       railTitle: 'Must-do pressure that still moves the whole board',
-      sharedPriorityAttractions: [],
     });
   });
 
@@ -671,22 +740,24 @@ describe('party insights', () => {
   });
 
   it('uses the explicit kids-versus-adults split for the 2026 trip', () => {
-    const view = getPartyClusterView(casschwlanck2026TripData);
+    const analysis = analyzeParty(casschwlanck2026TripData);
+    const view = buildBoardView(casschwlanck2026TripData);
 
-    expect(view.mode).toBe('cohorts');
-    expect(view.clusters).toHaveLength(2);
+    expect(analysis.mode).toBe('named-cohorts');
+    expect(analysis.clusters).toHaveLength(2);
     expect(
-      view.clusters.map((cluster) => ({ eyebrow: cluster.eyebrow, members: cluster.memberNames })),
+      analysis.clusters.map((cluster) => ({ label: cluster.label, members: cluster.memberNames })),
     ).toEqual([
       {
-        eyebrow: 'Kids',
+        label: 'Kids',
         members: ['Cassian', 'Charlie', 'Margot', 'Truman'],
       },
       {
-        eyebrow: 'Adults',
+        label: 'Adults',
         members: ['Collin', 'Kayla', 'Kelsey', 'Lisa', 'Tim', 'Tytus'],
       },
     ]);
+    expect(view.railEyebrow).toBe('Kid vs adult gaps');
     expect(view.headlineInsight?.eyebrow).toBe('Sharpest split');
     expect(new Set(view.railItems.map((item) => item.badge))).toEqual(new Set(['Adults', 'Kids']));
   });

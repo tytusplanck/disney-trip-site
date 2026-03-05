@@ -185,7 +185,6 @@ describe('trip detail helpers', () => {
     const overview = getPartyOverview(summaries);
 
     expect(summaries).toHaveLength(10);
-    expect(summaries[0]).toHaveProperty('styleId');
     expect(summaries[0]).toHaveProperty('styleDescription');
     expect(summaries.find((summary) => summary.member.name === 'Tytus')?.topChoices[0]).toBe(
       'Fantasmic!',
@@ -329,12 +328,10 @@ describe('trip detail helpers', () => {
     expect(summaries.find((summary) => summary.member.id === 'big')).toMatchObject({
       styleDescription:
         'Has a few intense priorities and a sharper no-thanks list than the rest of the group.',
-      styleId: 'big_swing_chaser',
       styleLabel: 'Big-swing chaser',
     });
     expect(summaries.find((summary) => summary.member.id === 'classic')).toMatchObject({
       styleDescription: 'Stacks up dependable favorites without needing a huge must-do list.',
-      styleId: 'classic_comfort_cruiser',
       styleLabel: 'Classic comfort cruiser',
     });
   });

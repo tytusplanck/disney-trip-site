@@ -5,12 +5,8 @@ import { checkPassword } from '../../../lib/auth/password';
 import {
   AUTH_COOKIE_NAME,
   createSessionCookieValue,
-  getSessionCookieOptions,
+  getSessionCookieOptionsForUrl,
 } from '../../../lib/auth/session';
-
-function getIsSecure(url: URL): boolean {
-  return url.protocol === 'https:' || url.hostname !== 'localhost';
-}
 
 function buildErrorLocation(url: URL, next: string): string {
   const loginUrl = new URL('/login', url);
@@ -42,7 +38,7 @@ export const POST: APIRoute = async (context) => {
   context.cookies.set(
     AUTH_COOKIE_NAME,
     createSessionCookieValue(SITE_PASSWORD),
-    getSessionCookieOptions(getIsSecure(context.url)),
+    getSessionCookieOptionsForUrl(context.url),
   );
 
   return context.redirect(next, 303);

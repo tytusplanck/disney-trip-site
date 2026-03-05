@@ -116,3 +116,11 @@ export function getSessionCookieOptions(isSecure: boolean) {
     secure: isSecure,
   };
 }
+
+export function isSecureSessionRequest(url: URL): boolean {
+  return url.protocol === 'https:';
+}
+
+export function getSessionCookieOptionsForUrl(url: URL) {
+  return getSessionCookieOptions(isSecureSessionRequest(url));
+}

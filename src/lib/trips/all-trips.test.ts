@@ -11,6 +11,7 @@ import {
   getTripInlineFacts,
   getTripLandingPath,
   getTripMobileFacts,
+  getTripRouteContext,
   getTripSectionPath,
 } from './all-trips';
 
@@ -65,9 +66,17 @@ describe('all trips helpers', () => {
     const planningTrip = findTripSummary(allTripsData.trips, 'casschwlanck', '2026');
     const upcomingTrip = findTripSummary(allTripsData.trips, 'casschwlanck', 'future-trip');
     const planningModule = findTripDataModule(allTripsData.modules, 'casschwlanck', '2026');
+    const routeContext = getTripRouteContext(
+      allTripsData.trips,
+      allTripsData.modules,
+      'casschwlanck',
+      '2026',
+    );
 
     expect(planningModule?.summary.id).toBe('2026');
     expect(findTripDataModule(allTripsData.modules, 'missing', 'trip')).toBeUndefined();
+    expect(routeContext?.trip.id).toBe('2026');
+    expect(routeContext?.tripModule.summary.id).toBe('2026');
 
     if (!planningTrip || !upcomingTrip) {
       throw new Error('Expected seeded trips to exist.');

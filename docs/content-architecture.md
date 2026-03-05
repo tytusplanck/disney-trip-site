@@ -5,16 +5,19 @@
 - Store trip summaries shared across multiple routes in [`/src/data/all-trips.ts`](../src/data/all-trips.ts).
 - Keep shared trip data typed so All Trips cards, stub routes, and future trip pages read the same source of truth.
 - Store full trip payloads as separate modules under [`/src/data/trips`](../src/data/trips) so `summary`, `party`, `schedule`, and `attractions` can evolve independently while sharing one interface.
+- Trip-specific grouping rules such as named party cohorts belong in the trip data module itself so reusable analytics stay free of hardcoded trip ids, member ids, or family-specific presets.
 - Use helpers in [`/src/lib/trips/all-trips.ts`](../src/lib/trips/all-trips.ts) to derive grouped sections, stat-strip values, and route paths instead of hard-coding those rules in Astro templates.
 - Use [`/src/lib/trips/details.ts`](../src/lib/trips/details.ts) to derive page-level view models such as rankings, party summaries, and schedule day cards from the typed trip modules.
 - Use [`/src/lib/trips/readiness.ts`](../src/lib/trips/readiness.ts) to decide when each protected section can leave placeholder mode; attractions, schedule, and party routes each unlock when their own arrays are populated.
 - When one planner route needs richer interactive filtering, add a dedicated view-model helper under [`/src/lib/trips`](../src/lib/trips) for that surface instead of forcing unrelated logic into `details.ts`.
+- Keep analytics and renderer DTOs separate when a planning surface needs both. Analytics helpers may expose richer testable results, but the object passed into a component should contain only the fields that component actually renders.
 
 ## Route-Owned Copy
 
 - Keep page-specific labels, metadata, and supporting copy in route-adjacent `.page.ts` modules.
 - Keep trip section copy in [`/src/pages/[family]/[trip]/trip-sections.page.ts`](../src/pages/[family]/[trip]/trip-sections.page.ts) so the planner routes stay in sync.
 - Treat Astro components as presentation-only wherever practical. Shared components should receive typed props, not own page copy decisions.
+- If route-owned copy needs status-aware behavior, resolve that in the route-adjacent page module or a route-owned helper rather than burying those decisions inside a shared component.
 
 ## Shell Composition
 

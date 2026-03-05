@@ -1,13 +1,7 @@
-import {
-  startTransition,
-  useDeferredValue,
-  useId,
-  useState,
-  type ChangeEvent,
-  type ReactNode,
-} from 'react';
+import { startTransition, useDeferredValue, useId, useState, type ChangeEvent } from 'react';
 import AttractionHeatmap from './AttractionHeatmap';
 import ConsensusBars from './ConsensusBars';
+import DisclosurePanel from './islands/DisclosurePanel';
 import type {
   AttractionsExplorerAttraction,
   AttractionsExplorerData,
@@ -90,35 +84,6 @@ function SignalList({
         <p className="attractions-explorer__signal-empty">{emptyText}</p>
       )}
     </section>
-  );
-}
-
-function DisclosurePanel({
-  label,
-  summary,
-  detail,
-  children,
-  className,
-}: {
-  label: string;
-  summary: string;
-  detail: string;
-  children: ReactNode;
-  className?: string;
-}) {
-  return (
-    <details className={['disclosure-panel', className].filter(Boolean).join(' ')} open>
-      <summary className="disclosure-panel__summary">
-        <span className="disclosure-panel__summary-copy">
-          <span className="disclosure-panel__label">{label}</span>
-          <span className="disclosure-panel__headline">{summary}</span>
-          <span className="disclosure-panel__detail">{detail}</span>
-        </span>
-        <span className="disclosure-panel__toggle" aria-hidden="true" />
-      </summary>
-
-      <div className="disclosure-panel__body">{children}</div>
-    </details>
   );
 }
 

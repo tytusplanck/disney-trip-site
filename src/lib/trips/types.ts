@@ -42,18 +42,25 @@ export interface TripBarStat {
   value: string;
 }
 
-export interface TripStubPage {
-  section: TripSection;
-  title: string;
-  calloutTitle: string;
-  calloutBody: string;
-  checklist: string[];
-}
-
 export interface TripPartyMember {
   id: string;
   name: string;
 }
+
+export interface TripPartyNamedCohort {
+  id: string;
+  label: string;
+  memberIds: string[];
+}
+
+export type TripPartyGroupingConfig =
+  | {
+      kind: 'auto-clusters';
+    }
+  | {
+      kind: 'named-cohorts';
+      cohorts: [TripPartyNamedCohort, TripPartyNamedCohort];
+    };
 
 export interface TripScheduleEntry {
   date: string;
@@ -77,4 +84,12 @@ export interface TripDataModule {
   party: TripPartyMember[];
   schedule: TripScheduleEntry[];
   attractions: TripAttractionPreference[];
+  partyGrouping?: TripPartyGroupingConfig;
+}
+
+export interface TripStubPage {
+  title: string;
+  calloutTitle: string;
+  calloutBody: string;
+  checklist: string[];
 }

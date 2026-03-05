@@ -10,13 +10,6 @@ interface AttractionsExplorerSummaryCard {
   detail: string;
 }
 
-interface AttractionsExplorerParkSummary {
-  parkLabel: string;
-  attractionCount: number;
-  averageScorePercent: number;
-  highConsensusCount: number;
-}
-
 export interface AttractionsExplorerAttraction {
   id: string;
   attractionLabel: string;
@@ -63,7 +56,6 @@ export interface AttractionsExplorerData {
   dayPresets: AttractionsExplorerDayPreset[];
   attractions: AttractionsExplorerAttraction[];
   parkLabels: string[];
-  parkSummaries: AttractionsExplorerParkSummary[];
 }
 
 export interface AttractionsExplorerView {
@@ -156,45 +148,6 @@ function getOrderedParkLabels(
       ...attractions.map((attraction) => attraction.parkLabel),
     ]),
   );
-}
-
-function getParkSummaries(
-  attractions: readonly AttractionsExplorerAttraction[],
-): AttractionsExplorerParkSummary[] {
-  const groups = new Map<string, AttractionsExplorerAttraction[]>();
-
-  attractions.forEach((attraction) => {
-    const group = groups.get(attraction.parkLabel);
-
-    if (group) {
-      group.push(attraction);
-      return;
-    }
-
-    groups.set(attraction.parkLabel, [attraction]);
-  });
-
-  return [...groups.entries()]
-    .map(([parkLabel, parkAttractions]) => {
-      const averageScorePercent = Math.round(
-        parkAttractions.reduce((total, attraction) => total + attraction.scorePercent, 0) /
-          parkAttractions.length,
-      );
-
-      return {
-        parkLabel,
-        attractionCount: parkAttractions.length,
-        averageScorePercent,
-        highConsensusCount: parkAttractions.filter((attraction) => attraction.tone === 'high')
-          .length,
-      };
-    })
-    .sort(
-      (left, right) =>
-        right.averageScorePercent - left.averageScorePercent ||
-        right.attractionCount - left.attractionCount ||
-        left.parkLabel.localeCompare(right.parkLabel),
-    );
 }
 
 function getMemberTier(
@@ -420,7 +373,6 @@ export function buildAttractionsExplorerData(module: TripDataModule): Attraction
     dayPresets,
     attractions,
     parkLabels: getOrderedParkLabels(dayPresets, attractions),
-    parkSummaries: getParkSummaries(attractions),
   };
 }
 

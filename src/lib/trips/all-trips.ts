@@ -12,6 +12,11 @@ const SECTION_ORDER: TripStatus[] = ['planning', 'upcoming', 'completed'];
 const MISSING_VALUE = '--';
 const DEFAULT_TRIP_SECTION: TripSection = 'attractions';
 
+export interface TripRouteContext {
+  trip: TripSummary;
+  tripModule: TripDataModule;
+}
+
 function formatCountLabel(count: number): string {
   return `${String(count)} ${count === 1 ? 'trip' : 'trips'}`;
 }
@@ -76,6 +81,18 @@ export function findTripDataModule(
   return modules.find(
     (module) => module.summary.groupId === groupId && module.summary.id === tripId,
   );
+}
+
+export function getTripRouteContext(
+  trips: TripSummary[],
+  modules: TripDataModule[],
+  groupId: string,
+  tripId: string,
+): TripRouteContext | null {
+  const trip = findTripSummary(trips, groupId, tripId);
+  const tripModule = findTripDataModule(modules, groupId, tripId);
+
+  return trip && tripModule ? { trip, tripModule } : null;
 }
 
 export function getTripSectionPath(

@@ -1,4 +1,4 @@
-import type { TripSection, TripStubPage } from '../lib/trips/types';
+import type { TripSection, TripStatus, TripStubPage } from '../lib/trips/types';
 
 export interface TripStubStatusCopy {
   eyebrow: string;
@@ -7,7 +7,6 @@ export interface TripStubStatusCopy {
 
 export const tripStubPages: Record<TripSection, TripStubPage> = {
   attractions: {
-    section: 'attractions',
     title: 'Ride picks',
     calloutTitle: 'Attraction planner reserved',
     calloutBody:
@@ -19,7 +18,6 @@ export const tripStubPages: Record<TripSection, TripStubPage> = {
     ],
   },
   schedule: {
-    section: 'schedule',
     title: 'Day-by-day plan',
     calloutTitle: 'Schedule layout held',
     calloutBody:
@@ -27,7 +25,6 @@ export const tripStubPages: Record<TripSection, TripStubPage> = {
     checklist: ['Day tabs', 'Session groupings', 'Event rows and tags'],
   },
   party: {
-    section: 'party',
     title: 'Traveler preferences',
     calloutTitle: 'Party components queued',
     calloutBody:
@@ -45,3 +42,7 @@ export const upcomingStubStatus: TripStubStatusCopy = {
   eyebrow: 'Planning Window',
   body: 'Each section stays in placeholder mode until that part of the trip data is ready for real page content.',
 };
+
+export function getTripStubStatusCopy(status: TripStatus): TripStubStatusCopy {
+  return status === 'upcoming' ? upcomingStubStatus : planningStubStatus;
+}

@@ -5,11 +5,7 @@ import type {
   TripPartyMember,
   TripScheduleEntry,
 } from './types';
-import {
-  getPartyPersonaProfile,
-  getPartyPreferenceCounts,
-  type PartyPersonaId,
-} from './party-insights';
+import { getPartyPersonaProfile, getPartyPreferenceCounts } from './party-analytics';
 
 export interface PreferenceMeta {
   tier: PreferenceTier;
@@ -50,7 +46,6 @@ export interface PartyTierSummary {
 
 export interface PartyMemberSummary {
   member: TripPartyMember;
-  styleId: PartyPersonaId;
   styleLabel: string;
   styleDescription: string;
   topChoices: string[];
@@ -213,7 +208,6 @@ export function getPartySummaries(module: TripDataModule): PartyMemberSummary[] 
 
     return {
       member,
-      styleId: persona.id,
       styleLabel: persona.label,
       styleDescription: persona.description,
       topChoices: getTopChoicesForMember(member.id, module.attractions),

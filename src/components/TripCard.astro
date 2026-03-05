@@ -3,7 +3,7 @@ import ChipList from './ChipList.astro';
 import StatusBadge from './StatusBadge.astro';
 import { getTripLandingPath, getTripSectionPath } from '../lib/trips/all-trips';
 import type { TripSummary } from '../lib/trips/types';
-import type { AllTripsCardCopy } from '../pages/index.page';
+import { getAllTripsCardPresentation, type AllTripsCardCopy } from '../pages/index.page';
 import type { AllTripsCardInsight } from '../lib/trips/details';
 
 interface Props {
@@ -15,7 +15,8 @@ interface Props {
 const { trip, copy, insights = [] } = Astro.props;
 
 const cardHref = getTripLandingPath(trip);
-const isPlanningTrip = trip.status === 'planning';
+const showInsights = trip.status === 'planning' && insights.length > 0;
+const cardPresentation = getAllTripsCardPresentation(copy, trip.status);
 
 const essentials = [
   { label: 'People', value: trip.partySize === null ? '--' : String(trip.partySize) },
@@ -61,7 +62,7 @@ const planningLinks = [
       </div>
 
       {
-        isPlanningTrip && insights.length > 0 ? (
+        showInsights ? (
           <div class="trip-card__narrative">
             <dl class="trip-card__insights">
               {insights.map((insight) => (
@@ -73,7 +74,9 @@ const planningLinks = [
             </dl>
           </div>
         ) : (
-          <p class="trip-card__summary-copy trip-card__summary-copy--future">{copy.futureNote}</p>
+          <p class="trip-card__summary-copy trip-card__summary-copy--future">
+            {cardPresentation.fallbackNote}
+          </p>
         )
       }
     </div>
@@ -91,13 +94,13 @@ const planningLinks = [
       </dl>
 
       <a class="trip-card__button" href={cardHref}>
-        {copy.primaryActionLabel}
+        {cardPresentation.primaryActionLabel}
       </a>
     </div>
   </div>
 
   {
-    isPlanningTrip ? (
+    cardPresentation.showShortcutLinks ? (
       <details class="trip-card__links-panel">
         <summary class="trip-card__links-summary">{copy.shortcutLabel}</summary>
         <div class="trip-card__links-body">
@@ -115,7 +118,7 @@ const planningLinks = [
       </details>
     ) : (
       <div class="trip-card__footer-note">
-        <p class="trip-card__future-note">{copy.futureNote}</p>
+        <p class="trip-card__future-note">{cardPresentation.fallbackNote}</p>
       </div>
     )
   }

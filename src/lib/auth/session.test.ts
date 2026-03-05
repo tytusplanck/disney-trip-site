@@ -4,6 +4,8 @@ import {
   AUTH_COOKIE_NAME,
   createSessionCookieValue,
   getSessionCookieOptions,
+  getSessionCookieOptionsForUrl,
+  isSecureSessionRequest,
   verifySessionCookieValue,
 } from './session';
 
@@ -75,6 +77,21 @@ describe('session helpers', () => {
       path: '/',
       sameSite: 'strict',
       secure: true,
+    });
+  });
+
+  it('marks only https requests as secure session requests', () => {
+    expect(isSecureSessionRequest(new URL('https://example.com/login'))).toBe(true);
+    expect(isSecureSessionRequest(new URL('http://localhost/login'))).toBe(false);
+    expect(isSecureSessionRequest(new URL('http://127.0.0.1/login'))).toBe(false);
+  });
+
+  it('derives cookie options directly from the request URL protocol', () => {
+    expect(getSessionCookieOptionsForUrl(new URL('https://example.com/login'))).toMatchObject({
+      secure: true,
+    });
+    expect(getSessionCookieOptionsForUrl(new URL('http://127.0.0.1/login'))).toMatchObject({
+      secure: false,
     });
   });
 });

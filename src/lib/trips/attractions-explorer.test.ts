@@ -15,7 +15,7 @@ const defaultState = {
 } as const;
 
 describe('attractions explorer helpers', () => {
-  it('builds trip-wide explorer data with scheduled park-day presets and park summaries', () => {
+  it('builds trip-wide explorer data with scheduled park-day presets', () => {
     const data = buildAttractionsExplorerData(attractionsExplorerFixtureTrip);
     const defaultView = deriveAttractionsExplorerView(data, defaultState);
 
@@ -23,11 +23,6 @@ describe('attractions explorer helpers', () => {
     expect(data.dayPresets.map((preset) => preset.parkLabel)).toEqual(['EPCOT', 'Magic Kingdom']);
     expect(data.dayPresets.map((preset) => preset.dayNumber)).toEqual([2, 4]);
     expect(data.parkLabels).toEqual(['EPCOT', 'Magic Kingdom']);
-    expect(data.parkSummaries[0]).toMatchObject({
-      parkLabel: 'EPCOT',
-      attractionCount: 3,
-      averageScorePercent: 82,
-    });
     expect(defaultView.contextHeading).toBe('Explorer Fixture Trip decision board');
     expect(defaultView.hasResults).toBe(true);
     expect(defaultView.topPicks[0]?.attractionLabel).toBe('Living with the Land');

@@ -2,6 +2,7 @@ import type {
   PreferenceTier,
   TripAttractionPreference,
   TripDataModule,
+  TripPartyGroupingConfig,
   TripPartyMember,
 } from './types';
 
@@ -28,24 +29,23 @@ export interface PartyAffinityPair {
   similarityScore: number;
 }
 
-interface PartyClusterFavorite {
+export interface PartyClusterFavorite {
   attractionLabel: string;
   parkLabel: string;
   priorityVotes: number;
   mustDoVotes: number;
 }
 
-interface PartySharedPriorityAttraction {
+export interface PartySharedPriorityAttraction {
   attractionLabel: string;
   parkLabel: string;
   mustDoVotes: number;
   consensusScore: number;
 }
 
-export interface PartyClusterCard {
+export interface PartyClusterAnalysisGroup {
   id: string;
-  eyebrow: string;
-  title: string;
+  label: string | null;
   memberIds: string[];
   memberNames: string[];
   size: number;
@@ -54,30 +54,26 @@ export interface PartyClusterCard {
   topAnchorAttraction: string;
   topAnchorParkLabel: string;
   dominantParkLabel: string;
-  description: string;
 }
 
-export interface PartyClusterRailItem {
-  badge: string;
-  detail: string;
-  title: string;
+export interface PartyCohortContrast {
+  attractionLabel: string;
+  parkLabel: string;
+  gapScore: number;
+  leadingCohortLabel: string;
+  leadingPriorityVotes: number;
+  leadingSize: number;
+  trailingCohortLabel: string;
+  trailingPriorityVotes: number;
+  trailingSize: number;
 }
 
-export interface PartyClusterHeadlineInsight {
-  detail: string;
-  eyebrow: string;
-  title: string;
-}
-
-export interface PartyClusterView {
-  headlineInsight: PartyClusterHeadlineInsight | null;
-  mode: 'cohorts' | 'clusters';
+export interface PartyClusterAnalysis {
+  mode: 'named-cohorts' | 'clusters';
   pairs: PartyAffinityPair[];
-  railEyebrow: string;
-  railItems: PartyClusterRailItem[];
-  railTitle: string;
-  clusters: PartyClusterCard[];
+  clusters: PartyClusterAnalysisGroup[];
   sharedPriorityAttractions: PartySharedPriorityAttraction[];
+  cohortContrasts: PartyCohortContrast[] | null;
 }
 
 const PARTY_PERSONA_PROFILES: Record<PartyPersonaId, PartyPersonaProfile> = {
@@ -125,20 +121,6 @@ const CLUSTER_SEED_THRESHOLD = 55;
 const CLUSTER_ADD_AVERAGE_THRESHOLD = 52;
 const CLUSTER_ADD_MINIMUM_THRESHOLD = 55;
 const CLUSTER_ASSIGN_THRESHOLD = 48;
-const COHORT_PRESETS: Record<
-  string,
-  {
-    adultsLabel: string;
-    kidsLabel: string;
-    kidMemberIds: string[];
-  }
-> = {
-  'casschwlanck/2026': {
-    adultsLabel: 'Adults',
-    kidsLabel: 'Kids',
-    kidMemberIds: ['truman', 'charlie', 'margot', 'cassian'],
-  },
-};
 
 function getMemberTier(attraction: TripAttractionPreference, memberId: string): PreferenceTier {
   return attraction.preferenceByPartyMemberId[memberId] ?? DEFAULT_TIER;
@@ -314,22 +296,61 @@ function sortMemberIds(memberIds: string[], memberById: Map<string, TripPartyMem
   );
 }
 
-function getCohortPreset(module: TripDataModule): {
-  adultsLabel: string;
-  kidsLabel: string;
-  kidMemberIds: string[];
-} | null {
-  const preset = COHORT_PRESETS[`${module.summary.groupId}/${module.summary.id}`];
-
-  if (!preset) {
+function getValidatedNamedCohorts(
+  config: TripPartyGroupingConfig | undefined,
+  party: TripPartyMember[],
+):
+  | [
+      { id: string; label: string; memberIds: string[] },
+      { id: string; label: string; memberIds: string[] },
+    ]
+  | null {
+  if (config?.kind !== 'named-cohorts') {
     return null;
   }
 
-  return preset.kidMemberIds.every((memberId) =>
-    module.party.some((member) => member.id === memberId),
-  )
-    ? preset
-    : null;
+  const [firstCohort, secondCohort] = config.cohorts;
+
+  if (
+    firstCohort.id.length === 0 ||
+    secondCohort.id.length === 0 ||
+    firstCohort.label.length === 0 ||
+    secondCohort.label.length === 0
+  ) {
+    return null;
+  }
+
+  const partyMemberIds = new Set(party.map((member) => member.id));
+  const firstMemberIds = new Set(firstCohort.memberIds);
+  const secondMemberIds = new Set(secondCohort.memberIds);
+
+  if (
+    firstMemberIds.size !== firstCohort.memberIds.length ||
+    secondMemberIds.size !== secondCohort.memberIds.length ||
+    firstMemberIds.size === 0 ||
+    secondMemberIds.size === 0
+  ) {
+    return null;
+  }
+
+  const combinedMemberIds = [...firstMemberIds, ...secondMemberIds];
+
+  if (combinedMemberIds.length !== party.length) {
+    return null;
+  }
+
+  if (new Set(combinedMemberIds).size !== combinedMemberIds.length) {
+    return null;
+  }
+
+  if (combinedMemberIds.some((memberId) => !partyMemberIds.has(memberId))) {
+    return null;
+  }
+
+  return [
+    { ...firstCohort, memberIds: [...firstCohort.memberIds] },
+    { ...secondCohort, memberIds: [...secondCohort.memberIds] },
+  ];
 }
 
 function getPriorityVotesForMembers(
@@ -341,16 +362,6 @@ function getPriorityVotesForMembers(
   return {
     averageTier: tiers.reduce((total, tier) => total + tier, 0) / Math.max(memberIds.length, 1),
     priorityVotes: tiers.filter((tier) => tier <= 2).length,
-  };
-}
-
-function getCohortDescriptions(
-  kidsTopAnchor: string,
-  adultsTopAnchor: string,
-): { adultsDescription: string; kidsDescription: string } {
-  return {
-    adultsDescription: `Carries more of the headliner pull, with ${adultsTopAnchor} setting the adult pace.`,
-    kidsDescription: `Keeps the family-side picks in the conversation, with ${kidsTopAnchor} anchoring the kid stack.`,
   };
 }
 
@@ -712,66 +723,6 @@ function getDominantParkLabel(
   );
 }
 
-function formatMemberNames(memberNames: string[]): string {
-  const firstMemberName = memberNames[0] ?? 'This group';
-  const secondMemberName = memberNames[1] ?? firstMemberName;
-
-  if (memberNames.length === 0) {
-    return 'This group';
-  }
-
-  if (memberNames.length === 1) {
-    return firstMemberName;
-  }
-
-  if (memberNames.length === 2) {
-    return `${firstMemberName} and ${secondMemberName}`;
-  }
-
-  return `${firstMemberName}, ${secondMemberName}, and ${String(memberNames.length - 2)} others`;
-}
-
-function getClusterTitle(
-  memberNames: string[],
-  sharedFavorites: PartyClusterFavorite[],
-  topAnchorAttraction: string,
-): string {
-  const firstMemberName = memberNames[0] ?? 'This group';
-
-  if (memberNames.length === 1) {
-    return `${firstMemberName}'s lane`;
-  }
-
-  if (sharedFavorites.length >= 2) {
-    const firstFavorite = sharedFavorites[0];
-    const secondFavorite = sharedFavorites[1];
-
-    if (firstFavorite && secondFavorite) {
-      const combinedTitle = `${firstFavorite.attractionLabel} + ${secondFavorite.attractionLabel}`;
-
-      if (combinedTitle.length <= 42) {
-        return combinedTitle;
-      }
-    }
-  }
-
-  return `${topAnchorAttraction} cluster`;
-}
-
-function getClusterDescription(
-  memberNames: string[],
-  topAnchorAttraction: string,
-  dominantParkLabel: string,
-): string {
-  const firstMemberName = memberNames[0] ?? 'This group';
-
-  if (memberNames.length === 1) {
-    return `${firstMemberName} breaks from the pack around ${topAnchorAttraction} and a more ${dominantParkLabel}-leaning ride mix.`;
-  }
-
-  return `${formatMemberNames(memberNames)} line up most closely around ${topAnchorAttraction}, with ${dominantParkLabel} carrying the strongest overlap.`;
-}
-
 function getAttractionMustDoVoteCount(attraction: TripAttractionPreference): number {
   return Object.values(attraction.preferenceByPartyMemberId).filter((tier) => tier === 1).length;
 }
@@ -795,50 +746,44 @@ function buildSharedPriorityAttractions(
     .slice(0, SHARED_PRIORITY_LIMIT);
 }
 
-function buildClusterRailItems(
-  sharedPriorityAttractions: PartySharedPriorityAttraction[],
-): PartyClusterRailItem[] {
-  return sharedPriorityAttractions.map((attraction, index) => ({
-    badge: `#${String(index + 1)}`,
-    detail: `${String(attraction.mustDoVotes)} must-do calls • ${String(attraction.consensusScore)} points • ${attraction.parkLabel}`,
-    title: attraction.attractionLabel,
-  }));
-}
-
-function buildCohortContrastView(
+function buildCohortContrasts(
   attractions: TripAttractionPreference[],
-  kidsMemberIds: string[],
-  adultsMemberIds: string[],
-  kidsLabel: string,
-  adultsLabel: string,
-): {
-  headlineInsight: PartyClusterHeadlineInsight;
-  railItems: PartyClusterRailItem[];
-} {
+  firstCohortMemberIds: string[],
+  secondCohortMemberIds: string[],
+  firstCohortLabel: string,
+  secondCohortLabel: string,
+): PartyCohortContrast[] {
   const contrastAttractions = [...attractions]
     .map((attraction) => {
-      const kidsStats = getPriorityVotesForMembers(attraction, kidsMemberIds);
-      const adultsStats = getPriorityVotesForMembers(attraction, adultsMemberIds);
-      const kidsShare = kidsStats.priorityVotes / Math.max(kidsMemberIds.length, 1);
-      const adultsShare = adultsStats.priorityVotes / Math.max(adultsMemberIds.length, 1);
-      const shareGap = Math.abs(kidsShare - adultsShare);
-      const averageTierGap = Math.abs(kidsStats.averageTier - adultsStats.averageTier) / 4;
-      const leaningLabel =
-        kidsShare > adultsShare ||
-        (kidsShare === adultsShare && kidsStats.averageTier < adultsStats.averageTier)
-          ? kidsLabel
-          : adultsLabel;
+      const firstCohortStats = getPriorityVotesForMembers(attraction, firstCohortMemberIds);
+      const secondCohortStats = getPriorityVotesForMembers(attraction, secondCohortMemberIds);
+      const firstCohortShare =
+        firstCohortStats.priorityVotes / Math.max(firstCohortMemberIds.length, 1);
+      const secondCohortShare =
+        secondCohortStats.priorityVotes / Math.max(secondCohortMemberIds.length, 1);
+      const shareGap = Math.abs(firstCohortShare - secondCohortShare);
+      const averageTierGap =
+        Math.abs(firstCohortStats.averageTier - secondCohortStats.averageTier) / 4;
+      const firstCohortLeads =
+        firstCohortShare > secondCohortShare ||
+        (firstCohortShare === secondCohortShare &&
+          firstCohortStats.averageTier < secondCohortStats.averageTier);
 
       return {
         attractionLabel: attraction.attractionLabel,
         gapScore: shareGap * 0.7 + averageTierGap * 0.3,
-        leaningLabel,
         parkLabel: attraction.parkLabel,
-        adultsPriorityVotes: adultsStats.priorityVotes,
-        adultsSize: adultsMemberIds.length,
+        leadingCohortLabel: firstCohortLeads ? firstCohortLabel : secondCohortLabel,
+        leadingPriorityVotes: firstCohortLeads
+          ? firstCohortStats.priorityVotes
+          : secondCohortStats.priorityVotes,
+        leadingSize: firstCohortLeads ? firstCohortMemberIds.length : secondCohortMemberIds.length,
+        trailingCohortLabel: firstCohortLeads ? secondCohortLabel : firstCohortLabel,
+        trailingPriorityVotes: firstCohortLeads
+          ? secondCohortStats.priorityVotes
+          : firstCohortStats.priorityVotes,
+        trailingSize: firstCohortLeads ? secondCohortMemberIds.length : firstCohortMemberIds.length,
         consensusScore: attraction.consensusScore,
-        kidsPriorityVotes: kidsStats.priorityVotes,
-        kidsSize: kidsMemberIds.length,
       };
     })
     .sort(
@@ -848,40 +793,39 @@ function buildCohortContrastView(
         left.attractionLabel.localeCompare(right.attractionLabel),
     );
 
-  const topContrast = contrastAttractions[0];
-  const contrastingPick = contrastAttractions.find(
-    (attraction) => attraction.leaningLabel !== topContrast?.leaningLabel,
+  return contrastAttractions.map(
+    ({
+      attractionLabel,
+      gapScore,
+      leadingCohortLabel,
+      leadingPriorityVotes,
+      leadingSize,
+      parkLabel,
+      trailingCohortLabel,
+      trailingPriorityVotes,
+      trailingSize,
+    }) => ({
+      attractionLabel,
+      gapScore,
+      leadingCohortLabel,
+      leadingPriorityVotes,
+      leadingSize,
+      parkLabel,
+      trailingCohortLabel,
+      trailingPriorityVotes,
+      trailingSize,
+    }),
   );
-  const curatedContrasts = [topContrast, contrastingPick, ...contrastAttractions].filter(
-    (attraction, index, array): attraction is (typeof contrastAttractions)[number] =>
-      attraction !== undefined &&
-      array.findIndex((candidate) => candidate?.attractionLabel === attraction.attractionLabel) ===
-        index,
-  );
-
-  return {
-    headlineInsight: {
-      eyebrow: 'Sharpest split',
-      title: `${topContrast?.leaningLabel ?? kidsLabel} lean hardest toward ${topContrast?.attractionLabel ?? 'the current top contrast'}`,
-      detail: `${String(topContrast?.kidsPriorityVotes ?? 0)}/${String(topContrast?.kidsSize ?? 0)} kids marked it Must Do or Preferred, versus ${String(topContrast?.adultsPriorityVotes ?? 0)}/${String(topContrast?.adultsSize ?? 0)} adults.`,
-    },
-    railItems: curatedContrasts.slice(0, 4).map((attraction) => ({
-      badge: attraction.leaningLabel,
-      detail: `${String(attraction.kidsPriorityVotes)}/${String(attraction.kidsSize)} kids priority • ${String(attraction.adultsPriorityVotes)}/${String(attraction.adultsSize)} adults priority • ${attraction.parkLabel}`,
-      title: attraction.attractionLabel,
-    })),
-  };
 }
 
-function buildClusterCard(
+function buildClusterAnalysisGroup(
   id: string,
-  eyebrow: string,
+  label: string | null,
   memberIds: string[],
   memberById: Map<string, TripPartyMember>,
   pairLookup: Map<string, PartyAffinityPair>,
   attractions: TripAttractionPreference[],
-  descriptionOverride?: string,
-): PartyClusterCard {
+): PartyClusterAnalysisGroup {
   const memberNames = memberIds.map((memberId) => memberById.get(memberId)?.name ?? memberId);
   const sharedFavorites = getClusterSharedFavorites(memberIds, attractions);
   const topAnchor = getTopAnchorAttraction(memberIds, attractions, sharedFavorites);
@@ -889,17 +833,13 @@ function buildClusterCard(
 
   return {
     averageAffinityScore: getAverageClusterAffinity(pairLookup, memberIds),
-    description:
-      descriptionOverride ??
-      getClusterDescription(memberNames, topAnchor.attractionLabel, dominantParkLabel),
     dominantParkLabel,
-    eyebrow,
     id,
+    label,
     memberIds,
     memberNames,
     sharedFavorites,
     size: memberIds.length,
-    title: getClusterTitle(memberNames, sharedFavorites, topAnchor.attractionLabel),
     topAnchorAttraction: topAnchor.attractionLabel,
     topAnchorParkLabel: topAnchor.parkLabel,
   };
@@ -947,68 +887,47 @@ export function getPartyPersonaProfile(
   return PARTY_PERSONA_PROFILES.balanced_explorer;
 }
 
-export function getPartyClusterView(module: TripDataModule): PartyClusterView {
+export function getPartyClusterAnalysis(module: TripDataModule): PartyClusterAnalysis {
   const memberById = new Map(module.party.map((member) => [member.id, member]));
   const pairs = buildAffinityPairs(module.party, module.attractions);
   const pairLookup = buildPairLookup(pairs);
   const sharedPriorityAttractions = buildSharedPriorityAttractions(module.attractions);
-  const cohortPreset = getCohortPreset(module);
+  const namedCohorts = getValidatedNamedCohorts(module.partyGrouping, module.party);
 
-  if (cohortPreset) {
-    const kidsMemberIds = sortMemberIds(cohortPreset.kidMemberIds, memberById);
-    const adultsMemberIds = sortMemberIds(
-      module.party
-        .map((member) => member.id)
-        .filter((memberId) => !cohortPreset.kidMemberIds.includes(memberId)),
-      memberById,
-    );
-    const cohortDescriptions = getCohortDescriptions(
-      getTopAnchorAttraction(
-        kidsMemberIds,
-        module.attractions,
-        getClusterSharedFavorites(kidsMemberIds, module.attractions),
-      ).attractionLabel,
-      getTopAnchorAttraction(
-        adultsMemberIds,
-        module.attractions,
-        getClusterSharedFavorites(adultsMemberIds, module.attractions),
-      ).attractionLabel,
-    );
-    const cohortContrastView = buildCohortContrastView(
+  if (namedCohorts) {
+    const [firstCohort, secondCohort] = namedCohorts;
+    const firstCohortMemberIds = sortMemberIds(firstCohort.memberIds, memberById);
+    const secondCohortMemberIds = sortMemberIds(secondCohort.memberIds, memberById);
+    const cohortContrasts = buildCohortContrasts(
       module.attractions,
-      kidsMemberIds,
-      adultsMemberIds,
-      cohortPreset.kidsLabel,
-      cohortPreset.adultsLabel,
+      firstCohortMemberIds,
+      secondCohortMemberIds,
+      firstCohort.label,
+      secondCohort.label,
     );
 
     return {
       clusters: [
-        buildClusterCard(
-          'cohort-kids',
-          cohortPreset.kidsLabel,
-          kidsMemberIds,
+        buildClusterAnalysisGroup(
+          firstCohort.id,
+          firstCohort.label,
+          firstCohortMemberIds,
           memberById,
           pairLookup,
           module.attractions,
-          cohortDescriptions.kidsDescription,
         ),
-        buildClusterCard(
-          'cohort-adults',
-          cohortPreset.adultsLabel,
-          adultsMemberIds,
+        buildClusterAnalysisGroup(
+          secondCohort.id,
+          secondCohort.label,
+          secondCohortMemberIds,
           memberById,
           pairLookup,
           module.attractions,
-          cohortDescriptions.adultsDescription,
         ),
       ],
-      headlineInsight: cohortContrastView.headlineInsight,
-      mode: 'cohorts',
+      cohortContrasts,
+      mode: 'named-cohorts',
       pairs,
-      railEyebrow: 'Kid vs adult gaps',
-      railItems: cohortContrastView.railItems,
-      railTitle: 'Where the two groups pull the day in different directions',
       sharedPriorityAttractions,
     };
   }
@@ -1021,16 +940,13 @@ export function getPartyClusterView(module: TripDataModule): PartyClusterView {
   );
 
   return {
-    headlineInsight: null,
+    cohortContrasts: null,
     mode: 'clusters',
     pairs,
-    railEyebrow: 'Shared priorities',
-    railItems: buildClusterRailItems(sharedPriorityAttractions),
-    railTitle: 'Must-do pressure that still moves the whole board',
     clusters: clusterMemberIds.map((memberIds, index) =>
-      buildClusterCard(
+      buildClusterAnalysisGroup(
         `cluster-${String(index + 1)}`,
-        'Affinity cluster',
+        null,
         memberIds,
         memberById,
         pairLookup,

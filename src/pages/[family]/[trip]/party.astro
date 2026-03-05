@@ -6,29 +6,35 @@ import PartyClusterBoard from '../../../components/PartyClusterBoard.astro';
 import TripPageShell from '../../../components/shells/TripPageShell.astro';
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
 import { allTripsData } from '../../../data/all-trips';
-import { planningStubStatus, tripStubPages, upcomingStubStatus } from '../../../data/trip-stubs';
-import { findTripSummary, findTripDataModule } from '../../../lib/trips/all-trips';
+import { getTripStubStatusCopy, tripStubPages } from '../../../data/trip-stubs';
+import { getTripRouteContext } from '../../../lib/trips/all-trips';
 import { getPartySummaries } from '../../../lib/trips/details';
-import { getPartyClusterView } from '../../../lib/trips/party-insights';
+import { buildPartyClusterBoardView } from '../../../lib/trips/party-view';
 import { hasTripSectionContent } from '../../../lib/trips/readiness';
 import { tripSectionTitles } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
-const trip = findTripSummary(allTripsData.trips, familyId, tripId);
-const tripModule = findTripDataModule(allTripsData.modules, familyId, tripId);
+const routeContext = getTripRouteContext(
+  allTripsData.trips,
+  allTripsData.modules,
+  familyId,
+  tripId,
+);
 
-if (!trip || !tripModule) {
+if (!routeContext) {
   return Astro.redirect('/');
 }
 
+const { trip, tripModule } = routeContext;
+
 const stubPage = tripStubPages.party;
 const pageTitle = tripSectionTitles.party;
-const statusCopy = trip.status === 'upcoming' ? upcomingStubStatus : planningStubStatus;
+const statusCopy = getTripStubStatusCopy(trip.status);
 const tripIsStub = !hasTripSectionContent(tripModule, 'party');
 const hasAttractionPreferences = tripModule.attractions.length > 0;
 const partySummaries = getPartySummaries(tripModule);
-const clusterView = getPartyClusterView(tripModule);
+const clusterView = buildPartyClusterBoardView(tripModule);
 ---
 
 {
