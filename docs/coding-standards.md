@@ -40,6 +40,11 @@ This repository is a private Disney trip site built to be maintained primarily b
 - Put presentation in stylesheet classes and CSS variables, not component-local style declarations
 - When a visual direction changes, update the shared stylesheet and keep the route markup class-based
 - Theme variants such as family gradients must be mapped through classes or data attributes, never inline styles
+- Keep surface styling intentional with token tiers:
+  - `--surface-base` for regular containers
+  - `--surface-elevated` for important grouped controls
+  - `--surface-featured` for primary, high-attention panels only
+- Avoid reusing one heavy card treatment for every section; reserve shadows and accent treatments for truly primary surfaces
 
 ## Auth and Secrecy Rules
 
@@ -69,6 +74,7 @@ This repository is a private Disney trip site built to be maintained primarily b
 - Update `/docs` when workflows, auth, or coding conventions change
 - If a route changes its content model, document the new page-object or shared-data convention here
 - Keep content architecture notes current when shared trip data or shell composition patterns change
+- If disclosure behavior or responsive defaults change, document the data attributes and route-level defaults in `/docs/content-architecture.md`
 
 ## Vercel Expectations
 

@@ -54,14 +54,15 @@ const fullMobileTitle = mobileTitle ?? railLabel;
     {
       headerKind !== 'trip' && (
         <section class="site-header__rail" aria-label={railLabel}>
-          <div class="site-header__stats site-header__stats--grid">
+          <p class="site-header__rail-title">{railLabel}</p>
+          <dl class="site-header__stats site-header__stats--summary">
             {statItems.map((item) => (
               <div class="site-header__stat">
-                <strong class="site-header__rail-value">{item.value}</strong>
-                <span class="site-header__rail-label">{item.label}</span>
+                <dt class="site-header__rail-label">{item.label}</dt>
+                <dd class="site-header__rail-value">{item.value}</dd>
               </div>
             ))}
-          </div>
+          </dl>
         </section>
       )
     }
@@ -78,7 +79,12 @@ const fullMobileTitle = mobileTitle ?? railLabel;
         </p>
         {hasMobileFacts && (
           <>
-            <details class="site-header__mobile-facts-toggle" data-mobile-collapsed open>
+            <details
+              class="site-header__mobile-facts-toggle"
+              data-mobile-behavior="collapsed"
+              data-desktop-default-open="true"
+              open
+            >
               <summary class="site-header__mobile-facts-summary">{mobileFactsLabel}</summary>
             </details>
             <div class="site-header__mobile-facts-panel">
@@ -99,7 +105,12 @@ const fullMobileTitle = mobileTitle ?? railLabel;
         <BrandMark />
         {hasMobileFacts && (
           <>
-            <details class="site-header__mobile-facts-toggle" data-mobile-collapsed open>
+            <details
+              class="site-header__mobile-facts-toggle"
+              data-mobile-behavior="collapsed"
+              data-desktop-default-open="true"
+              open
+            >
               <summary class="site-header__mobile-facts-summary">{mobileFactsLabel}</summary>
             </details>
             <div class="site-header__mobile-facts-panel">

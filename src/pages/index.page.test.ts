@@ -6,18 +6,18 @@ describe('all trips page copy helpers', () => {
     expect(getAllTripsCardPresentation(allTripsPage.card, 'planning')).toEqual({
       fallbackNote:
         'Planner insights will appear here once the ride scores, itinerary, and traveler signals are loaded.',
-      primaryActionLabel: 'Open planner',
+      primaryActionLabel: 'View planner',
       showShortcutLinks: true,
     });
     expect(getAllTripsCardPresentation(allTripsPage.card, 'upcoming')).toEqual({
       fallbackNote: 'Planner sections will open here once this trip starts taking shape.',
-      primaryActionLabel: 'Open planner',
+      primaryActionLabel: 'View planner',
       showShortcutLinks: false,
     });
     expect(getAllTripsCardPresentation(allTripsPage.card, 'completed')).toEqual({
       fallbackNote:
         'Archive notes and the final planner state will stay here once this trip wraps.',
-      primaryActionLabel: 'Open archive',
+      primaryActionLabel: 'View archive',
       showShortcutLinks: false,
     });
   });

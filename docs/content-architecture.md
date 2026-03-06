@@ -27,8 +27,20 @@
 - Planning trip tabs render inside the shared content shell so attractions, schedule, and party pages all open with the same content-width embedded tab strip.
 - Desktop trip pages use a lean shared header for brand and breadcrumb context, with the section tabs starting the main content column instead of living in the full-width header.
 - Trip shells use a compact mobile header pattern: breadcrumbs collapse to a back link, trip facts move into an inline disclosure, and the same content-embedded tabs stay directly above the page body.
-- Dense planning views stay fully available, but sections such as the full attraction matrix, full itinerary, and traveler cards collapse through disclosure panels on smaller screens.
+- Disclosure panels use explicit responsive behavior via `data-mobile-behavior`:
+  - `expanded`: open by default on mobile first load
+  - `collapsed`: collapsed by default on mobile first load
+  - `match-desktop`: mirror the desktop `open` default
+- The schedule itinerary and party traveler profile disclosures default to `expanded` on mobile so pages never feel empty on first view.
+- The attractions scoring guide and deep-dive ranking/matrix disclosures default to `collapsed` on mobile to keep the first screen focused.
 - This split keeps route layouts flexible without duplicating document scaffolding.
+
+## Attractions Filter IA
+
+- The attractions decision board keeps a two-layer filter model:
+  - Always visible controls: quick scope, park filter, and search
+  - Advanced disclosure controls: traveler, area filter, and sentiment
+- This preserves full filtering power while reducing first-view cognitive load.
 
 ## Theme Mapping
 

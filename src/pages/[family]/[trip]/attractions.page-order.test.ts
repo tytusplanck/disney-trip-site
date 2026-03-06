@@ -17,6 +17,7 @@ describe('attractions page section order', () => {
     expect(scoringSystemIndex).toBeGreaterThan(-1);
     expect(decisionBoardIndex).toBeGreaterThan(-1);
     expect(scoringSystemIndex).toBeLessThan(decisionBoardIndex);
+    expect(source.includes('summary="See scoring rules"')).toBe(true);
     expect(source.includes('How the board turns preferences into points')).toBe(false);
     expect(source.includes('Filter down to the right ride stack for the day')).toBe(false);
   });

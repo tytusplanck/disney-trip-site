@@ -70,19 +70,19 @@ const clusterView = buildPartyClusterBoardView(tripModule);
         <div class="trip-page-section__header">
           <div class="trip-page-section__copy">
             <p class="page-label">Traveler cards</p>
-            <h2 class="section-title">Open the full traveler breakdown when you need it</h2>
+            <h2 class="section-title">Traveler breakdown, ready when you need detail</h2>
           </div>
         </div>
 
         <DisclosurePanel
           label="Traveler cards"
-          summary="Open every traveler profile"
+          summary="See all traveler profiles"
           detail={
             hasAttractionPreferences
               ? `${partySummaries.length} travelers with full preference counts`
               : `${partySummaries.length} travelers currently loaded from reservations`
           }
-          mobileCollapsed
+          mobileBehavior="expanded"
         >
           <div class="party-detail-grid">
             {partySummaries.map((summary) => (

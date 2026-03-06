@@ -64,8 +64,9 @@ const scoreGuide = ([1, 2, 3, 4, 5] as const).map((tier) => ({
       <section class="trip-page-section">
         <DisclosurePanel
           label="Scoring system"
-          summary="Open the points guide"
+          summary="See scoring rules"
           detail={`How ${tripModule.party.length} ballots become ${maxScoreLabel} max points`}
+          mobileBehavior="collapsed"
           defaultOpen={false}
         >
           <AttractionsScoreGuide

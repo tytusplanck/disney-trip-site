@@ -19,5 +19,7 @@ describe('trip site header markup', () => {
     expect(source.includes('site-header__mobile-back')).toBe(true);
     expect(source.includes('site-header__mobile-title')).toBe(true);
     expect(source.includes('site-header__mobile-facts-panel')).toBe(true);
+    expect(source.includes('data-mobile-behavior="collapsed"')).toBe(true);
+    expect(source.includes('data-desktop-default-open="true"')).toBe(true);
   });
 });

@@ -19,6 +19,8 @@ const { title, description = siteShellData.defaultDescription, noIndex = true } 
     <meta name="description" content={description} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate icon" href="/favicon.ico" />
     <link
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400;600&display=swap"
       rel="stylesheet"
@@ -42,7 +44,7 @@ const { title, description = siteShellData.defaultDescription, noIndex = true } 
       const disclosureQuery = window.matchMedia('(max-width: 720px)');
 
       const syncDisclosurePanels = () => {
-        document.querySelectorAll('details[data-mobile-collapsed]').forEach((panel) => {
+        document.querySelectorAll('details[data-mobile-behavior]').forEach((panel) => {
           if (!(panel instanceof HTMLDetailsElement)) {
             return;
           }
@@ -51,7 +53,15 @@ const { title, description = siteShellData.defaultDescription, noIndex = true } 
             return;
           }
 
-          panel.open = !disclosureQuery.matches;
+          const behavior = panel.dataset['mobileBehavior'] ?? 'match-desktop';
+          const desktopDefaultOpen = panel.dataset['desktopDefaultOpen'] !== 'false';
+
+          if (!disclosureQuery.matches || behavior === 'match-desktop') {
+            panel.open = desktopDefaultOpen;
+            return;
+          }
+
+          panel.open = behavior === 'expanded';
         });
       };
 
@@ -60,7 +70,7 @@ const { title, description = siteShellData.defaultDescription, noIndex = true } 
           return;
         }
 
-        const summary = event.target.closest('details[data-mobile-collapsed] > summary');
+        const summary = event.target.closest('details[data-mobile-behavior] > summary');
 
         if (summary?.parentElement instanceof HTMLDetailsElement) {
           summary.parentElement.dataset['userToggled'] = 'true';

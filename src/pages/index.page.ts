@@ -68,7 +68,7 @@ export const allTripsPage: AllTripsPage = {
   headerMetaLabel: 'All Trips',
   intro: {
     label: 'All Trips',
-    title: 'Pick a trip.',
+    title: 'Choose a trip.',
     body: "See the schedule, rides, and who's going.",
   },
   stats: {
@@ -87,9 +87,9 @@ export const allTripsPage: AllTripsPage = {
   },
   card: {
     primaryActionLabelByStatus: {
-      planning: 'Open planner',
-      upcoming: 'Open planner',
-      completed: 'Open archive',
+      planning: 'View planner',
+      upcoming: 'View planner',
+      completed: 'View archive',
     },
     fallbackNoteByStatus: {
       planning:

@@ -1,6 +1,6 @@
 .trip-page-shell__main {
   display: grid;
-  gap: 2rem;
+  gap: 2.15rem;
 }
 
 .trip-page-section {
@@ -27,8 +27,8 @@
 .trip-page-section__note {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
 }
@@ -48,10 +48,25 @@
 .party-cluster-rail,
 .attractions-explorer__panel,
 .attractions-explorer__card {
-  border: 1px solid var(--border2);
+  border: 1px solid rgb(var(--tone-slate-rgb) / 0.18);
   border-radius: 0.9rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent), var(--surface);
-  box-shadow: var(--shadow-soft);
+  background: var(--surface-base);
+  box-shadow: none;
+}
+
+.disclosure-panel,
+.attractions-explorer__panel,
+.party-cluster-highlight,
+.party-cluster-rail {
+  background:
+    linear-gradient(180deg, rgb(var(--tone-slate-rgb) / 0.08), transparent 24%),
+    var(--surface-elevated);
+  border-color: rgb(var(--tone-slate-rgb) / 0.24);
+}
+
+.attractions-explorer__panel,
+.party-cluster-highlight {
+  box-shadow: var(--shadow-elevated);
 }
 
 .detail-stat-card {
@@ -94,8 +109,8 @@
 .attractions-score-card__eyebrow {
   margin: 0 0 0.65rem;
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--accent);
 }
@@ -174,8 +189,8 @@
 .attractions-score-row__detail,
 .attractions-score-row__points {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.08em;
+  font-size: 0.73rem;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
 }
 
@@ -217,14 +232,14 @@
 
 .disclosure-panel__label {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--accent);
 }
 
 .disclosure-panel__headline {
-  font-size: 1.06rem;
+  font-size: 1.12rem;
   font-weight: 500;
   color: var(--text);
 }
@@ -970,10 +985,10 @@
   display: grid;
   gap: 1rem;
   padding: 1.15rem;
-  border: 1px solid var(--border2);
+  border: 1px solid rgb(var(--tone-slate-rgb) / 0.16);
   border-radius: 0.9rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent), var(--surface);
-  box-shadow: var(--shadow-soft);
+  background: var(--surface-base);
+  box-shadow: none;
 }
 
 .schedule-card__day,
@@ -1056,10 +1071,10 @@
   display: grid;
   gap: 1rem;
   padding: 1.15rem;
-  border: 1px solid var(--border2);
+  border: 1px solid rgb(var(--tone-slate-rgb) / 0.16);
   border-radius: 0.9rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent), var(--surface);
-  box-shadow: var(--shadow-soft);
+  background: var(--surface-base);
+  box-shadow: none;
 }
 
 .party-detail-card__avatar {
@@ -1220,12 +1235,12 @@
 
 .attractions-explorer {
   display: grid;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .attractions-explorer__panel,
 .attractions-explorer__card {
-  padding: 1.15rem 1.2rem;
+  padding: 1.15rem 1.25rem;
 }
 
 .attractions-explorer__panel {
@@ -1273,7 +1288,7 @@
 
 .attractions-explorer__filters {
   display: grid;
-  gap: 1rem;
+  gap: 1.05rem;
 }
 
 .attractions-explorer__filter-group,
@@ -1299,25 +1314,25 @@
 
 .attractions-explorer__filter-label {
   margin: 0;
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
   color: var(--accent);
 }
 
 .attractions-explorer__chip-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.65rem;
+  gap: 0.55rem;
 }
 
 .attractions-explorer__chip {
   display: grid;
   gap: 0.28rem;
   min-height: 3.2rem;
-  padding: 0.8rem 0.95rem;
-  border: 1px solid var(--border2);
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgb(var(--tone-slate-rgb) / 0.2);
   border-radius: 0.8rem;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgb(var(--bg-rgb) / 0.34);
   color: var(--text);
   cursor: pointer;
   text-align: left;
@@ -1330,23 +1345,22 @@
 
 .attractions-explorer__chip:hover {
   transform: translateY(-1px);
-  border-color: var(--accent-border-hover);
+  border-color: var(--accent-border-medium);
+  background: rgb(var(--tone-slate-rgb) / 0.13);
 }
 
 .attractions-explorer__chip--compact {
   min-height: 2.75rem;
   padding: 0.6rem 0.75rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-size: 0.73rem;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
 }
 
 .attractions-explorer__chip--active {
   border-color: var(--accent-border-active);
-  background:
-    linear-gradient(180deg, var(--accent-fill-base), rgb(var(--tone-slate-rgb) / 0.08)),
-    rgba(255, 255, 255, 0.03);
+  background: linear-gradient(180deg, var(--accent-fill-base), rgb(var(--tone-slate-rgb) / 0.12));
   box-shadow: 0 0 0 1px var(--accent-fill-ring);
 }
 
@@ -1356,15 +1370,71 @@
 }
 
 .attractions-explorer__chip-meta {
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
+  font-size: 0.73rem;
+  letter-spacing: 0.08em;
   color: var(--muted);
 }
 
-.attractions-explorer__control-grid {
+.attractions-explorer__advanced-filters {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 0.85rem;
+  background: rgb(var(--bg-rgb) / 0.26);
+}
+
+.attractions-explorer__advanced-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  list-style: none;
+  cursor: pointer;
+  padding: 0.75rem 0.95rem;
+}
+
+.attractions-explorer__advanced-summary::-webkit-details-marker {
+  display: none;
+}
+
+.attractions-explorer__advanced-summary::after {
+  content: '+';
+  flex-shrink: 0;
+  color: var(--accent);
+  font-size: 1.05rem;
+}
+
+.attractions-explorer__advanced-filters[open] .attractions-explorer__advanced-summary::after {
+  content: '-';
+}
+
+.attractions-explorer__advanced-summary:hover {
+  background: rgb(var(--tone-slate-rgb) / 0.08);
+}
+
+.attractions-explorer__advanced-label,
+.attractions-explorer__advanced-detail {
+  margin: 0;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+.attractions-explorer__advanced-label {
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.attractions-explorer__advanced-detail {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.attractions-explorer__advanced-body {
+  display: grid;
+  gap: 0.85rem;
+  border-top: 1px solid var(--border);
+  padding: 0.9rem 0.95rem 0.95rem;
 }
 
 .attractions-explorer__select,
@@ -1421,43 +1491,33 @@
 
 .attractions-explorer__results {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(18rem, 1fr);
-  gap: 1rem;
-  align-items: start;
-  grid-template-areas:
-    'summary summary'
-    'top-picks signals'
-    'full-rankings area'
-    'matrix .';
+  grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 1fr);
+  gap: 0.95rem;
+  align-items: stretch;
 }
 
-.attractions-explorer__results > * {
+.attractions-explorer__results > *,
+.attractions-explorer__results-primary > *,
+.attractions-explorer__results-secondary > * {
   min-width: 0;
 }
 
-.attractions-explorer__summary-grid {
-  grid-area: summary;
-}
-
-.attractions-explorer__card--top-picks {
-  grid-area: top-picks;
+.attractions-explorer__results-primary,
+.attractions-explorer__results-secondary {
+  display: grid;
+  align-content: start;
+  gap: 0.95rem;
 }
 
 .attractions-explorer__card--signals {
-  grid-area: signals;
-  gap: 1.1rem;
+  gap: 1rem;
+  background: var(--surface-base);
+  border-color: rgb(var(--tone-slate-rgb) / 0.16);
 }
 
-.attractions-explorer__card--areas {
-  grid-area: area;
-}
-
-.attractions-explorer__disclosure--rankings {
-  grid-area: full-rankings;
-}
-
-.attractions-explorer__disclosure--matrix {
-  grid-area: matrix;
+.attractions-explorer__disclosure--areas .disclosure-panel__body {
+  display: grid;
+  gap: 0.8rem;
 }
 
 .attractions-explorer__signal-group {
@@ -1576,7 +1636,8 @@
 .attractions-explorer__chip:focus-visible,
 .attractions-explorer__reset:focus-visible,
 .attractions-explorer__select:focus-visible,
-.attractions-explorer__input:focus-visible {
+.attractions-explorer__input:focus-visible,
+.attractions-explorer__advanced-summary:focus-visible {
   outline: 2px solid var(--accent-focus-outline);
   outline-offset: 3px;
 }
@@ -1596,22 +1657,8 @@
   }
 
   .party-cluster-board,
-  .attractions-explorer__control-grid,
   .attractions-explorer__results {
     grid-template-columns: 1fr;
-  }
-
-  .attractions-explorer__results {
-    grid-template-areas: none;
-  }
-
-  .attractions-explorer__summary-grid,
-  .attractions-explorer__card--top-picks,
-  .attractions-explorer__card--signals,
-  .attractions-explorer__card--areas,
-  .attractions-explorer__disclosure--rankings,
-  .attractions-explorer__disclosure--matrix {
-    grid-area: auto;
   }
 
   .party-cluster-rail__list li {

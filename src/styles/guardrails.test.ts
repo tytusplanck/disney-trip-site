@@ -65,12 +65,20 @@ describe('style guardrails', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('keeps the faint text token above WCAG AA contrast on surface backgrounds', () => {
+  it('keeps the faint text token above WCAG AA contrast on base surfaces', () => {
     const tokenSource = readFileSync(join(stylesDirectory, 'tokens.css'), 'utf8');
     const faint = getTokenValue(tokenSource, '--faint');
-    const surface = getTokenValue(tokenSource, '--surface');
+    const surface = getTokenValue(tokenSource, '--surface-base');
 
     expect(contrastRatio(faint, surface)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('keeps the muted token readable against base surfaces', () => {
+    const tokenSource = readFileSync(join(stylesDirectory, 'tokens.css'), 'utf8');
+    const muted = getTokenValue(tokenSource, '--muted');
+    const surface = getTokenValue(tokenSource, '--surface-base');
+
+    expect(contrastRatio(muted, surface)).toBeGreaterThanOrEqual(5);
   });
 
   it('keeps key mobile controls at or above 44px touch targets', () => {
@@ -82,6 +90,7 @@ describe('style guardrails', () => {
       /\.site-header__mobile-back,\s*\.site-header__mobile-facts-summary\s*{[\s\S]*min-height:\s*2\.75rem;/,
     );
     expect(componentsSource).toMatch(/\.trip-tabs__link\s*{[\s\S]*min-height:\s*2\.75rem;/);
+    expect(componentsSource).toMatch(/\.page-label\s*{[\s\S]*font-size:\s*0\.79rem;/);
     expect(tripPagesSource).toMatch(
       /\.attractions-explorer__chip--compact\s*{[\s\S]*min-height:\s*2\.75rem;/,
     );

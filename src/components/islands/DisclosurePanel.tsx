@@ -6,11 +6,26 @@ interface Props {
   detail: string;
   children: ReactNode;
   className?: string;
+  defaultOpen?: boolean;
+  mobileBehavior?: 'expanded' | 'collapsed' | 'match-desktop';
 }
 
-export default function DisclosurePanel({ label, summary, detail, children, className }: Props) {
+export default function DisclosurePanel({
+  label,
+  summary,
+  detail,
+  children,
+  className,
+  defaultOpen = true,
+  mobileBehavior = 'match-desktop',
+}: Props) {
   return (
-    <details className={['disclosure-panel', className].filter(Boolean).join(' ')} open>
+    <details
+      className={['disclosure-panel', className].filter(Boolean).join(' ')}
+      data-desktop-default-open={defaultOpen ? 'true' : 'false'}
+      data-mobile-behavior={mobileBehavior}
+      open={defaultOpen}
+    >
       <summary className="disclosure-panel__summary">
         <span className="disclosure-panel__summary-copy">
           <span className="disclosure-panel__label">{label}</span>

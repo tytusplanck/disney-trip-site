@@ -56,9 +56,9 @@ const scheduleDays = getScheduleDaySummaries(tripModule.schedule);
       <section class="trip-page-section">
         <DisclosurePanel
           label="Full itinerary"
-          summary="Open every day card"
+          summary="See full itinerary"
           detail={`${scheduleDays.length} trip days with notes and park labels`}
-          mobileCollapsed
+          mobileBehavior="expanded"
         >
           <div class="schedule-grid">
             {scheduleDays.map((day) => (
