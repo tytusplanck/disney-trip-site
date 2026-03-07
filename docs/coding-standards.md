@@ -45,6 +45,7 @@ This repository is a private Disney trip site built to be maintained primarily b
   - `--surface-elevated` for important grouped controls
   - `--surface-featured` for primary, high-attention panels only
 - Avoid reusing one heavy card treatment for every section; reserve shadows and accent treatments for truly primary surfaces
+- Keep the shared visual language restrained and tool-like: warm light neutrals, muted accent hues, condensed sans headings, and low-motion interactions
 
 ## Auth and Secrecy Rules
 

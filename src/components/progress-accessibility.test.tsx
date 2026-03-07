@@ -31,7 +31,7 @@ describe('progress accessibility', () => {
     ).toBeInTheDocument();
   });
 
-  it('keeps explicit aria labels on Astro progress elements', () => {
+  it('keeps explicit progressbar semantics on Astro meter markup', () => {
     const partyCardSource = readFileSync(
       join(process.cwd(), 'src/components/PartyCard.astro'),
       'utf8',
@@ -41,7 +41,11 @@ describe('progress accessibility', () => {
       'utf8',
     );
 
-    expect(partyCardSource).toMatch(/<progress[\s\S]*aria-label=/);
-    expect(clusterBoardSource).toMatch(/<progress[\s\S]*aria-label=/);
+    expect(partyCardSource).toMatch(/role="progressbar"/);
+    expect(partyCardSource).toMatch(/aria-label=/);
+    expect(partyCardSource).toMatch(/aria-valuenow=/);
+    expect(clusterBoardSource).toMatch(/role="progressbar"/);
+    expect(clusterBoardSource).toMatch(/aria-label=/);
+    expect(clusterBoardSource).toMatch(/aria-valuenow=/);
   });
 });

@@ -16,9 +16,8 @@
   gap: 1rem;
   padding: clamp(1.25rem, 2.5vw, 1.75rem);
   border: 1px solid var(--border2);
-  border-radius: 0.9rem;
+  border-radius: 0.7rem;
   background: var(--surface);
-  box-shadow: var(--shadow-soft);
 }
 
 .stub-panel__header,
@@ -37,17 +36,17 @@
 .stub-panel__title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.55rem, 3vw, 1.95rem);
-  font-weight: 300;
-  line-height: 1;
-  letter-spacing: -0.03em;
+  font-size: clamp(1.4rem, 2.5vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: 0.01em;
 }
 
 .stub-panel__rail {
   align-content: start;
   padding: 1rem;
   border: 1px solid var(--border);
-  border-radius: 0.75rem;
+  border-radius: 0.55rem;
   background: var(--surface2);
 }
 

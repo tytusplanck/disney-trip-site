@@ -47,12 +47,31 @@ const { view } = Astro.props;
                   : `${String(cluster.averageAffinityScore)}% aligned`}
               </span>
             </div>
-            <progress
+            <div
               aria-label={`${cluster.title} affinity score ${String(cluster.averageAffinityScore)} out of 100`}
+              aria-valuemax={100}
+              aria-valuemin={0}
+              aria-valuenow={cluster.averageAffinityScore}
               class="party-cluster-card__meter-progress"
-              max="100"
-              value={cluster.averageAffinityScore}
-            />
+              role="progressbar"
+            >
+              <svg
+                aria-hidden="true"
+                class="progress-meter__svg"
+                focusable="false"
+                preserveAspectRatio="none"
+                viewBox="0 0 100 10"
+              >
+                <rect class="progress-meter__track" height="10" rx="5" ry="5" width="100" />
+                <rect
+                  class="progress-meter__fill"
+                  height="10"
+                  rx="5"
+                  ry="5"
+                  width={cluster.averageAffinityScore}
+                />
+              </svg>
+            </div>
           </div>
 
           <div class="party-cluster-card__favorites">

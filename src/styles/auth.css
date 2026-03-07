@@ -25,11 +25,9 @@
   gap: 1.25rem;
   padding: clamp(1.5rem, 4vw, 2.2rem);
   border: 1px solid var(--border2);
-  border-radius: 1rem;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.015), transparent 32%),
-    linear-gradient(180deg, rgba(17, 19, 24, 0.96), rgba(17, 19, 24, 0.88));
-  box-shadow: var(--shadow-soft);
+  border-radius: 0.8rem;
+  background: var(--surface-base);
+  box-shadow: 0 8px 18px rgba(54, 60, 55, 0.06);
   position: relative;
   overflow: hidden;
 }
@@ -38,8 +36,8 @@
   content: '';
   position: absolute;
   inset: 0 auto 0 0;
-  width: 0.3rem;
-  background: linear-gradient(180deg, var(--accent-fill-strong), rgb(var(--tone-slate-rgb) / 0.45));
+  width: 0.18rem;
+  background: var(--tone-slate);
 }
 
 .auth-card__quip {

@@ -37,23 +37,52 @@ const initial = summary.member.name.slice(0, 1).toUpperCase();
 
   <div class="party-detail-card__tiers">
     {
-      summary.tierSummaries.map((tierSummary) => (
-        <div class="party-detail-card__tier-row">
-          <div class="party-detail-card__tier-copy">
-            <span class="party-detail-card__tier-label">{tierSummary.label}</span>
-            <span class="party-detail-card__tier-count">{tierSummary.count}</span>
-          </div>
-          <progress
-            aria-label={`${summary.member.name} ${tierSummary.label}: ${String(tierSummary.count)} of ${String(tierSummary.maxCount)}`}
+      summary.tierSummaries.map((tierSummary) => {
+        const progressWidth =
+          tierSummary.maxCount > 0 ? (tierSummary.count / tierSummary.maxCount) * 100 : 0;
+
+        return (
+          <div
             class:list={[
-              'party-detail-card__tier-progress',
-              `party-detail-card__tier-progress--${tierSummary.tier}`,
+              'party-detail-card__tier-row',
+              `party-detail-card__tier-row--${tierSummary.tier}`,
             ]}
-            max={tierSummary.maxCount}
-            value={tierSummary.count}
-          />
-        </div>
-      ))
+          >
+            <div class="party-detail-card__tier-copy">
+              <span class="party-detail-card__tier-label">{tierSummary.label}</span>
+              <span class="party-detail-card__tier-count">{tierSummary.count}</span>
+            </div>
+            <div
+              aria-label={`${summary.member.name} ${tierSummary.label}: ${String(tierSummary.count)} of ${String(tierSummary.maxCount)}`}
+              aria-valuemax={tierSummary.maxCount}
+              aria-valuemin={0}
+              aria-valuenow={tierSummary.count}
+              class:list={[
+                'party-detail-card__tier-progress',
+                `party-detail-card__tier-progress--${tierSummary.tier}`,
+              ]}
+              role="progressbar"
+            >
+              <svg
+                aria-hidden="true"
+                class="progress-meter__svg"
+                focusable="false"
+                preserveAspectRatio="none"
+                viewBox="0 0 100 10"
+              >
+                <rect class="progress-meter__track" height="10" rx="5" ry="5" width="100" />
+                <rect
+                  class="progress-meter__fill"
+                  height="10"
+                  rx="5"
+                  ry="5"
+                  width={progressWidth}
+                />
+              </svg>
+            </div>
+          </div>
+        );
+      })
     }
   </div>
 
