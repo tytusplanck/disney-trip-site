@@ -12,7 +12,7 @@ Minimal Astro + React-islands scaffold for a private Disney trip planning site.
 
 ## Required Environment Variable
 
-- `SITE_PASSWORD`: shared password used by the server-side auth gate
+- `SITE_PASSWORD`: shared site key used by the server-side auth gate. The env var name stays unchanged for deployment compatibility.
 
 ## Commands
 
@@ -27,7 +27,7 @@ Minimal Astro + React-islands scaffold for a private Disney trip planning site.
 ## Deployment Notes
 
 - Target platform: Vercel
-- The site is intentionally password-gated
+- The site is intentionally protected by a shared site key
 - `robots.txt`, `X-Robots-Tag`, and `noindex` metadata are configured to discourage crawling before launch
 
 ## Agent Notes

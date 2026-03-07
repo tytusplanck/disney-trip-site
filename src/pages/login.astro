@@ -6,7 +6,7 @@ import { loginPage } from './login.page';
 
 const error = Astro.url.searchParams.get('error');
 const next = sanitizeRedirectTarget(Astro.url.searchParams.get('next'));
-const hasError = error === 'invalid-password';
+const hasError = error === 'invalid-site-key' || error === 'invalid-password';
 const { form, intro, meta } = loginPage;
 ---
 
@@ -18,24 +18,35 @@ const { form, intro, meta } = loginPage;
         <h1 class="page-title" id="login-title">{intro.title}</h1>
         <p class="auth-card__quip">{intro.quip}</p>
 
-        <form class="form-stack auth-card__form" action="/api/auth/login" method="post">
+        <form
+          class="form-stack auth-card__form"
+          action="/api/auth/login"
+          method="post"
+          autocomplete="off"
+        >
           <input type="hidden" name="next" value={next} />
-          <label class="field" for="password">
-            <span class="field__label">{form.passwordLabel}</span>
+          <label class="field" for="site-key">
+            <span class="field__label">{form.siteKeyLabel}</span>
             <input
-              class="auth-card__input"
-              id="password"
-              name="password"
-              type="password"
-              autocomplete="current-password"
-              placeholder={form.passwordPlaceholder}
+              class="auth-card__input auth-card__input--masked"
+              id="site-key"
+              name="siteKey"
+              type="text"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+              data-1p-ignore="true"
+              data-op-ignore="true"
+              data-bwignore="true"
+              placeholder={form.siteKeyPlaceholder}
               required
             />
           </label>
           {
             hasError && (
               <p class="form-error" role="alert">
-                {form.errorMessage}
+                {form.siteKeyErrorMessage}
               </p>
             )
           }

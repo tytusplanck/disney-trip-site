@@ -53,7 +53,7 @@ This repository is a private Disney trip site built to be maintained primarily b
 - Protected content must stay behind middleware and server-side auth checks
 - Do not place protected trip details in `/public`
 - Do not expose trip data on `/login`
-- Do not bypass the password gate for new routes unless docs and tests are updated together
+- Do not bypass the site key gate for new routes unless docs and tests are updated together
 
 ## Verification Commands
 

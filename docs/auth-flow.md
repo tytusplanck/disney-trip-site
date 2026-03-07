@@ -2,21 +2,21 @@
 
 ## Why SSR
 
-This site uses Astro SSR on Vercel so protected content can stay on the server until a correct password is submitted. A static export would expose the generated HTML to anyone who can reach the deployment.
+This site uses Astro SSR on Vercel so protected content can stay on the server until a correct site key is submitted. A static export would expose the generated HTML to anyone who can reach the deployment.
 
 ## Required Secret
 
 - `SITE_PASSWORD`
 
-The password is defined as a server-only secret in Astro's env schema and validated at startup/build time.
+The deployed secret keeps the `SITE_PASSWORD` name for compatibility, even though the product now refers to it as a site key. It is defined as a server-only secret in Astro's env schema and validated at startup/build time.
 
 ## Request Flow
 
 1. A visitor requests `/`.
 2. Astro middleware checks the `site_access` cookie.
 3. If the cookie is missing or invalid, the request is redirected to `/login`.
-4. The visitor submits the password form on `/login`.
-5. `POST /api/auth/login` compares the submitted password to `SITE_PASSWORD`.
+4. The visitor submits the site key form on `/login`.
+5. `POST /api/auth/login` compares the submitted site key to `SITE_PASSWORD`.
 6. On success, the server issues a signed, HTTP-only session cookie and redirects back to `/`.
 7. Middleware accepts the cookie on future requests and allows the protected page to render.
 8. `POST /api/auth/logout` deletes the cookie and redirects back to `/login`.
@@ -57,11 +57,11 @@ Middleware verifies the signature before treating the request as authenticated.
 
 ## Astro Origin Check
 
-Astro ships with a built-in `security.checkOrigin` guard for SSR form submissions. In this project it is disabled because the Vercel deployment path can cause Astro's request origin comparison to reject the shared-password form before the login handler runs.
+Astro ships with a built-in `security.checkOrigin` guard for SSR form submissions. In this project it is disabled because the Vercel deployment path can cause Astro's request origin comparison to reject the shared site key form before the login handler runs.
 
 The application still relies on these controls:
 
-- server-side password validation
+- server-side site key validation
 - signed HTTP-only session cookies
 - `SameSite=Strict` cookies
 - route protection in middleware
@@ -70,9 +70,9 @@ If form handling changes later, re-evaluate whether a custom CSRF/origin strateg
 
 ## Deployment And Repository Warning
 
-The password gate protects the deployed site. It does not protect a public GitHub repository.
+The site key gate protects the deployed site. It does not protect a public GitHub repository.
 
-If private trip details are committed to a public repo, anyone who can view the repo can read that content without going through the password page. Keep the repository private if it will contain real family trip details.
+If private trip details are committed to a public repo, anyone who can view the repo can read that content without going through the login page. Keep the repository private if it will contain real family trip details.
 
 ## Agent Boundaries
 

@@ -10,10 +10,10 @@ interface LoginIntroContent {
 }
 
 interface LoginFormContent {
-  passwordLabel: string;
-  passwordPlaceholder: string;
+  siteKeyLabel: string;
+  siteKeyPlaceholder: string;
   submitLabel: string;
-  errorMessage: string;
+  siteKeyErrorMessage: string;
 }
 
 export interface LoginPage {
@@ -25,17 +25,17 @@ export interface LoginPage {
 export const loginPage: LoginPage = {
   meta: {
     title: 'Disney Trip Login',
-    description: 'Enter the shared password to access the private Disney trip planning site.',
+    description: 'Enter the shared site key to access the private Disney trip planning site.',
   },
   intro: {
-    eyebrow: 'Password required',
-    title: 'One password opens the whole trip site.',
-    quip: "No password, no pixie dust. Even Mickey can't magic this gate open.",
+    eyebrow: 'Site key required',
+    title: 'One site key opens the whole trip site.',
+    quip: "No site key, no pixie dust. Even Mickey can't magic this gate open.",
   },
   form: {
-    passwordLabel: 'Password',
-    passwordPlaceholder: 'Enter password',
+    siteKeyLabel: 'Site key',
+    siteKeyPlaceholder: 'Enter site key',
     submitLabel: 'Enter site',
-    errorMessage: 'That password did not match. Try again.',
+    siteKeyErrorMessage: 'That site key did not match. Try again.',
   },
 };

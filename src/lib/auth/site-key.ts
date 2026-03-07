@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 
-export type PasswordCheckResult = { ok: true } | { ok: false };
+export type SiteKeyCheckResult = { ok: true } | { ok: false };
 
 function normalizeInput(input: string, targetLength: number): Buffer {
   const normalized = Buffer.alloc(targetLength);
@@ -8,7 +8,7 @@ function normalizeInput(input: string, targetLength: number): Buffer {
   return normalized;
 }
 
-export function checkPassword(input: string, expected: string): PasswordCheckResult {
+export function checkSiteKey(input: string, expected: string): SiteKeyCheckResult {
   const expectedBuffer = Buffer.from(expected, 'utf8');
   const inputBuffer = normalizeInput(input, expectedBuffer.length);
   const lengthsMatch = Buffer.byteLength(input, 'utf8') === expectedBuffer.length;

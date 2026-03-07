@@ -63,6 +63,10 @@
     background-color 150ms ease;
 }
 
+.auth-card__input--masked {
+  -webkit-text-security: disc;
+}
+
 .auth-card__input:focus {
   border-color: var(--accent-border-strong);
   box-shadow: 0 0 0 3px var(--accent-fill-muted);

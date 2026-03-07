@@ -37,7 +37,7 @@ describe('auth route handlers', () => {
       cookies,
       buildLoginForm({
         next: '/casschwlanck/2026/schedule',
-        password: SITE_PASSWORD,
+        siteKey: SITE_PASSWORD,
       }),
     );
 
@@ -59,13 +59,30 @@ describe('auth route handlers', () => {
     });
   });
 
+  it('still accepts the legacy password field name', async () => {
+    const cookies = new MockCookies();
+    const context = createApiContext(
+      'https://example.com/api/auth/login',
+      cookies,
+      buildLoginForm({
+        password: SITE_PASSWORD,
+      }),
+    );
+
+    const response = await loginPost(context);
+
+    expect(response.status).toBe(303);
+    expect(response.headers.get('location')).toBe('/');
+    expect(cookies.setCalls[0]?.name).toBe(AUTH_COOKIE_NAME);
+  });
+
   it('uses non-secure cookie options for localhost development logins', async () => {
     const cookies = new MockCookies();
     const context = createApiContext(
       'http://localhost/api/auth/login',
       cookies,
       buildLoginForm({
-        password: SITE_PASSWORD,
+        siteKey: SITE_PASSWORD,
       }),
     );
 
@@ -82,7 +99,7 @@ describe('auth route handlers', () => {
       'http://127.0.0.1/api/auth/login',
       cookies,
       buildLoginForm({
-        password: SITE_PASSWORD,
+        siteKey: SITE_PASSWORD,
       }),
     );
 
@@ -100,7 +117,7 @@ describe('auth route handlers', () => {
       cookies,
       buildLoginForm({
         next: 'https://example.org/elsewhere',
-        password: SITE_PASSWORD,
+        siteKey: SITE_PASSWORD,
       }),
     );
 
@@ -109,7 +126,7 @@ describe('auth route handlers', () => {
     expect(response.headers.get('location')).toBe('/');
   });
 
-  it('redirects back with an error when the password is missing', async () => {
+  it('redirects back with an error when the site key is missing', async () => {
     const context = createApiContext(
       'https://example.com/api/auth/login',
       new MockCookies(),
@@ -122,17 +139,17 @@ describe('auth route handlers', () => {
 
     expect(response.status).toBe(303);
     expect(response.headers.get('location')).toBe(
-      '/login?error=invalid-password&next=%2Fcasschwlanck%2F2026%2Fparty',
+      '/login?error=invalid-site-key&next=%2Fcasschwlanck%2F2026%2Fparty',
     );
   });
 
-  it('redirects back with an error when the password is invalid', async () => {
+  it('redirects back with an error when the site key is invalid', async () => {
     const context = createApiContext(
       'https://example.com/api/auth/login',
       new MockCookies(),
       buildLoginForm({
         next: '/casschwlanck/2026/party',
-        password: 'wrong-password',
+        siteKey: 'wrong-site-key',
       }),
     );
 
@@ -140,7 +157,7 @@ describe('auth route handlers', () => {
 
     expect(response.status).toBe(303);
     expect(response.headers.get('location')).toBe(
-      '/login?error=invalid-password&next=%2Fcasschwlanck%2F2026%2Fparty',
+      '/login?error=invalid-site-key&next=%2Fcasschwlanck%2F2026%2Fparty',
     );
   });
 
