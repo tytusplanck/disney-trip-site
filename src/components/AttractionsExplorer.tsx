@@ -468,6 +468,29 @@ export default function AttractionsExplorer({ data }: Props) {
               >
                 <ConsensusBars items={view.rankedAttractions} />
               </DisclosurePanel>
+            </div>
+
+            <div className="attractions-explorer__results-secondary">
+              <article className="attractions-explorer__card attractions-explorer__card--signals">
+                <div className="trip-page-section__copy">
+                  <p className="page-label">Interesting signals</p>
+                  <h3 className="section-title">Patterns worth noticing before you commit</h3>
+                </div>
+
+                <SignalList
+                  emptyText="No broad-approval rides remain after the current filters."
+                  items={view.broadApproval}
+                  title="Broad approval"
+                  variant="approval"
+                />
+
+                <SignalList
+                  emptyText="No split-decision rides remain after the current filters."
+                  items={view.splitDecisions}
+                  title="Split decisions"
+                  variant="division"
+                />
+              </article>
 
               <DisclosurePanel
                 className="attractions-explorer__disclosure--matrix"
@@ -519,29 +542,6 @@ export default function AttractionsExplorer({ data }: Props) {
                   </p>
                 )}
               </DisclosurePanel>
-            </div>
-
-            <div className="attractions-explorer__results-secondary">
-              <article className="attractions-explorer__card attractions-explorer__card--signals">
-                <div className="trip-page-section__copy">
-                  <p className="page-label">Interesting signals</p>
-                  <h3 className="section-title">Patterns worth noticing before you commit</h3>
-                </div>
-
-                <SignalList
-                  emptyText="No broad-approval rides remain after the current filters."
-                  items={view.broadApproval}
-                  title="Broad approval"
-                  variant="approval"
-                />
-
-                <SignalList
-                  emptyText="No split-decision rides remain after the current filters."
-                  items={view.splitDecisions}
-                  title="Split decisions"
-                  variant="division"
-                />
-              </article>
             </div>
           </div>
         </>

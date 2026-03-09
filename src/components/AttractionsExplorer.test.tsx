@@ -17,7 +17,7 @@ function createExplorerData() {
 }
 
 describe('AttractionsExplorer', () => {
-  it('keeps summary and ranking disclosures ahead of secondary insights', () => {
+  it('keeps rankings in the primary column and secondary insights in the rail', () => {
     renderExplorer();
 
     const summaryLabel = screen.getByText('Matching rides');
@@ -38,6 +38,16 @@ describe('AttractionsExplorer', () => {
     expect(
       rankingsDisclosure.compareDocumentPosition(signalsHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).not.toBe(0);
+    expect(
+      signalsHeading.compareDocumentPosition(matrixDisclosure) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0);
+    expect(
+      matrixDisclosure.compareDocumentPosition(areaDisclosure) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0);
+    expect(rankingsDisclosure.closest('.attractions-explorer__results-primary')).not.toBeNull();
+    expect(matrixDisclosure.closest('.attractions-explorer__results-secondary')).not.toBeNull();
+    expect(areaDisclosure.closest('.attractions-explorer__results-secondary')).not.toBeNull();
+    expect(signalsHeading.closest('.attractions-explorer__results-secondary')).not.toBeNull();
     expect(
       rankingsDisclosure.closest('details')?.hasAttribute('open'),
       'rankings disclosure should default open',
