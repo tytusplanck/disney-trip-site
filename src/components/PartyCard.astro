@@ -10,30 +10,44 @@ const initial = summary.member.name.slice(0, 1).toUpperCase();
 ---
 
 <article class="party-detail-card">
-  <div class="party-detail-card__avatar" aria-hidden="true">
-    {initial}
-  </div>
-
   <div class="party-detail-card__header">
-    <h3 class="party-detail-card__name">{summary.member.name}</h3>
-    <p class="party-detail-card__style">{summary.styleLabel}</p>
-    <p class="party-detail-card__style-description">{summary.styleDescription}</p>
+    <div class="party-detail-card__avatar" aria-hidden="true">
+      {initial}
+    </div>
+    <div class="party-detail-card__identity">
+      <p class="party-detail-card__style">{summary.styleLabel}</p>
+      <h3 class="party-detail-card__name">{summary.member.name}</h3>
+      <p class="party-detail-card__style-description">{summary.styleDescription}</p>
+    </div>
   </div>
 
   <dl class="party-detail-card__meta">
-    <div>
-      <dt class="detail-label">Must Do</dt>
+    <div class="party-detail-card__meta-item">
+      <dt class="detail-label">Priority votes</dt>
       <dd class="detail-value">{summary.mustDoCount}</dd>
     </div>
-    <div>
-      <dt class="detail-label">All In</dt>
+    <div class="party-detail-card__meta-item">
+      <dt class="detail-label">Broad likes</dt>
       <dd class="detail-value">{summary.enthusiasmCount}</dd>
     </div>
-    <div>
-      <dt class="detail-label">Avoid</dt>
+    <div class="party-detail-card__meta-item">
+      <dt class="detail-label">Avoid flags</dt>
       <dd class="detail-value">{summary.avoidCount}</dd>
     </div>
   </dl>
+
+  <div class="party-detail-card__choices">
+    <p class="party-detail-card__choices-label">Top calls</p>
+    <ul class="party-detail-card__choices-list">
+      {
+        summary.topChoices.length > 0 ? (
+          summary.topChoices.map((choice) => <li>{choice}</li>)
+        ) : (
+          <li>No must-do calls logged yet.</li>
+        )
+      }
+    </ul>
+  </div>
 
   <div class="party-detail-card__tiers">
     {
@@ -84,18 +98,5 @@ const initial = summary.member.name.slice(0, 1).toUpperCase();
         );
       })
     }
-  </div>
-
-  <div class="party-detail-card__choices">
-    <p class="party-detail-card__choices-label">Top calls</p>
-    <ul class="party-detail-card__choices-list">
-      {
-        summary.topChoices.length > 0 ? (
-          summary.topChoices.map((choice) => <li>{choice}</li>)
-        ) : (
-          <li>No must-do calls logged yet.</li>
-        )
-      }
-    </ul>
   </div>
 </article>

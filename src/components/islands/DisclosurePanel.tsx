@@ -32,7 +32,10 @@ export default function DisclosurePanel({
           <span className="disclosure-panel__headline">{summary}</span>
           <span className="disclosure-panel__detail">{detail}</span>
         </span>
-        <span className="disclosure-panel__toggle" aria-hidden="true" />
+        <span className="disclosure-panel__summary-action">
+          <span className="disclosure-panel__toggle-text">Open</span>
+          <span className="disclosure-panel__toggle" aria-hidden="true" />
+        </span>
       </summary>
 
       <div className="disclosure-panel__body">{children}</div>

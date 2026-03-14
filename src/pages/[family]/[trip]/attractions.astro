@@ -61,6 +61,17 @@ const scoreGuide = ([1, 2, 3, 4, 5] as const).map((tier) => ({
       activeSection="attractions"
       pageTitle={pageTitle}
     >
+      <section class="trip-page-section trip-page-section--intro">
+        <div class="trip-page-section__copy">
+          <p class="page-label">Ride picks</p>
+          <h2 class="section-title">Sort the rides before the day gets noisy</h2>
+          <p class="body-copy">
+            Start with the shared ranking, then narrow by park, traveler, and area until the next
+            call is obvious.
+          </p>
+        </div>
+      </section>
+
       <section class="trip-page-section">
         <DisclosurePanel
           label="Scoring system"

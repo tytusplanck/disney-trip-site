@@ -25,8 +25,10 @@
 - Visible page chrome lives in page-level shell components such as All Trips, auth, and trip shells.
 - The trip root route redirects to the first planner section, with the protected planner continuing under attractions, schedule, and party routes.
 - Planning trip tabs render inside the shared content shell so attractions, schedule, and party pages all open with the same content-width embedded tab strip.
+- The embedded planner tabs are styled as a segmented wayfinding rail with a label and supporting detail for each section.
 - Desktop trip pages use a lean shared header for brand and breadcrumb context, with the section tabs starting the main content column instead of living in the full-width header.
 - Trip shells use a compact mobile header pattern: breadcrumbs collapse to a back link, trip facts move into an inline disclosure, and the same content-embedded tabs stay directly above the page body.
+- Planner routes may open with a concise page-intro section inside the main content column before the first disclosure or tool surface.
 - Disclosure panels use explicit responsive behavior via `data-mobile-behavior`:
   - `expanded`: open by default on mobile first load
   - `collapsed`: collapsed by default on mobile first load

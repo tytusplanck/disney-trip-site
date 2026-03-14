@@ -15,6 +15,7 @@ export default function AttractionHeatmap({ party, rows, highlightMemberId = nul
     <div className="trip-heatmap">
       <div className="trip-heatmap__scroll">
         <table className="trip-heatmap__table">
+          <caption className="visually-hidden">Traveler preference matrix by attraction</caption>
           <thead>
             <tr>
               <th className="trip-heatmap__heading trip-heatmap__heading--attraction">

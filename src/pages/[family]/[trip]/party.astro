@@ -58,6 +58,17 @@ const clusterView = buildPartyClusterBoardView(tripModule);
       activeSection="party"
       pageTitle={pageTitle}
     >
+      <section class="trip-page-section trip-page-section--intro">
+        <div class="trip-page-section__copy">
+          <p class="page-label">Traveler preferences</p>
+          <h2 class="section-title">See where the group lines up or pulls apart</h2>
+          <p class="body-copy">
+            Start with the cluster view to spot the biggest alignment gaps, then drop into each
+            traveler profile when you need the detail.
+          </p>
+        </div>
+      </section>
+
       <section class="trip-page-section">
         {hasAttractionPreferences ? (
           <PartyClusterBoard view={clusterView} />
@@ -70,7 +81,7 @@ const clusterView = buildPartyClusterBoardView(tripModule);
         <div class="trip-page-section__header">
           <div class="trip-page-section__copy">
             <p class="page-label">Traveler cards</p>
-            <h2 class="section-title">Traveler breakdown, ready when you need detail</h2>
+            <h2 class="section-title">Traveler detail, ready when you need the specifics</h2>
           </div>
         </div>
 

@@ -14,9 +14,11 @@ const { form, intro, meta } = loginPage;
   <AuthShell metaLabel={intro.eyebrow}>
     <div class="auth-page">
       <section class="auth-card" aria-labelledby="login-title">
-        <p class="page-label">{intro.eyebrow}</p>
-        <h1 class="page-title" id="login-title">{intro.title}</h1>
-        <p class="auth-card__quip">{intro.quip}</p>
+        <div class="auth-card__heading">
+          <p class="page-label">{intro.eyebrow}</p>
+          <h1 class="page-title" id="login-title">{intro.title}</h1>
+          <p class="auth-card__quip">{intro.quip}</p>
+        </div>
 
         <form
           class="form-stack auth-card__form"
@@ -27,21 +29,24 @@ const { form, intro, meta } = loginPage;
           <input type="hidden" name="next" value={next} />
           <label class="field" for="site-key">
             <span class="field__label">{form.siteKeyLabel}</span>
-            <input
-              class="auth-card__input auth-card__input--masked"
-              id="site-key"
-              name="siteKey"
-              type="text"
-              autocomplete="off"
-              autocapitalize="off"
-              autocorrect="off"
-              spellcheck="false"
-              data-1p-ignore="true"
-              data-op-ignore="true"
-              data-bwignore="true"
-              placeholder={form.siteKeyPlaceholder}
-              required
-            />
+            <span class="field__control">
+              <span class="field__symbol" aria-hidden="true"> Key </span>
+              <input
+                class="auth-card__input auth-card__input--masked"
+                id="site-key"
+                name="siteKey"
+                type="text"
+                autocomplete="off"
+                autocapitalize="off"
+                autocorrect="off"
+                spellcheck="false"
+                data-1p-ignore="true"
+                data-op-ignore="true"
+                data-bwignore="true"
+                placeholder={form.siteKeyPlaceholder}
+                required
+              />
+            </span>
           </label>
           {
             hasError && (
@@ -52,6 +57,8 @@ const { form, intro, meta } = loginPage;
           }
           <button class="button auth-card__button" type="submit">{form.submitLabel}</button>
         </form>
+
+        <p class="auth-card__note">One shared key. No personal accounts. No extra steps.</p>
       </section>
     </div>
   </AuthShell>

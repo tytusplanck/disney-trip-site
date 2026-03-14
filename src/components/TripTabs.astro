@@ -9,23 +9,29 @@ interface Props {
 
 const { trip, activeSection } = Astro.props;
 
-const tabs: { label: string; section: TripSection }[] = [
-  { label: 'Attractions', section: 'attractions' },
-  { label: 'Schedule', section: 'schedule' },
-  { label: 'Party', section: 'party' },
+const tabs: { label: string; detail: string; section: TripSection }[] = [
+  { label: 'Attractions', detail: 'Rankings and filters', section: 'attractions' },
+  { label: 'Schedule', detail: 'Daily rhythm', section: 'schedule' },
+  { label: 'Party', detail: 'Traveler signals', section: 'party' },
 ];
 ---
 
 <nav class="trip-tabs" aria-label="Trip sections">
-  {
-    tabs.map((tab) => (
-      <a
-        class:list={['trip-tabs__link', activeSection === tab.section && 'trip-tabs__link--active']}
-        href={getTripSectionPath(trip, tab.section)}
-        aria-current={activeSection === tab.section ? 'page' : undefined}
-      >
-        {tab.label}
-      </a>
-    ))
-  }
+  <div class="trip-tabs__rail">
+    {
+      tabs.map((tab) => (
+        <a
+          class:list={[
+            'trip-tabs__link',
+            activeSection === tab.section && 'trip-tabs__link--active',
+          ]}
+          href={getTripSectionPath(trip, tab.section)}
+          aria-current={activeSection === tab.section ? 'page' : undefined}
+        >
+          <span class="trip-tabs__link-label">{tab.label}</span>
+          <span class="trip-tabs__link-detail">{tab.detail}</span>
+        </a>
+      ))
+    }
+  </div>
 </nav>

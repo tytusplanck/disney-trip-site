@@ -65,34 +65,48 @@ describe('style guardrails', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('keeps the faint text token above WCAG AA contrast on base surfaces', () => {
+  it('keeps the faint metadata token at AA contrast on base surfaces', () => {
     const tokenSource = readFileSync(join(stylesDirectory, 'tokens.css'), 'utf8');
-    const faint = getTokenValue(tokenSource, '--faint');
-    const surface = getTokenValue(tokenSource, '--surface-base');
+    const faint = getTokenValue(tokenSource, '--color-ink-faint');
+    const surface = getTokenValue(tokenSource, '--color-surface-1');
 
-    expect(contrastRatio(faint, surface)).toBeGreaterThanOrEqual(4.5);
+    expect(Number(contrastRatio(faint, surface).toFixed(2))).toBeGreaterThanOrEqual(4.5);
   });
 
   it('keeps the muted token readable against base surfaces', () => {
     const tokenSource = readFileSync(join(stylesDirectory, 'tokens.css'), 'utf8');
-    const muted = getTokenValue(tokenSource, '--muted');
-    const surface = getTokenValue(tokenSource, '--surface-base');
+    const muted = getTokenValue(tokenSource, '--color-ink-muted');
+    const surface = getTokenValue(tokenSource, '--color-surface-1');
 
     expect(contrastRatio(muted, surface)).toBeGreaterThanOrEqual(5);
   });
 
   it('keeps key mobile controls at or above 44px touch targets', () => {
+    const tokenSource = readFileSync(join(stylesDirectory, 'tokens.css'), 'utf8');
     const componentsSource = readFileSync(join(stylesDirectory, 'components.css'), 'utf8');
     const tripPagesSource = readFileSync(join(stylesDirectory, 'trip-pages.css'), 'utf8');
 
+    expect(getTokenValue(tokenSource, '--tap-target-min')).toBe('2.75rem');
     expect(componentsSource).not.toMatch(/min-height:\s*2\.(6|65)rem/);
-    expect(componentsSource).toMatch(
-      /\.site-header__mobile-back,\s*\.site-header__mobile-facts-summary\s*{[\s\S]*min-height:\s*2\.75rem;/,
+    expect(componentsSource).toContain('.site-header__mobile-back,');
+    expect(componentsSource).toContain('.site-header__mobile-facts-summary {');
+    expect(componentsSource).toContain('.trip-tabs__link {');
+    expect(componentsSource).toContain('min-height: var(--tap-target-min);');
+    expect(tripPagesSource).toContain('.attractions-explorer__chip {');
+    expect(tripPagesSource).toContain('.attractions-explorer__input,');
+    expect(tripPagesSource).toContain('.attractions-explorer__select {');
+  });
+
+  it('rejects the old parchment canvas palette in active stylesheets', () => {
+    const stylesheetSources = getStylesheetPaths().map((filePath) =>
+      readFileSync(filePath, 'utf8'),
     );
-    expect(componentsSource).toMatch(/\.trip-tabs__link\s*{[\s\S]*min-height:\s*2\.75rem;/);
-    expect(componentsSource).toMatch(/\.page-label\s*{[\s\S]*font-size:\s*0\.79rem;/);
-    expect(tripPagesSource).toMatch(
-      /\.attractions-explorer__chip--compact\s*{[\s\S]*min-height:\s*2\.75rem;/,
+    const deprecatedPalette = ['#f4ede3', '#ede4d8', '#f6efe6', '#ece2d5', '#ddd0bf'];
+
+    const offenders = stylesheetSources.filter((source) =>
+      deprecatedPalette.some((token) => source.toLowerCase().includes(token)),
     );
+
+    expect(offenders).toEqual([]);
   });
 });

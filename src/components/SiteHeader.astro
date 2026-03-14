@@ -45,27 +45,39 @@ const fullMobileTitle = mobileTitle ?? railLabel;
 >
   <div class="site-header__desktop">
     <div class="site-header__top">
-      <BrandMark />
-      <div class="site-header__context">
-        <slot name="context" />
+      <div class="site-header__brand-block">
+        <BrandMark />
+        <div class="site-header__context">
+          <slot name="context" />
+        </div>
       </div>
+      {headerKind === 'trip' && <p class="site-header__trip-label">{railLabel}</p>}
     </div>
-
-    {
-      headerKind !== 'trip' && (
-        <section class="site-header__rail" aria-label={railLabel}>
-          <p class="site-header__rail-title">{railLabel}</p>
-          <dl class="site-header__stats site-header__stats--summary">
-            {statItems.map((item) => (
-              <div class="site-header__stat">
-                <dt class="site-header__rail-label">{item.label}</dt>
-                <dd class="site-header__rail-value">{item.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-      )
-    }
+    <section
+      class:list={['site-header__rail', headerKind === 'trip' && 'site-header__rail--trip']}
+      aria-label={railLabel}
+    >
+      <div class="site-header__rail-heading">
+        <p class="site-header__rail-title">{railLabel}</p>
+        {
+          headerKind === 'trip' && mobileTitle && (
+            <p class="site-header__rail-subtitle" title={mobileTitle}>
+              {mobileTitle}
+            </p>
+          )
+        }
+      </div>
+      <dl class="site-header__stats site-header__stats--summary">
+        {
+          statItems.map((item) => (
+            <div class="site-header__stat">
+              <dt class="site-header__rail-label">{item.label}</dt>
+              <dd class="site-header__rail-value">{item.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
   </div>
 
   {
@@ -74,19 +86,23 @@ const fullMobileTitle = mobileTitle ?? railLabel;
         <a class="site-header__mobile-back" href={mobileBackHref}>
           {mobileBackLabel}
         </a>
-        <p class="site-header__mobile-title" title={fullMobileTitle} aria-label={fullMobileTitle}>
-          {mobileTitle}
-        </p>
+        <div class="site-header__mobile-title-block">
+          <p class="site-header__mobile-kicker">{railLabel}</p>
+          <p class="site-header__mobile-title" title={fullMobileTitle} aria-label={fullMobileTitle}>
+            {mobileTitle}
+          </p>
+        </div>
         {hasMobileFacts && (
-          <>
-            <details
-              class="site-header__mobile-facts-toggle"
-              data-mobile-behavior="collapsed"
-              data-desktop-default-open="true"
-              open
-            >
-              <summary class="site-header__mobile-facts-summary">{mobileFactsLabel}</summary>
-            </details>
+          <details
+            class="site-header__mobile-facts-shell"
+            data-mobile-behavior="collapsed"
+            data-desktop-default-open="true"
+            open
+          >
+            <summary class="site-header__mobile-facts-summary">
+              <span class="site-header__mobile-facts-summary-label">{mobileFactsLabel}</span>
+              <span class="site-header__mobile-facts-toggle" aria-hidden="true" />
+            </summary>
             <div class="site-header__mobile-facts-panel">
               <div class="site-header__mobile-facts-grid">
                 {mobileFactsItems.map((item) => (
@@ -97,22 +113,26 @@ const fullMobileTitle = mobileTitle ?? railLabel;
                 ))}
               </div>
             </div>
-          </>
+          </details>
         )}
       </div>
     ) : (
       <div class="site-header__mobile site-header__mobile--archive">
-        <BrandMark />
+        <div class="site-header__mobile-brand-block">
+          <BrandMark />
+          <p class="site-header__mobile-kicker">{railLabel}</p>
+        </div>
         {hasMobileFacts && (
-          <>
-            <details
-              class="site-header__mobile-facts-toggle"
-              data-mobile-behavior="collapsed"
-              data-desktop-default-open="true"
-              open
-            >
-              <summary class="site-header__mobile-facts-summary">{mobileFactsLabel}</summary>
-            </details>
+          <details
+            class="site-header__mobile-facts-shell"
+            data-mobile-behavior="collapsed"
+            data-desktop-default-open="true"
+            open
+          >
+            <summary class="site-header__mobile-facts-summary">
+              <span class="site-header__mobile-facts-summary-label">{mobileFactsLabel}</span>
+              <span class="site-header__mobile-facts-toggle" aria-hidden="true" />
+            </summary>
             <div class="site-header__mobile-facts-panel">
               <div class="site-header__mobile-facts-grid">
                 {mobileFactsItems.map((item) => (
@@ -123,7 +143,7 @@ const fullMobileTitle = mobileTitle ?? railLabel;
                 ))}
               </div>
             </div>
-          </>
+          </details>
         )}
       </div>
     )

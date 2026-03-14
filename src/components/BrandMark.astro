@@ -9,8 +9,7 @@ const { href = '/' } = Astro.props;
 ---
 
 <a class="brand-mark" href={href} aria-label={siteShellData.brandLinkLabel}>
-  <span class="brand-mark__disney">Disney</span>
-  <span class="brand-mark__sep">/</span>
-  <span class="brand-mark__by">Planned by</span>
-  <span class="brand-mark__tytus">Tytus</span>
+  <span class="brand-mark__wordmark">Disney</span>
+  <span class="brand-mark__route" aria-hidden="true"></span>
+  <span class="brand-mark__support">Planned by Tytus</span>
 </a>

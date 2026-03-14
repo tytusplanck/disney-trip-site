@@ -9,8 +9,9 @@ const partyCardSource = readFileSync(
 );
 
 describe('trip page style contracts', () => {
-  it('adds disclosure inset spacing around the schedule card stack', () => {
-    expect(tripPagesStyles.includes('padding: 1rem 0.35rem 0.3rem;')).toBe(true);
+  it('renders schedule cards as a two-column timeline layout before mobile collapse', () => {
+    expect(tripPagesStyles.includes('grid-template-columns: auto minmax(0, 1fr);')).toBe(true);
+    expect(tripPagesStyles.includes('.schedule-card__day-marker')).toBe(true);
   });
 
   it('exposes tier row modifiers for traveler sentiment styling', () => {

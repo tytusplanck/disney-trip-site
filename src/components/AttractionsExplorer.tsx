@@ -123,7 +123,7 @@ export default function AttractionsExplorer({ data }: Props) {
     () => (
       <div className="detail-stat-grid attractions-explorer__summary-grid">
         {view.summaryCards.map((item) => (
-          <article className="detail-stat-card" key={item.label}>
+          <article className="detail-stat-card attractions-explorer__summary-card" key={item.label}>
             <p className="detail-label">{item.label}</p>
             <p className="detail-value attractions-explorer__summary-value">{item.value}</p>
             <p className="detail-note">{item.detail}</p>
@@ -133,6 +133,17 @@ export default function AttractionsExplorer({ data }: Props) {
     ),
     [view.summaryCards],
   );
+  const spotlightPicks = view.topPicks.slice(0, 3);
+  const activeSentimentLabel =
+    state.sentiment === 'all'
+      ? 'All sentiment'
+      : (sentimentOptions.find((option) => option.value === state.sentiment)?.label ??
+        'Filtered sentiment');
+  const advancedSummary = [
+    view.activeMember?.name ?? 'Whole group',
+    state.areaLabel ?? 'All areas',
+    activeSentimentLabel,
+  ].join(' / ');
 
   function updateState(
     nextState: (previousState: AttractionsExplorerState) => AttractionsExplorerState,
@@ -214,17 +225,37 @@ export default function AttractionsExplorer({ data }: Props) {
             <p className="attractions-explorer__context-detail">{view.contextDetail}</p>
           </div>
 
-          <button
-            className="attractions-explorer__reset"
-            disabled={resetDisabled}
-            onClick={handleReset}
-            type="button"
-          >
-            Reset filters
-          </button>
+          <div className="attractions-explorer__panel-actions">
+            <p className="attractions-explorer__mode">
+              {view.activeMember ? `${view.activeMember.name} spotlight` : 'Whole-group read'}
+            </p>
+            <button
+              className="attractions-explorer__reset"
+              disabled={resetDisabled}
+              onClick={handleReset}
+              type="button"
+            >
+              Reset filters
+            </button>
+          </div>
         </div>
 
         <div className="attractions-explorer__filters">
+          <label
+            className="attractions-explorer__field attractions-explorer__field--search"
+            htmlFor={searchFieldId}
+          >
+            <span className="attractions-explorer__filter-label">Search</span>
+            <input
+              className="attractions-explorer__input"
+              id={searchFieldId}
+              onChange={handleSearchChange}
+              placeholder="Search attraction names"
+              type="search"
+              value={state.search}
+            />
+          </label>
+
           <section className="attractions-explorer__filter-group">
             <div className="attractions-explorer__filter-heading">
               <p className="attractions-explorer__filter-label">Quick scope</p>
@@ -325,27 +356,14 @@ export default function AttractionsExplorer({ data }: Props) {
             </div>
           </section>
 
-          <label
-            className="attractions-explorer__field attractions-explorer__field--search"
-            htmlFor={searchFieldId}
+          <details
+            className="attractions-explorer__advanced-filters"
+            data-desktop-default-open="false"
+            data-mobile-behavior="collapsed"
           >
-            <span className="attractions-explorer__filter-label">Search</span>
-            <input
-              className="attractions-explorer__input"
-              id={searchFieldId}
-              onChange={handleSearchChange}
-              placeholder="Search attraction names"
-              type="search"
-              value={state.search}
-            />
-          </label>
-
-          <details className="attractions-explorer__advanced-filters">
             <summary className="attractions-explorer__advanced-summary">
               <span className="attractions-explorer__advanced-label">Advanced filters</span>
-              <span className="attractions-explorer__advanced-detail">
-                Traveler, area, and sentiment
-              </span>
+              <span className="attractions-explorer__advanced-detail">{advancedSummary}</span>
             </summary>
 
             <div className="attractions-explorer__advanced-body">
@@ -455,6 +473,29 @@ export default function AttractionsExplorer({ data }: Props) {
       {view.hasResults ? (
         <>
           {summaryCards}
+
+          {spotlightPicks.length > 0 ? (
+            <section className="attractions-explorer__spotlights" aria-label="Top ride calls">
+              {spotlightPicks.map((item, index) => (
+                <article className="attractions-explorer__spotlight" key={`${item.id}-spotlight`}>
+                  <p className="attractions-explorer__spotlight-rank">Top {index + 1}</p>
+                  <h3 className="attractions-explorer__spotlight-title">{item.attractionLabel}</h3>
+                  <p className="attractions-explorer__spotlight-meta">
+                    {item.parkLabel} / {item.areaLabel}
+                  </p>
+                  <div className="attractions-explorer__spotlight-foot">
+                    <p className="attractions-explorer__spotlight-score">
+                      {item.consensusScore}
+                      <span>/{item.maxScore}</span>
+                    </p>
+                    <p className="attractions-explorer__spotlight-detail">
+                      {item.mustDoVotes} must-do / {item.preferredVotes} preferred
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </section>
+          ) : null}
 
           <div className="attractions-explorer__results">
             <div className="attractions-explorer__results-primary">

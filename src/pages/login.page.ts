@@ -28,14 +28,14 @@ export const loginPage: LoginPage = {
     description: 'Enter the shared site key to access the private Disney trip planning site.',
   },
   intro: {
-    eyebrow: 'Site key required',
-    title: 'One site key opens the whole trip site.',
-    quip: "No site key, no pixie dust. Even Mickey can't magic this gate open.",
+    eyebrow: 'Private trip planner',
+    title: 'Enter the shared site key.',
+    quip: 'This unlocks the trip archive, ride priorities, schedule, and traveler notes.',
   },
   form: {
     siteKeyLabel: 'Site key',
-    siteKeyPlaceholder: 'Enter site key',
-    submitLabel: 'Enter site',
-    siteKeyErrorMessage: 'That site key did not match. Try again.',
+    siteKeyPlaceholder: 'Shared site key',
+    submitLabel: 'Open planner',
+    siteKeyErrorMessage: 'That site key did not match. Check the shared key and try again.',
   },
 };

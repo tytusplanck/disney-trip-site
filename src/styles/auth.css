@@ -1,75 +1,60 @@
 .auth-shell {
   min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto 1fr;
 }
 
 .auth-shell__main {
-  flex: 1;
   display: grid;
 }
 
 .auth-page {
-  width: 100%;
-  max-width: var(--content-width);
+  width: min(100%, var(--content-main));
   margin: 0 auto;
   min-height: 100%;
   display: grid;
   place-items: center;
-  padding: clamp(2.5rem, 9vw, 6rem) clamp(1rem, 3vw, 2.5rem) clamp(3rem, 8vw, 5rem);
+  padding: var(--space-11) var(--gutter-desktop) var(--space-12);
 }
 
 .auth-card {
-  width: min(100%, 32rem);
-  display: grid;
-  gap: 1.25rem;
-  padding: clamp(1.5rem, 4vw, 2.2rem);
-  border: 1px solid var(--border2);
-  border-radius: 0.8rem;
-  background: var(--surface-base);
-  box-shadow: 0 8px 18px rgba(54, 60, 55, 0.06);
   position: relative;
   overflow: hidden;
+  width: min(100%, 34rem);
+  display: grid;
+  gap: var(--space-6);
+  padding: clamp(1.75rem, 4vw, 2.5rem);
+  border: var(--border-thin) solid var(--color-line-subtle);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-1);
+  box-shadow: var(--shadow-raised);
 }
 
 .auth-card::before {
   content: '';
   position: absolute;
-  inset: 0 auto 0 0;
-  width: 0.18rem;
-  background: var(--tone-slate);
+  inset: 0 0 auto 0;
+  height: var(--border-route);
+  background: linear-gradient(90deg, var(--color-brand), var(--color-accent-warm));
 }
 
-.auth-card__quip {
-  margin: 0;
-  max-width: 28rem;
-  font-size: 1rem;
-  line-height: 1.7;
-  color: var(--muted);
+.auth-card__heading {
+  display: grid;
+  gap: var(--space-3);
 }
 
 .auth-card__form {
-  margin-top: 0.4rem;
+  margin-top: var(--space-1);
 }
 
 .auth-card__input {
-  padding: 0.95rem 1rem;
-  border: 1px solid var(--border2);
-  border-radius: 0.75rem;
-  background: var(--surface2);
-  transition:
-    border-color 150ms ease,
-    box-shadow 150ms ease,
-    background-color 150ms ease;
+  padding: 0;
+  border: none;
+  background: transparent;
 }
 
 .auth-card__input--masked {
   -webkit-text-security: disc;
-}
-
-.auth-card__input:focus {
-  border-color: var(--accent-border-strong);
-  box-shadow: 0 0 0 3px var(--accent-fill-muted);
 }
 
 .auth-card__button {
@@ -77,8 +62,16 @@
   min-width: 0;
 }
 
-@media (max-width: 640px) {
+.auth-card__note {
+  margin: 0;
+  padding-top: var(--space-4);
+  border-top: var(--border-thin) solid var(--color-line-subtle);
+  color: var(--color-ink-faint);
+  font-size: var(--text-body-sm);
+}
+
+@media (max-width: 720px) {
   .auth-page {
-    max-width: 100%;
+    padding: var(--space-8) var(--gutter-mobile) var(--space-11);
   }
 }

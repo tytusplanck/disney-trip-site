@@ -53,6 +53,17 @@ const scheduleDays = getScheduleDaySummaries(tripModule.schedule);
       activeSection="schedule"
       pageTitle={pageTitle}
     >
+      <section class="trip-page-section trip-page-section--intro">
+        <div class="trip-page-section__copy">
+          <p class="page-label">Day-by-day plan</p>
+          <h2 class="section-title">Read the trip as one clean timeline</h2>
+          <p class="body-copy">
+            Each day should scan in seconds, with park anchors, travel days, and notes visible
+            without extra digging.
+          </p>
+        </div>
+      </section>
+
       <section class="trip-page-section">
         <DisclosurePanel
           label="Full itinerary"

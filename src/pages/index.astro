@@ -48,7 +48,7 @@ function getTripCardInsights(groupId: string, tripId: string) {
 
   {
     allTripsSections.map((section) => (
-      <section class="all-trips-section">
+      <section class="all-trips-section" data-trip-status={section.status}>
         <SectionHeader
           label={sectionLabelByStatus[section.status]}
           countLabel={section.countLabel}
