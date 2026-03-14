@@ -30,8 +30,8 @@ const { view } = Astro.props;
               <span>{cluster.memberSummary}</span>
             </div>
             <div class="party-summary__cluster-meta">
-              <span>{cluster.anchorAttraction}</span>
-              <span>{cluster.affinityValue}</span>
+              <span class="party-summary__cluster-anchor">{cluster.anchorAttraction}</span>
+              <span class="party-summary__cluster-affinity">{cluster.affinityValue}</span>
             </div>
           </li>
         ))

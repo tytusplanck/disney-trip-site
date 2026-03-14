@@ -221,28 +221,28 @@
 }
 
 .trip-tier-token--1 {
-  background: var(--color-success-soft);
-  color: var(--color-pref-must);
+  background: var(--color-viz-1-soft);
+  color: var(--color-viz-1-strong);
 }
 
 .trip-tier-token--2 {
-  background: var(--color-brand-soft);
-  color: var(--color-pref-pref);
+  background: var(--color-viz-2-soft);
+  color: var(--color-viz-2-strong);
 }
 
 .trip-tier-token--3 {
-  background: var(--color-accent-warm-soft);
-  color: var(--color-pref-indif);
+  background: var(--color-viz-3-soft);
+  color: var(--color-viz-3-strong);
 }
 
 .trip-tier-token--4 {
-  background: var(--color-danger-soft);
-  color: var(--color-pref-dont);
+  background: var(--color-viz-4-soft);
+  color: var(--color-viz-4-strong);
 }
 
 .trip-tier-token--5 {
-  background: var(--color-skip-soft);
-  color: var(--color-pref-skip);
+  background: var(--color-viz-5-soft);
+  color: var(--color-viz-5-strong);
 }
 
 .consensus-bars {
@@ -294,10 +294,10 @@
   display: inline-flex;
   align-items: center;
   padding: 0.2rem 0.55rem;
-  border: var(--border-thin) solid var(--color-line-strong);
+  border: var(--border-thin) solid transparent;
   border-radius: var(--radius-pill);
-  background: var(--color-surface-2);
-  color: var(--trip-accent, var(--color-brand));
+  background: var(--color-viz-2-soft);
+  color: var(--color-viz-2-strong);
   font-size: var(--text-meta);
   font-weight: 600;
   letter-spacing: var(--tracking-meta);
@@ -321,38 +321,44 @@
 }
 
 .consensus-progress {
+  --consensus-progress-radius: min(var(--radius-sm), 0.36rem);
+  --bar-fill: var(--color-viz-2-strong);
   width: 100%;
   height: 0.72rem;
   display: block;
   overflow: hidden;
-  border-radius: var(--radius-pill);
-  --bar-fill: var(--color-brand);
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  border-radius: var(--consensus-progress-radius);
+  background: var(--color-viz-track);
 }
 
-.progress-meter__svg {
-  display: block;
-  width: 100%;
-  height: 100%;
+.consensus-progress::-webkit-progress-bar {
+  background: var(--color-viz-track);
+  border-radius: var(--consensus-progress-radius);
 }
 
-.progress-meter__track {
-  fill: var(--color-viz-track);
+.consensus-progress::-webkit-progress-value {
+  background: var(--bar-fill);
+  border-radius: var(--consensus-progress-radius);
 }
 
-.progress-meter__fill {
-  fill: var(--bar-fill);
+.consensus-progress::-moz-progress-bar {
+  background: var(--bar-fill);
+  border-radius: var(--consensus-progress-radius);
 }
 
 .consensus-progress--high {
-  --bar-fill: var(--color-pref-must);
+  --bar-fill: var(--color-viz-1-strong);
 }
 
 .consensus-progress--medium {
-  --bar-fill: var(--color-pref-pref);
+  --bar-fill: var(--color-viz-2-strong);
 }
 
 .consensus-progress--low {
-  --bar-fill: var(--color-pref-indif);
+  --bar-fill: var(--color-viz-3-strong);
 }
 
 .consensus-row__score {
@@ -605,6 +611,19 @@
   padding: var(--space-5);
 }
 
+.party-summary__highlight {
+  position: relative;
+  overflow: hidden;
+}
+
+.party-summary__highlight::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-viz-2-strong) 0%, var(--color-viz-4-strong) 100%);
+}
+
 .party-summary__title {
   margin: 0;
   font-family: var(--font-display);
@@ -669,6 +688,26 @@
   text-align: right;
 }
 
+.party-summary__cluster-anchor {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.party-summary__cluster-affinity {
+  display: inline-flex;
+  align-items: center;
+  justify-self: end;
+  min-height: 2rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-viz-2-soft);
+  color: var(--color-viz-2-strong);
+  font-size: var(--text-meta);
+  font-weight: 600;
+  letter-spacing: var(--tracking-meta);
+  white-space: nowrap;
+}
+
 .party-summary__gap-copy {
   justify-items: end;
   text-align: right;
@@ -677,10 +716,10 @@
 .party-summary__gap-badge {
   min-width: 4.75rem;
   padding: 0.28rem 0.65rem;
-  border: var(--border-thin) solid var(--color-line-subtle);
+  border: var(--border-thin) solid transparent;
   border-radius: var(--radius-pill);
-  background: var(--color-surface-2);
-  color: var(--color-ink);
+  background: var(--color-viz-4-soft);
+  color: var(--color-viz-4-strong);
   text-align: center;
 }
 
@@ -761,27 +800,27 @@
 }
 
 .party-traveler-card__stat--priority {
-  background: var(--color-success-soft);
+  background: var(--color-viz-1-soft);
 }
 
 .party-traveler-card__stat--priority .party-traveler-card__stat-value {
-  color: var(--color-pref-must);
+  color: var(--color-viz-1-strong);
 }
 
 .party-traveler-card__stat--likes {
-  background: var(--color-brand-soft);
+  background: var(--color-viz-2-soft);
 }
 
 .party-traveler-card__stat--likes .party-traveler-card__stat-value {
-  color: var(--color-pref-pref);
+  color: var(--color-viz-2-strong);
 }
 
 .party-traveler-card__stat--avoid {
-  background: var(--color-danger-soft);
+  background: var(--color-viz-5-soft);
 }
 
 .party-traveler-card__stat--avoid .party-traveler-card__stat-value {
-  color: var(--color-pref-dont);
+  color: var(--color-viz-5-strong);
 }
 
 .party-traveler-card__top-call {
@@ -858,27 +897,6 @@
     min-height: 2.75rem;
   }
 
-  .party-traveler-cards {
-    gap: var(--space-3);
-  }
-
-  .party-traveler-card {
-    gap: var(--space-2);
-    padding: var(--space-3);
-  }
-
-  .party-traveler-card__description {
-    max-width: none;
-  }
-
-  .party-traveler-card__stat {
-    padding: var(--space-2);
-  }
-
-  .party-traveler-card__top-call {
-    padding-top: var(--space-2);
-  }
-
   .attractions-explorer__panel,
   .attractions-explorer__results,
   .attractions-explorer__empty,
@@ -900,6 +918,26 @@
   .party-summary__cluster-meta {
     justify-items: start;
     text-align: left;
+  }
+
+  .party-traveler-cards {
+    gap: var(--space-3);
+  }
+
+  .party-traveler-card {
+    gap: var(--space-2);
+  }
+
+  .party-traveler-card__description {
+    max-width: none;
+  }
+
+  .party-traveler-card__stat {
+    padding: var(--space-2);
+  }
+
+  .party-traveler-card__top-call {
+    padding-top: var(--space-2);
   }
 }
 

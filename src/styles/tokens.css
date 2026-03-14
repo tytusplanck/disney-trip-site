@@ -72,13 +72,24 @@
   --color-schedule-resort-strong: #067a48;
   --color-schedule-resort-soft: #d8f5e6;
 
-  --color-pref-must: #2d7a78;
-  --color-pref-pref: #2b6f8a;
-  --color-pref-indif: #607b97;
-  --color-pref-dont: #aa606a;
-  --color-pref-skip: #7a7291;
-  --color-viz-track: #d8e1ea;
-  --color-viz-grid: #e7edf4;
+  --color-viz-1-strong: #067a48;
+  --color-viz-1-soft: #d8f5e6;
+  --color-viz-2-strong: #0a6dad;
+  --color-viz-2-soft: #ddf1ff;
+  --color-viz-3-strong: #607b97;
+  --color-viz-3-soft: #eaf0f6;
+  --color-viz-4-strong: #7046b7;
+  --color-viz-4-soft: #f1e7ff;
+  --color-viz-5-strong: #5d3d98;
+  --color-viz-5-soft: #ede5fb;
+
+  --color-pref-must: var(--color-viz-1-strong);
+  --color-pref-pref: var(--color-viz-2-strong);
+  --color-pref-indif: var(--color-viz-3-strong);
+  --color-pref-dont: var(--color-viz-4-strong);
+  --color-pref-skip: var(--color-viz-5-strong);
+  --color-viz-track: #d8e6f4;
+  --color-viz-grid: #eaf1f8;
 
   --color-focus-ring: #2b6f8a;
   --color-focus-halo: #dceaf3;
@@ -170,16 +181,16 @@
   --status-upcoming: var(--color-status-upcoming);
   --status-completed: var(--color-status-completed);
   --must: var(--color-pref-must);
-  --must-bg: var(--color-success-soft);
+  --must-bg: var(--color-viz-1-soft);
   --pref: var(--color-pref-pref);
-  --pref-bg: var(--color-brand-soft);
+  --pref-bg: var(--color-viz-2-soft);
   --indif: var(--color-pref-indif);
-  --indif-bg: var(--color-accent-warm-soft);
+  --indif-bg: var(--color-viz-3-soft);
   --dont: var(--color-pref-dont);
-  --dont-bg: var(--color-danger-soft);
+  --dont-bg: var(--color-viz-4-soft);
   --skip: var(--color-pref-skip);
-  --skip-bg: var(--color-skip-soft);
-  --viz-affinity: var(--color-brand);
+  --skip-bg: var(--color-viz-5-soft);
+  --viz-affinity: var(--color-viz-2-strong);
   --viz-track: var(--color-viz-track);
   --font-mono: var(--font-ui);
   --content-width: var(--content-main);

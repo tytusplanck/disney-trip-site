@@ -50,6 +50,20 @@
 - Keep the vertical day marker on one shared trip accent so the timeline rail stays calm and consistent.
 - Badge treatments should stay as soft pills with stronger text, not solid saturated fills.
 
+## Data Viz Spectrum
+
+- Planner data-viz uses one shared ordered spectrum instead of mixing brand, success, danger, and skip hues independently.
+- Use these token pairs for data surfaces only:
+  - `viz-1`: strongest support / must-do (`#067a48` / `#d8f5e6`)
+  - `viz-2`: positive support / preferred (`#0a6dad` / `#ddf1ff`)
+  - `viz-3`: neutral bridge / indifferent (`#607b97` / `#eaf0f6`)
+  - `viz-4`: friction / don't-want (`#7046b7` / `#f1e7ff`)
+  - `viz-5`: strongest rejection / will-skip (`#5d3d98` / `#ede5fb`)
+- Apply the spectrum to bars, badges, stat cells, and thin summary rails only. Keep long-form copy, control chrome, tabs, and page shells on the neutral/trip-accent system.
+- `--color-danger*` remains reserved for destructive or error UI. It is not part of planner preference visualization.
+- Schedule stays the reference for semantic vibrance, but its travel / park / resort colors remain scoped to the schedule badge treatment.
+- Party should stay metrics-first: color belongs in affinity pills, gap badges, stat cells, and summary rails, not full-card washes.
+
 ## Layout Rules
 
 - Minimum tap target: `2.75rem`

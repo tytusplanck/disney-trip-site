@@ -8,8 +8,6 @@ export default function ConsensusBars({ items }: Props) {
   return (
     <div className="consensus-bars" aria-label="Consensus rankings">
       {items.map((item, index) => {
-        const progressWidth = Math.max(0, Math.min(100, item.scorePercent));
-
         return (
           <article className="consensus-row" key={item.id}>
             <div className="consensus-row__meta">
@@ -23,31 +21,12 @@ export default function ConsensusBars({ items }: Props) {
             </div>
 
             <div className="consensus-row__track">
-              <div
+              <progress
                 aria-label={`${item.attractionLabel} consensus score ${String(item.consensusScore)} out of ${String(item.maxScore)}`}
-                aria-valuemax={item.maxScore}
-                aria-valuemin={0}
-                aria-valuenow={item.consensusScore}
                 className={`consensus-progress consensus-progress--${item.tone}`}
-                role="progressbar"
-              >
-                <svg
-                  aria-hidden="true"
-                  className="progress-meter__svg"
-                  focusable="false"
-                  preserveAspectRatio="none"
-                  viewBox="0 0 100 10"
-                >
-                  <rect className="progress-meter__track" height="10" rx="5" ry="5" width="100" />
-                  <rect
-                    className="progress-meter__fill"
-                    height="10"
-                    rx="5"
-                    ry="5"
-                    width={progressWidth}
-                  />
-                </svg>
-              </div>
+                max={item.maxScore}
+                value={item.consensusScore}
+              />
               <p className="consensus-row__votes">
                 {item.mustDoVotes} must-do / {item.preferredVotes} preferred
               </p>
