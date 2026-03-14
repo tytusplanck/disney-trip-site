@@ -5,9 +5,16 @@ import { describe, expect, it } from 'vitest';
 const source = readFileSync(join(process.cwd(), 'src/pages/[family]/[trip]/party.astro'), 'utf-8');
 
 describe('party page structure', () => {
-  it('uses concise disclosure copy and keeps traveler details visible on first mobile view', () => {
-    expect(source.includes('summary="See all traveler profiles"')).toBe(true);
-    expect(source.includes('mobileBehavior="expanded"')).toBe(true);
-    expect(source.includes('Open every traveler profile')).toBe(false);
+  it('renders visible traveler cards instead of a disclosure', () => {
+    expect(source.includes('DisclosurePanel')).toBe(false);
+    expect(source.includes('PartyTravelerCards')).toBe(true);
+    expect(source.includes('summary="See traveler quick list"')).toBe(false);
+  });
+
+  it('replaces the old dossier board with compact summary components', () => {
+    expect(source.includes('PartySummary')).toBe(true);
+    expect(source.includes('PartyTravelerCards')).toBe(true);
+    expect(source.includes('PartyCard')).toBe(false);
+    expect(source.includes('PartyClusterBoard')).toBe(false);
   });
 });

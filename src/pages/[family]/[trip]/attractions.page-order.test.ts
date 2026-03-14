@@ -8,17 +8,22 @@ const source = readFileSync(
 );
 
 describe('attractions page section order', () => {
-  it('keeps the scoring system ahead of the decision board', () => {
-    const scoringSystemIndex = source.indexOf('<DisclosurePanel');
+  it('keeps the scoring guide ahead of the reduced decision board', () => {
+    const scoringGuideIndex = source.indexOf('<DisclosurePanel');
     const decisionBoardIndex = source.indexOf(
       '<AttractionsExplorer client:load data={explorerData} />',
     );
 
-    expect(scoringSystemIndex).toBeGreaterThan(-1);
+    expect(scoringGuideIndex).toBeGreaterThan(-1);
     expect(decisionBoardIndex).toBeGreaterThan(-1);
-    expect(scoringSystemIndex).toBeLessThan(decisionBoardIndex);
-    expect(source.includes('summary="See scoring rules"')).toBe(true);
+    expect(scoringGuideIndex).toBeLessThan(decisionBoardIndex);
+    expect(source.includes('summary="See how scores work"')).toBe(true);
+  });
+
+  it('removes the route intro and deleted secondary analysis modules', () => {
     expect(source.includes('How the board turns preferences into points')).toBe(false);
     expect(source.includes('Filter down to the right ride stack for the day')).toBe(false);
+    expect(source.includes('AttractionHeatmap')).toBe(false);
+    expect(source.includes('SignalList')).toBe(false);
   });
 });

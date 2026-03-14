@@ -62,6 +62,16 @@
   --color-status-completed: #2d7a78;
   --color-status-completed-bg: #e7f2f1;
 
+  --color-schedule-travel-accent: #9b67e8;
+  --color-schedule-travel-strong: #7046b7;
+  --color-schedule-travel-soft: #f1e7ff;
+  --color-schedule-park-accent: #2196f3;
+  --color-schedule-park-strong: #0a6dad;
+  --color-schedule-park-soft: #ddf1ff;
+  --color-schedule-resort-accent: #15b26f;
+  --color-schedule-resort-strong: #067a48;
+  --color-schedule-resort-soft: #d8f5e6;
+
   --color-pref-must: #2d7a78;
   --color-pref-pref: #2b6f8a;
   --color-pref-indif: #607b97;

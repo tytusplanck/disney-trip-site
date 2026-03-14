@@ -1,0 +1,43 @@
+---
+import type { PartyMemberSummary } from '../lib/trips/details';
+
+interface Props {
+  summaries: PartyMemberSummary[];
+}
+
+const { summaries } = Astro.props;
+---
+
+<ul class="party-traveler-cards">
+  {
+    summaries.map((summary) => (
+      <li class="party-traveler-card">
+        <p class="party-traveler-card__style">{summary.styleLabel}</p>
+        <h3 class="party-traveler-card__name">{summary.member.name}</h3>
+        <p class="party-traveler-card__description">{summary.styleDescription}</p>
+
+        <dl class="party-traveler-card__stats">
+          <div class="party-traveler-card__stat party-traveler-card__stat--priority">
+            <dt class="party-traveler-card__stat-label">Priority votes</dt>
+            <dd class="party-traveler-card__stat-value">{summary.mustDoCount}</dd>
+          </div>
+          <div class="party-traveler-card__stat party-traveler-card__stat--likes">
+            <dt class="party-traveler-card__stat-label">Broad likes</dt>
+            <dd class="party-traveler-card__stat-value">{summary.enthusiasmCount}</dd>
+          </div>
+          <div class="party-traveler-card__stat party-traveler-card__stat--avoid">
+            <dt class="party-traveler-card__stat-label">Avoid flags</dt>
+            <dd class="party-traveler-card__stat-value">{summary.avoidCount}</dd>
+          </div>
+        </dl>
+
+        <p class="party-traveler-card__top-call">
+          <span class="party-traveler-card__top-call-label">Top call</span>
+          <span class="party-traveler-card__top-call-value">
+            {summary.topChoices[0] ?? 'No top call yet'}
+          </span>
+        </p>
+      </li>
+    ))
+  }
+</ul>

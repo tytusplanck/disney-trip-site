@@ -1,119 +1,34 @@
 ---
-import ChipList from './ChipList.astro';
 import StatusBadge from './StatusBadge.astro';
-import { getTripLandingPath, getTripSectionPath } from '../lib/trips/all-trips';
+import { getTripCompactFactsLine, getTripLandingPath } from '../lib/trips/all-trips';
 import type { TripSummary } from '../lib/trips/types';
 import { getAllTripsCardPresentation, type AllTripsCardCopy } from '../pages/index.page';
-import type { AllTripsCardInsight } from '../lib/trips/details';
 
 interface Props {
   trip: TripSummary;
   copy: AllTripsCardCopy;
-  insights?: AllTripsCardInsight[] | undefined;
 }
 
-const { trip, copy, insights = [] } = Astro.props;
+const { trip, copy } = Astro.props;
 
 const cardHref = getTripLandingPath(trip);
-const showInsights = trip.status === 'planning' && insights.length > 0;
 const cardPresentation = getAllTripsCardPresentation(copy, trip.status);
-
-const essentials = [
-  { label: 'People', value: trip.partySize === null ? '--' : String(trip.partySize) },
-  { label: 'Days', value: trip.dayCount === null ? '--' : String(trip.dayCount) },
-  { label: 'Parks', value: trip.parkLabels.length === 0 ? '--' : String(trip.parkLabels.length) },
-];
-
-const chipItems = trip.parkLabels.length > 0 ? trip.parkLabels : ['Parks TBD'];
-const planningLinks = [
-  {
-    label: 'Attractions',
-    detail: 'Ride priorities and the full matrix',
-    action: 'View attractions',
-    href: getTripSectionPath(trip, 'attractions'),
-  },
-  {
-    label: 'Schedule',
-    detail: 'Trip rhythm and daily plan',
-    action: 'View schedule',
-    href: getTripSectionPath(trip, 'schedule'),
-  },
-  {
-    label: 'Party',
-    detail: 'Traveler preferences and pressure points',
-    action: 'View party',
-    href: getTripSectionPath(trip, 'party'),
-  },
-];
+const factsLine = getTripCompactFactsLine(trip);
 ---
 
 <article class="trip-card" data-trip-theme={trip.themeId} data-trip-status={trip.status}>
   <div class="trip-card__route" aria-hidden="true"></div>
 
   <header class="trip-card__header">
-    <div class="trip-card__heading">
-      <StatusBadge status={trip.status} />
-      <h3 class="trip-card__title">{trip.title}</h3>
-      <p class="trip-card__date">{trip.dateLabel}</p>
-    </div>
-
-    <a class="trip-card__button" href={cardHref}>
-      {cardPresentation.primaryActionLabel}
-    </a>
+    <StatusBadge status={trip.status} />
+    <h3 class="trip-card__title">{trip.title}</h3>
+    <p class="trip-card__date">{trip.dateLabel}</p>
   </header>
 
-  <div class="trip-card__snapshot">
-    <dl class="trip-card__essentials">
-      {
-        essentials.map((item) => (
-          <div class="trip-card__essential">
-            <dt class="trip-card__essential-label">{item.label}</dt>
-            <dd class="trip-card__essential-value">{item.value}</dd>
-          </div>
-        ))
-      }
-    </dl>
+  <a class="trip-card__button" href={cardHref}>
+    {cardPresentation.primaryActionLabel}
+  </a>
 
-    <div class="trip-card__parks">
-      <ChipList items={chipItems} />
-    </div>
-  </div>
-
-  {
-    showInsights ? (
-      <dl class="trip-card__insights">
-        {insights.map((insight) => (
-          <div class="trip-card__insight">
-            <dt class="trip-card__insight-label">{insight.label}</dt>
-            <dd class="trip-card__insight-detail">{insight.detail}</dd>
-          </div>
-        ))}
-      </dl>
-    ) : (
-      <p class="trip-card__summary-copy trip-card__summary-copy--future">
-        {cardPresentation.fallbackNote}
-      </p>
-    )
-  }
-
-  {
-    cardPresentation.showShortcutLinks && (
-      <section class="trip-card__shortcut-panel" aria-label={copy.shortcutLabel}>
-        <div class="trip-card__shortcut-header">
-          <p class="trip-card__shortcut-label">{copy.shortcutLabel}</p>
-          <p class="trip-card__links-intro">{copy.shortcutIntro}</p>
-        </div>
-
-        <div class="trip-card__shortcut-list">
-          {planningLinks.map((link) => (
-            <a class="trip-card__shortcut" href={link.href}>
-              <span class="trip-card__shortcut-title">{link.label}</span>
-              <span class="trip-card__shortcut-detail">{link.detail}</span>
-              <span class="trip-card__shortcut-action">{link.action}</span>
-            </a>
-          ))}
-        </div>
-      </section>
-    )
-  }
+  <p class="trip-card__facts">{factsLine}</p>
+  <p class="trip-card__summary-copy">{cardPresentation.supportingCopy}</p>
 </article>

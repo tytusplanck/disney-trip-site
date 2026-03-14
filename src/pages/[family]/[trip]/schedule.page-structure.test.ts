@@ -8,10 +8,14 @@ const source = readFileSync(
 );
 
 describe('schedule page structure', () => {
-  it('opens directly into the itinerary disclosure without the redundant daily board header', () => {
+  it('renders a direct timeline without a disclosure wrapper', () => {
+    expect(source.includes('DisclosurePanel')).toBe(false);
+    expect(source.includes('<div class="schedule-grid">')).toBe(true);
+    expect(source.includes('<ScheduleDayCard day={day} />')).toBe(true);
+  });
+
+  it('removes the route intro and redundant daily board copy', () => {
     expect(source.includes('<p class="page-label">Daily board</p>')).toBe(false);
-    expect(source.includes('label="Full itinerary"')).toBe(true);
-    expect(source.includes('summary="See full itinerary"')).toBe(true);
-    expect(source.includes('mobileBehavior="expanded"')).toBe(true);
+    expect(source.includes('pageSummary={pageCopy.summary}')).toBe(true);
   });
 });

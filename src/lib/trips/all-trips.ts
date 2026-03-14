@@ -1,15 +1,12 @@
 import type {
   AllTripsSection,
-  AllTripsStats,
   TripDataModule,
-  TripBarStat,
   TripSection,
   TripStatus,
   TripSummary,
 } from './types';
 
 const SECTION_ORDER: TripStatus[] = ['planning', 'upcoming', 'completed'];
-const MISSING_VALUE = '--';
 const DEFAULT_TRIP_SECTION: TripSection = 'attractions';
 
 export interface TripRouteContext {
@@ -19,10 +16,6 @@ export interface TripRouteContext {
 
 function formatCountLabel(count: number): string {
   return `${String(count)} ${count === 1 ? 'trip' : 'trips'}`;
-}
-
-function formatMetricValue(value: number | null): string {
-  return value === null ? MISSING_VALUE : String(value);
 }
 
 function formatInlineMetric(
@@ -51,18 +44,6 @@ export function getAllTripsSections(trips: TripSummary[]): AllTripsSection[] {
       trips: sectionTrips,
     };
   });
-}
-
-export function getAllTripsStats(trips: TripSummary[]): AllTripsStats {
-  const nextPlanningTrip = trips.find((trip) => trip.status === 'planning');
-
-  return {
-    totalTrips: String(trips.length),
-    planningTrips: String(trips.filter((trip) => trip.status === 'planning').length),
-    ridesScouted: formatMetricValue(nextPlanningTrip?.attractionCount ?? null),
-    nextTripPeople: formatMetricValue(nextPlanningTrip?.partySize ?? null),
-    nextTripParks: formatMetricValue(nextPlanningTrip?.parkLabels.length ?? null),
-  };
 }
 
 export function findTripSummary(
@@ -110,27 +91,12 @@ export function getTripBasePath(trip: Pick<TripSummary, 'groupId' | 'id'>): stri
   return `/${trip.groupId}/${trip.id}`;
 }
 
-export function getTripBarStats(trip: TripSummary): TripBarStat[] {
+export function getTripCompactFactsLine(trip: TripSummary): string {
   return [
-    { label: 'People', value: formatMetricValue(trip.partySize) },
-    { label: 'Days', value: formatMetricValue(trip.dayCount) },
-    { label: 'Attractions', value: formatMetricValue(trip.attractionCount) },
-    { label: 'Parks', value: formatMetricValue(trip.parkLabels.length || null) },
-  ];
-}
-
-export function getTripInlineFacts(trip: TripSummary): string[] {
-  return [
-    trip.dateLabel,
     formatInlineMetric(trip.partySize, 'person', 'people', 'Party TBD'),
     formatInlineMetric(trip.dayCount, 'day', 'days', 'Length TBD'),
-    formatInlineMetric(trip.attractionCount, 'attraction', 'attractions', 'Attractions TBD'),
     trip.parkLabels.length > 0
       ? `${String(trip.parkLabels.length)} ${trip.parkLabels.length === 1 ? 'park' : 'parks'}`
       : 'Parks TBD',
-  ];
-}
-
-export function getTripMobileFacts(trip: TripSummary): TripBarStat[] {
-  return [{ label: 'Dates', value: trip.dateLabel }, ...getTripBarStats(trip)];
+  ].join(' • ');
 }

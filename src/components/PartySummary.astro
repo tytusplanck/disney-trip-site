@@ -1,0 +1,58 @@
+---
+import type { PartySummaryView } from '../lib/trips/party-view';
+
+interface Props {
+  view: PartySummaryView;
+}
+
+const { view } = Astro.props;
+---
+
+<section class="party-summary">
+  {
+    view.headlineInsight && (
+      <article class="party-summary__highlight">
+        <p class="party-summary__eyebrow">{view.headlineInsight.eyebrow}</p>
+        <h2 class="party-summary__title">{view.headlineInsight.title}</h2>
+        <p class="party-summary__detail">{view.headlineInsight.detail}</p>
+      </article>
+    )
+  }
+
+  <section class="party-summary__section">
+    <p class="party-summary__eyebrow">Traveler groups</p>
+    <ul class="party-summary__cluster-list">
+      {
+        view.clusters.map((cluster) => (
+          <li class="party-summary__cluster-item">
+            <div class="party-summary__cluster-copy">
+              <strong>{cluster.label}</strong>
+              <span>{cluster.memberSummary}</span>
+            </div>
+            <div class="party-summary__cluster-meta">
+              <span>{cluster.anchorAttraction}</span>
+              <span>{cluster.affinityValue}</span>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="party-summary__section">
+    <p class="party-summary__eyebrow">Top group gaps</p>
+    <ol class="party-summary__gap-list">
+      {
+        view.gapItems.map((item) => (
+          <li class="party-summary__gap-item">
+            <span class="party-summary__gap-badge">{item.badge}</span>
+            <div class="party-summary__gap-copy">
+              <strong>{item.title}</strong>
+              <span>{item.detail}</span>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</section>

@@ -1,7 +1,8 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 import AttractionsExplorer from './AttractionsExplorer';
 import * as attractionsExplorerModel from '../lib/trips/attractions-explorer';
+import { casschwlanck2026TripData } from '../data/trips/casschwlanck-2026';
 import { attractionsExplorerFixtureTrip } from '../test/attractions-explorer.fixture';
 
 function renderExplorer() {
@@ -12,69 +13,35 @@ function renderExplorer() {
   );
 }
 
-function createExplorerData() {
-  return attractionsExplorerModel.buildAttractionsExplorerData(attractionsExplorerFixtureTrip);
-}
-
 describe('AttractionsExplorer', () => {
-  it('keeps rankings in the primary column and secondary insights in the rail', () => {
+  it('renders a reduced decision surface with filters and rankings only', () => {
     renderExplorer();
 
-    const summaryLabel = screen.getByText('Matching rides');
-    const rankingsDisclosure = screen.getByText('View full rankings');
-    const matrixDisclosure = screen.getByText('View traveler matrix');
-    const areaDisclosure = screen.getByText('View area breakdown');
-    const signalsHeading = screen.getByRole('heading', {
-      name: 'Patterns worth noticing before you commit',
-    });
+    expect(screen.getByText('Current scope')).toBeInTheDocument();
+    expect(screen.getByLabelText('Search')).toBeInTheDocument();
+    expect(screen.getByLabelText('Traveler')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /All Park Days/i })).toBeInTheDocument();
+    expect(screen.getByLabelText('Ranked rides')).toBeInTheDocument();
 
-    expect(
-      summaryLabel.compareDocumentPosition(rankingsDisclosure) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).not.toBe(0);
-    expect(
-      rankingsDisclosure.compareDocumentPosition(matrixDisclosure) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).not.toBe(0);
-    expect(
-      rankingsDisclosure.compareDocumentPosition(signalsHeading) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).not.toBe(0);
-    expect(
-      signalsHeading.compareDocumentPosition(matrixDisclosure) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).not.toBe(0);
-    expect(
-      matrixDisclosure.compareDocumentPosition(areaDisclosure) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).not.toBe(0);
-    expect(rankingsDisclosure.closest('.attractions-explorer__results-primary')).not.toBeNull();
-    expect(matrixDisclosure.closest('.attractions-explorer__results-secondary')).not.toBeNull();
-    expect(areaDisclosure.closest('.attractions-explorer__results-secondary')).not.toBeNull();
-    expect(signalsHeading.closest('.attractions-explorer__results-secondary')).not.toBeNull();
-    expect(
-      rankingsDisclosure.closest('details')?.hasAttribute('open'),
-      'rankings disclosure should default open',
-    ).toBe(true);
-    expect(
-      areaDisclosure.closest('details')?.hasAttribute('open'),
-      'area breakdown disclosure should default collapsed',
-    ).toBe(false);
-    expect(screen.queryByText('Top contenders right now')).not.toBeInTheDocument();
-    expect(screen.queryByText('View all areas')).not.toBeInTheDocument();
+    expect(screen.queryByText('View traveler matrix')).not.toBeInTheDocument();
+    expect(screen.queryByText('View area breakdown')).not.toBeInTheDocument();
+    expect(screen.queryByText('Patterns worth noticing before you commit')).not.toBeInTheDocument();
   });
 
-  it('updates the board when the EPCOT day chip is selected', async () => {
+  it('updates the ranking when the EPCOT day chip is selected', async () => {
     renderExplorer();
 
-    fireEvent.click(screen.getByRole('button', { name: /Day 2/i }));
+    fireEvent.click(screen.getByRole('button', { name: /EPCOT/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('Day 2: EPCOT')).toBeInTheDocument();
+      expect(screen.getByText('Day 2: EPCOT • Whole Group')).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/Hold - Geo82/)).toBeInTheDocument();
+    expect(screen.getByText(/Living with the Land/)).toBeInTheDocument();
     expect(screen.queryAllByText("Peter Pan's Flight")).toHaveLength(0);
-    expect(screen.getAllByText('Living with the Land').length).toBeGreaterThan(0);
   });
 
-  it('switches sentiment labels and highlights the selected traveler column', async () => {
+  it('sorts by traveler when a specific traveler is selected', async () => {
     renderExplorer();
 
     fireEvent.change(screen.getByLabelText('Traveler'), {
@@ -82,70 +49,66 @@ describe('AttractionsExplorer', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Must Do' })).toBeInTheDocument();
+      expect(screen.getByText('All Park Days • Ben')).toBeInTheDocument();
     });
 
-    expect(screen.queryByRole('button', { name: 'High' })).not.toBeInTheDocument();
-
-    const table = screen.getByRole('table');
-    const benHeader = within(table).getByText('Ben');
-    expect(benHeader).toHaveClass('trip-heatmap__heading--highlighted');
+    const topRows = screen.getAllByText(/Top [1-3]/).map((node) => node.textContent);
+    expect(topRows).toEqual(['Top 1', 'Top 2', 'Top 3']);
+    expect(screen.getByText("Soarin' Around the World")).toBeInTheDocument();
   });
 
   it('restores the default trip-wide state when filters are reset', async () => {
     renderExplorer();
 
-    fireEvent.click(screen.getByRole('button', { name: /Day 2/i }));
-    await waitFor(() => {
-      expect(screen.getByText('Day 2: EPCOT')).toBeInTheDocument();
-    });
-
-    fireEvent.click(screen.getByRole('button', { name: 'Reset filters' }));
-
-    await waitFor(() => {
-      expect(screen.getByText('Explorer Fixture Trip decision board')).toBeInTheDocument();
-    });
-
-    expect(screen.getByRole('button', { name: /All Trip/i })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
-  });
-
-  it('shows the no-results panel with a reset path when filters eliminate the board', async () => {
-    renderExplorer();
-
+    fireEvent.click(screen.getByRole('button', { name: /EPCOT/i }));
     fireEvent.change(screen.getByLabelText('Traveler'), {
       target: { value: 'ben' },
     });
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Will Skip' })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Reset filters' })).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByRole('button', { name: 'Will Skip' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Reset filters' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('All Park Days • Whole Group')).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('button', { name: /All Park Days/i })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
+
+  it('collapses to the top 15 rides by default and supports expanding the rest', async () => {
+    render(
+      <AttractionsExplorer
+        data={attractionsExplorerModel.buildAttractionsExplorerData(casschwlanck2026TripData)}
+      />,
+    );
+
+    const toggle = screen.getByRole('button', { name: 'Show Remaining Rides' });
+    expect(toggle).toBeInTheDocument();
+
+    fireEvent.click(toggle);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Show Top 15 Only' })).toBeInTheDocument();
+    });
+  });
+
+  it('shows the no-results state with a reset path when search eliminates the list', async () => {
+    renderExplorer();
+
     fireEvent.change(screen.getByLabelText('Search'), {
-      target: { value: 'Soarin' },
+      target: { value: 'Not a ride' },
     });
 
     await waitFor(() => {
-      expect(
-        screen.getByText('No attractions matched the current filter stack.'),
-      ).toBeInTheDocument();
+      expect(screen.getByText('No attractions matched the current filters.')).toBeInTheDocument();
     });
 
     expect(screen.getAllByRole('button', { name: 'Reset filters' }).length).toBeGreaterThan(0);
-  });
-
-  it('memoizes derived views when parent rerenders with unchanged data', () => {
-    const data = createExplorerData();
-    const deriveSpy = vi.spyOn(attractionsExplorerModel, 'deriveAttractionsExplorerView');
-    const { rerender } = render(<AttractionsExplorer data={data} />);
-    const initialCalls = deriveSpy.mock.calls.length;
-
-    rerender(<AttractionsExplorer data={data} />);
-
-    expect(deriveSpy.mock.calls.length).toBe(initialCalls);
-    deriveSpy.mockRestore();
   });
 });

@@ -19,7 +19,6 @@ describe('progress accessibility', () => {
       preferredVotes: 1,
       tone: 'high',
       memberTiers: { ada: 1 },
-      ratingVariance: 0.6,
     };
 
     render(<ConsensusBars items={[item]} />);
@@ -31,21 +30,17 @@ describe('progress accessibility', () => {
     ).toBeInTheDocument();
   });
 
-  it('keeps explicit progressbar semantics on Astro meter markup', () => {
-    const partyCardSource = readFileSync(
-      join(process.cwd(), 'src/components/PartyCard.astro'),
+  it('keeps the reduced party surfaces free of obsolete progress meters', () => {
+    const partySummarySource = readFileSync(
+      join(process.cwd(), 'src/components/PartySummary.astro'),
       'utf8',
     );
-    const clusterBoardSource = readFileSync(
-      join(process.cwd(), 'src/components/PartyClusterBoard.astro'),
+    const partyTravelerCardsSource = readFileSync(
+      join(process.cwd(), 'src/components/PartyTravelerCards.astro'),
       'utf8',
     );
 
-    expect(partyCardSource).toMatch(/role="progressbar"/);
-    expect(partyCardSource).toMatch(/aria-label=/);
-    expect(partyCardSource).toMatch(/aria-valuenow=/);
-    expect(clusterBoardSource).toMatch(/role="progressbar"/);
-    expect(clusterBoardSource).toMatch(/aria-label=/);
-    expect(clusterBoardSource).toMatch(/aria-valuenow=/);
+    expect(partySummarySource.includes('role="progressbar"')).toBe(false);
+    expect(partyTravelerCardsSource.includes('role="progressbar"')).toBe(false);
   });
 });

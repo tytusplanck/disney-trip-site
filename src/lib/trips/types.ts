@@ -29,19 +29,6 @@ export interface AllTripsSection {
   trips: TripSummary[];
 }
 
-export interface AllTripsStats {
-  totalTrips: string;
-  planningTrips: string;
-  ridesScouted: string;
-  nextTripPeople: string;
-  nextTripParks: string;
-}
-
-export interface TripBarStat {
-  label: string;
-  value: string;
-}
-
 export interface TripPartyMember {
   id: string;
   name: string;

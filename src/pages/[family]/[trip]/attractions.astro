@@ -11,7 +11,7 @@ import { getPreferenceTierPoints } from '../../../lib/trips/data';
 import { getPreferenceMeta } from '../../../lib/trips/details';
 import { getTripRouteContext } from '../../../lib/trips/all-trips';
 import { hasTripSectionContent } from '../../../lib/trips/readiness';
-import { tripSectionTitles } from './trip-sections.page';
+import { tripSectionCopy } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
@@ -29,7 +29,7 @@ if (!routeContext) {
 const { trip, tripModule } = routeContext;
 
 const stubPage = tripStubPages.attractions;
-const pageTitle = tripSectionTitles.attractions;
+const pageCopy = tripSectionCopy.attractions;
 const statusCopy = getTripStubStatusCopy(trip.status);
 const tripIsStub = !hasTripSectionContent(tripModule, 'attractions');
 const explorerData = buildAttractionsExplorerData(tripModule);
@@ -59,24 +59,14 @@ const scoreGuide = ([1, 2, 3, 4, 5] as const).map((tier) => ({
       description={`Attractions view for ${trip.title}.`}
       trip={trip}
       activeSection="attractions"
-      pageTitle={pageTitle}
+      pageTitle={pageCopy.title}
+      pageSummary={pageCopy.summary}
     >
-      <section class="trip-page-section trip-page-section--intro">
-        <div class="trip-page-section__copy">
-          <p class="page-label">Ride picks</p>
-          <h2 class="section-title">Sort the rides before the day gets noisy</h2>
-          <p class="body-copy">
-            Start with the shared ranking, then narrow by park, traveler, and area until the next
-            call is obvious.
-          </p>
-        </div>
-      </section>
-
       <section class="trip-page-section">
         <DisclosurePanel
-          label="Scoring system"
-          summary="See scoring rules"
-          detail={`How ${tripModule.party.length} ballots become ${maxScoreLabel} max points`}
+          label="Scoring guide"
+          summary="See how scores work"
+          detail={`${tripModule.party.length} travelers, ${maxScoreLabel}-point maximum`}
           mobileBehavior="collapsed"
           defaultOpen={false}
         >

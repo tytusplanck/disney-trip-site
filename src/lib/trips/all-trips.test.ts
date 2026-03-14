@@ -2,15 +2,12 @@ import { describe, expect, it } from 'vitest';
 import { allTripsData } from '../../data/all-trips';
 import type { TripSummary } from './types';
 import {
-  findTripSummary,
   findTripDataModule,
+  findTripSummary,
   getAllTripsSections,
-  getAllTripsStats,
-  getTripBarStats,
   getTripBasePath,
-  getTripInlineFacts,
+  getTripCompactFactsLine,
   getTripLandingPath,
-  getTripMobileFacts,
   getTripRouteContext,
   getTripSectionPath,
 } from './all-trips';
@@ -36,16 +33,6 @@ describe('all trips helpers', () => {
     expect(sections[2]?.countLabel).toBe('0 trips');
   });
 
-  it('derives the All Trips stat strip from the next planning trip', () => {
-    expect(getAllTripsStats(allTripsData.trips)).toEqual({
-      totalTrips: '2',
-      planningTrips: '1',
-      ridesScouted: '87',
-      nextTripPeople: '10',
-      nextTripParks: '4',
-    });
-  });
-
   it('routes both planning and upcoming trips to the first planner section', () => {
     const planningTrip = findTripSummary(allTripsData.trips, 'casschwlanck', '2026');
     const upcomingTrip = findTripSummary(allTripsData.trips, 'casschwlanck', 'future-trip');
@@ -62,9 +49,8 @@ describe('all trips helpers', () => {
     expect(getTripSectionPath(planningTrip, 'schedule')).toBe('/casschwlanck/2026/schedule');
   });
 
-  it('finds trip modules and derives shared trip chrome stats', () => {
+  it('finds trip modules and derives route context', () => {
     const planningTrip = findTripSummary(allTripsData.trips, 'casschwlanck', '2026');
-    const upcomingTrip = findTripSummary(allTripsData.trips, 'casschwlanck', 'future-trip');
     const planningModule = findTripDataModule(allTripsData.modules, 'casschwlanck', '2026');
     const routeContext = getTripRouteContext(
       allTripsData.trips,
@@ -78,37 +64,14 @@ describe('all trips helpers', () => {
     expect(routeContext?.trip.id).toBe('2026');
     expect(routeContext?.tripModule.summary.id).toBe('2026');
 
-    if (!planningTrip || !upcomingTrip) {
-      throw new Error('Expected seeded trips to exist.');
-    }
-
-    expect(upcomingTrip.dateLabel).toBe('Nov 7 - Nov 15, 2026');
-    expect(getTripBasePath(planningTrip)).toBe('/casschwlanck/2026');
-    expect(getTripBarStats(upcomingTrip)).toEqual([
-      { label: 'People', value: '14' },
-      { label: 'Days', value: '9' },
-      { label: 'Attractions', value: '--' },
-      { label: 'Parks', value: '4' },
-    ]);
-  });
-
-  it('builds the mobile facts list with dates first', () => {
-    const planningTrip = findTripSummary(allTripsData.trips, 'casschwlanck', '2026');
-
     if (!planningTrip) {
       throw new Error('Expected seeded planning trip to exist.');
     }
 
-    expect(getTripMobileFacts(planningTrip)).toEqual([
-      { label: 'Dates', value: 'Mar 28 - Apr 5, 2026' },
-      { label: 'People', value: '10' },
-      { label: 'Days', value: '9' },
-      { label: 'Attractions', value: '87' },
-      { label: 'Parks', value: '4' },
-    ]);
+    expect(getTripBasePath(planningTrip)).toBe('/casschwlanck/2026');
   });
 
-  it('builds the inline facts row for planning and upcoming trips', () => {
+  it('builds the compact facts row used on the simplified trip cards', () => {
     const planningTrip = findTripSummary(allTripsData.trips, 'casschwlanck', '2026');
     const upcomingTrip = findTripSummary(allTripsData.trips, 'casschwlanck', 'future-trip');
 
@@ -116,23 +79,11 @@ describe('all trips helpers', () => {
       throw new Error('Expected seeded planning and upcoming trips to exist.');
     }
 
-    expect(getTripInlineFacts(planningTrip)).toEqual([
-      'Mar 28 - Apr 5, 2026',
-      '10 people',
-      '9 days',
-      '87 attractions',
-      '4 parks',
-    ]);
-    expect(getTripInlineFacts(upcomingTrip)).toEqual([
-      'Nov 7 - Nov 15, 2026',
-      '14 people',
-      '9 days',
-      'Attractions TBD',
-      '4 parks',
-    ]);
+    expect(getTripCompactFactsLine(planningTrip)).toBe('10 people • 9 days • 4 parks');
+    expect(getTripCompactFactsLine(upcomingTrip)).toBe('14 people • 9 days • 4 parks');
   });
 
-  it('uses TBD copy for missing inline fact values', () => {
+  it('uses TBD copy for missing compact fact values', () => {
     const draftTrip: TripSummary = {
       groupId: 'test',
       id: 'draft',
@@ -147,12 +98,6 @@ describe('all trips helpers', () => {
       themeId: 'primary',
     };
 
-    expect(getTripInlineFacts(draftTrip)).toEqual([
-      'Dates TBD',
-      'Party TBD',
-      'Length TBD',
-      'Attractions TBD',
-      'Parks TBD',
-    ]);
+    expect(getTripCompactFactsLine(draftTrip)).toBe('Party TBD • Length TBD • Parks TBD');
   });
 });

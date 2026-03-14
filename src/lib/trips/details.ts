@@ -14,21 +14,6 @@ export interface PreferenceMeta {
   tone: 'must' | 'prefer' | 'indifferent' | 'avoid' | 'skip';
 }
 
-export interface AttractionHeatmapCell {
-  memberId: string;
-  memberName: string;
-  tier: PreferenceTier;
-}
-
-export interface AttractionHeatmapRow {
-  id: string;
-  attractionLabel: string;
-  areaLabel: string;
-  parkLabel: string;
-  consensusScore: number;
-  ratings: AttractionHeatmapCell[];
-}
-
 export interface RankedAttraction extends TripAttractionPreference {
   maxScore: number;
   scorePercent: number;
@@ -75,11 +60,6 @@ export interface ScheduleDaySummary {
   weekdayLabel: string;
   dateLabel: string;
   entry: TripScheduleEntry;
-}
-
-export interface AllTripsCardInsight {
-  label: string;
-  detail: string;
 }
 
 const PREFERENCE_META_BY_TIER: Record<PreferenceTier, PreferenceMeta> = {
@@ -131,24 +111,6 @@ export function getPreferenceMeta(tier: PreferenceTier): PreferenceMeta {
 
 export function getPreferenceLegend(): PreferenceMeta[] {
   return Object.values(PREFERENCE_META_BY_TIER);
-}
-
-export function getAttractionHeatmapRows(
-  party: TripPartyMember[],
-  attractions: TripAttractionPreference[],
-): AttractionHeatmapRow[] {
-  return attractions.map((attraction) => ({
-    id: attraction.id,
-    attractionLabel: attraction.attractionLabel,
-    areaLabel: attraction.areaLabel,
-    parkLabel: attraction.parkLabel,
-    consensusScore: attraction.consensusScore,
-    ratings: party.map((member) => ({
-      memberId: member.id,
-      memberName: member.name,
-      tier: attraction.preferenceByPartyMemberId[member.id] ?? 3,
-    })),
-  }));
 }
 
 export function getRankedAttractions(
@@ -283,38 +245,4 @@ export function getScheduleDaySummaries(schedule: TripScheduleEntry[]): Schedule
       entry,
     };
   });
-}
-
-export function getAllTripsCardInsights(module: TripDataModule): AllTripsCardInsight[] {
-  if (
-    module.attractions.length === 0 &&
-    module.schedule.length === 0 &&
-    module.party.length === 0
-  ) {
-    return [];
-  }
-
-  const scheduleOverview = getScheduleOverview(module.schedule);
-  const partySummaries = getPartySummaries(module);
-  const partyOverview = getPartyOverview(partySummaries);
-  const rankedAttractions = getRankedAttractions(module.attractions, module.party.length);
-  const sharedFavorite = rankedAttractions[0];
-  const highConsensusCount = rankedAttractions.filter(
-    (attraction) => attraction.consensusScore >= 45,
-  ).length;
-
-  return [
-    {
-      label: 'Cadence',
-      detail: `${String(scheduleOverview.parkDays)} park days, ${String(scheduleOverview.resortDays)} resort days, and ${String(scheduleOverview.travelDays)} travel days shape the trip.`,
-    },
-    {
-      label: 'Crew pulse',
-      detail: `${partyOverview.mostEnthusiasticMember ?? 'The group'} leads the board with ${String(partyOverview.averageMustDoCount)} average must-do calls.`,
-    },
-    {
-      label: 'Shared favorite',
-      detail: `${sharedFavorite?.attractionLabel ?? 'The top pick'} leads ${String(highConsensusCount)} rides already scoring 45+.`,
-    },
-  ];
 }

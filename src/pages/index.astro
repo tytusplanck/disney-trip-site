@@ -4,40 +4,23 @@ import SectionHeader from '../components/SectionHeader.astro';
 import TripCard from '../components/TripCard.astro';
 import AllTripsShell from '../components/shells/AllTripsShell.astro';
 import { allTripsData } from '../data/all-trips';
-import { findTripDataModule, getAllTripsSections, getAllTripsStats } from '../lib/trips/all-trips';
-import { getAllTripsCardInsights } from '../lib/trips/details';
+import { getAllTripsSections } from '../lib/trips/all-trips';
 import { allTripsPage } from './index.page';
 
-const { card, footerNote, headerMetaLabel, intro, meta, sections, stats } = allTripsPage;
+const { card, footerNote, headerMetaLabel, intro, meta, sections } = allTripsPage;
 const allTripsSections = getAllTripsSections(allTripsData.trips);
-const allTripsStats = getAllTripsStats(allTripsData.trips);
-
-const statItems = [
-  { label: stats.tripsLabel, value: allTripsStats.totalTrips },
-  { label: stats.planningTripsLabel, value: allTripsStats.planningTrips },
-  { label: stats.ridesLabel, value: allTripsStats.ridesScouted },
-  { label: stats.peopleLabel, value: allTripsStats.nextTripPeople },
-  { label: stats.parksLabel, value: allTripsStats.nextTripParks },
-];
 
 const sectionLabelByStatus = {
   planning: sections.planningLabel,
   upcoming: sections.upcomingLabel,
   completed: sections.completedLabel,
 } as const;
-
-function getTripCardInsights(groupId: string, tripId: string) {
-  const tripModule = findTripDataModule(allTripsData.modules, groupId, tripId);
-
-  return tripModule ? getAllTripsCardInsights(tripModule) : [];
-}
 ---
 
 <AllTripsShell
   title={meta.title}
   description={meta.description}
   metaLabel={headerMetaLabel}
-  statItems={statItems}
   footerNote={footerNote}
 >
   <section class="all-trips-intro">
@@ -57,13 +40,7 @@ function getTripCardInsights(groupId: string, tripId: string) {
         {section.trips.length > 0 ? (
           <div class:list={['trip-grid', section.trips.length === 1 && 'trip-grid--single']}>
             {section.trips.map((trip) => (
-              <TripCard
-                trip={trip}
-                copy={card}
-                insights={
-                  trip.status === 'planning' ? getTripCardInsights(trip.groupId, trip.id) : []
-                }
-              />
+              <TripCard trip={trip} copy={card} />
             ))}
           </div>
         ) : (

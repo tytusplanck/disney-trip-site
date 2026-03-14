@@ -11,14 +11,6 @@ interface AllTripsIntroCopy {
   body: string;
 }
 
-interface AllTripsStatsCopy {
-  tripsLabel: string;
-  planningTripsLabel: string;
-  ridesLabel: string;
-  peopleLabel: string;
-  parksLabel: string;
-}
-
 interface AllTripsSectionsCopy {
   planningLabel: string;
   upcomingLabel: string;
@@ -28,15 +20,12 @@ interface AllTripsSectionsCopy {
 
 export interface AllTripsCardCopy {
   primaryActionLabelByStatus: Record<TripStatus, string>;
-  fallbackNoteByStatus: Record<TripStatus, string>;
-  shortcutLabel: string;
-  shortcutIntro: string;
+  supportingCopyByStatus: Record<TripStatus, string>;
 }
 
 export interface AllTripsCardPresentation {
   primaryActionLabel: string;
-  fallbackNote: string;
-  showShortcutLinks: boolean;
+  supportingCopy: string;
 }
 
 export function getAllTripsCardPresentation(
@@ -45,8 +34,7 @@ export function getAllTripsCardPresentation(
 ): AllTripsCardPresentation {
   return {
     primaryActionLabel: copy.primaryActionLabelByStatus[status],
-    fallbackNote: copy.fallbackNoteByStatus[status],
-    showShortcutLinks: status === 'planning',
+    supportingCopy: copy.supportingCopyByStatus[status],
   };
 }
 
@@ -54,7 +42,6 @@ export interface AllTripsPage {
   meta: MetaContent;
   headerMetaLabel: string;
   intro: AllTripsIntroCopy;
-  stats: AllTripsStatsCopy;
   sections: AllTripsSectionsCopy;
   card: AllTripsCardCopy;
   footerNote: string;
@@ -71,13 +58,6 @@ export const allTripsPage: AllTripsPage = {
     title: 'Choose the trip that needs a decision.',
     body: 'Open the active planner, scan what is next, or revisit a finished trip.',
   },
-  stats: {
-    tripsLabel: 'Trips',
-    planningTripsLabel: 'Active Planners',
-    ridesLabel: 'Scored Rides',
-    peopleLabel: 'People (next trip)',
-    parksLabel: 'Parks (next trip)',
-  },
   sections: {
     planningLabel: 'Planning Now',
     upcomingLabel: 'Coming Later',
@@ -91,15 +71,11 @@ export const allTripsPage: AllTripsPage = {
       upcoming: 'Preview trip',
       completed: 'Open archive',
     },
-    fallbackNoteByStatus: {
-      planning:
-        'Ride priorities, itinerary, and traveler signals will stay concentrated here while the trip is active.',
-      upcoming:
-        'This trip will move into the live planner once the core itinerary and ride list are ready.',
-      completed: 'The final planner state and archive notes stay here after the trip wraps.',
+    supportingCopyByStatus: {
+      planning: 'The live planning trip stays focused here while decisions are still moving.',
+      upcoming: 'This trip will open up once the core itinerary and ride list are ready.',
+      completed: 'Finished planning snapshots will stay here after the trip wraps.',
     },
-    shortcutLabel: 'Jump to section',
-    shortcutIntro: 'Need a specific slice? Open it directly.',
   },
   footerNote: 'Private planner. Built for fast Disney decisions.',
 };

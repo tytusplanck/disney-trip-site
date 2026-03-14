@@ -2,35 +2,19 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SiteHeader from '../SiteHeader.astro';
 
-interface StatItem {
-  label: string;
-  value: string;
-}
-
 interface Props {
   title: string;
   description: string;
   metaLabel: string;
-  statItems: StatItem[];
   footerNote: string;
 }
 
-const { title, description, metaLabel, statItems, footerNote } = Astro.props;
+const { title, description, metaLabel, footerNote } = Astro.props;
 ---
 
 <BaseLayout title={title} description={description}>
   <div class="all-trips-shell">
-    <SiteHeader
-      headerKind="archive"
-      railLabel="All trips archive summary"
-      statItems={statItems}
-      mobileFactsLabel="All Trips Facts"
-      mobileFactsItems={statItems}
-    >
-      <p slot="context" class="site-header__context-text">
-        {metaLabel}
-      </p>
-    </SiteHeader>
+    <SiteHeader headerKind="archive" contextLabel={metaLabel} />
     <main class="all-trips-main" id="main-content">
       <slot />
     </main>

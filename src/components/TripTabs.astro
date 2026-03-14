@@ -9,10 +9,10 @@ interface Props {
 
 const { trip, activeSection } = Astro.props;
 
-const tabs: { label: string; detail: string; section: TripSection }[] = [
-  { label: 'Attractions', detail: 'Rankings and filters', section: 'attractions' },
-  { label: 'Schedule', detail: 'Daily rhythm', section: 'schedule' },
-  { label: 'Party', detail: 'Traveler signals', section: 'party' },
+const tabs: { label: string; section: TripSection }[] = [
+  { label: 'Attractions', section: 'attractions' },
+  { label: 'Schedule', section: 'schedule' },
+  { label: 'Party', section: 'party' },
 ];
 ---
 
@@ -29,7 +29,6 @@ const tabs: { label: string; detail: string; section: TripSection }[] = [
           aria-current={activeSection === tab.section ? 'page' : undefined}
         >
           <span class="trip-tabs__link-label">{tab.label}</span>
-          <span class="trip-tabs__link-detail">{tab.detail}</span>
         </a>
       ))
     }

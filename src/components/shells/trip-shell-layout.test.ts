@@ -12,25 +12,20 @@ const tripStubShellSource = readFileSync(
 );
 
 describe('trip page shell layout', () => {
-  it('renders the hidden title and embedded tabs before the page content slot', () => {
-    const mainIndex = tripPageShellSource.indexOf(
-      '<main class="trip-shell__main trip-page-shell__main" id="main-content">',
-    );
-    const headingIndex = tripPageShellSource.indexOf(
-      '<h1 class="visually-hidden">{pageTitle}</h1>',
-    );
+  it('renders tabs, then the visible heading block, then the page slot', () => {
     const tabsIndex = tripPageShellSource.indexOf(
       '<TripTabs trip={trip} activeSection={activeSection} />',
     );
+    const headingIndex = tripPageShellSource.indexOf('<section class="trip-page-heading">');
     const slotIndex = tripPageShellSource.indexOf('<slot />');
 
-    expect(mainIndex).toBeGreaterThan(-1);
-    expect(headingIndex).toBeGreaterThan(mainIndex);
-    expect(tabsIndex).toBeGreaterThan(headingIndex);
-    expect(slotIndex).toBeGreaterThan(tabsIndex);
+    expect(tabsIndex).toBeGreaterThan(-1);
+    expect(headingIndex).toBeGreaterThan(tabsIndex);
+    expect(slotIndex).toBeGreaterThan(headingIndex);
+    expect(tripPageShellSource.includes('pageSummary')).toBe(true);
   });
 
-  it('removes the legacy visible page header and header-level tab slots', () => {
+  it('removes the legacy page header and header-level tab slots', () => {
     expect(tripPageShellSource.includes('trip-shell__page-header')).toBe(false);
     expect(tripPageShellSource.includes('PageIntroTooltip')).toBe(false);
     expect(tripPageShellSource.includes('slot="desktop-tabs"')).toBe(false);
@@ -39,21 +34,13 @@ describe('trip page shell layout', () => {
 });
 
 describe('trip stub shell layout', () => {
-  it('renders the hidden title and embedded tabs before the stub panel', () => {
-    const mainIndex = tripStubShellSource.indexOf(
-      '<main class="trip-shell__main" id="main-content">',
-    );
-    const headingIndex = tripStubShellSource.indexOf(
-      '<h1 class="visually-hidden">{pageTitle}</h1>',
-    );
+  it('keeps tabs embedded in the content shell ahead of the stub panel', () => {
     const tabsIndex = tripStubShellSource.indexOf(
       '<TripTabs trip={trip} activeSection={activeSection} />',
     );
     const panelIndex = tripStubShellSource.indexOf('<section class="stub-panel">');
 
-    expect(mainIndex).toBeGreaterThan(-1);
-    expect(headingIndex).toBeGreaterThan(mainIndex);
-    expect(tabsIndex).toBeGreaterThan(headingIndex);
+    expect(tabsIndex).toBeGreaterThan(-1);
     expect(panelIndex).toBeGreaterThan(tabsIndex);
   });
 

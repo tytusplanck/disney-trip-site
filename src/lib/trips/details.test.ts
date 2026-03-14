@@ -3,12 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { casschwlanck2026TripData } from '../../data/trips/casschwlanck-2026';
 import { futureTripData } from '../../data/trips/future-trip';
 import {
-  getAllTripsCardInsights,
-  getAttractionHeatmapRows,
   getAttractionMustDoVoteCount,
   getPartyOverview,
   getPartySummaries,
-  getPreferenceLegend,
   getPreferenceMeta,
   getRankedAttractions,
   getSharedPriorityAttractions,
@@ -257,34 +254,10 @@ describe('trip detail helpers', () => {
     });
   });
 
-  it('builds richer all-trips card insights for the planning card', () => {
-    const insights = getAllTripsCardInsights(casschwlanck2026TripData);
-
-    expect(insights).toHaveLength(3);
-    expect(insights.map((insight) => insight.label)).toEqual([
-      'Cadence',
-      'Crew pulse',
-      'Shared favorite',
-    ]);
-    expect(insights[0]?.detail).toContain('park days');
-    expect(insights[2]?.detail).toContain('Kilimanjaro Safaris');
-  });
-
-  it('derives legend metadata and heatmap rows with indifferent fallbacks', () => {
-    const legend = getPreferenceLegend();
-    const rows = getAttractionHeatmapRows(
-      fallbackTripData.party,
-      fallbackTripData.attractions.slice(-1),
-    );
+  it('derives preference metadata and indifferent fallbacks for missing traveler ratings', () => {
     const partySummaries = getPartySummaries(fallbackTripData);
 
-    expect(legend).toHaveLength(5);
     expect(getPreferenceMeta(1).label).toBe('Must Do');
-    expect(rows[0]?.ratings[1]).toMatchObject({
-      memberId: 'cassie',
-      memberName: 'Cassie',
-      tier: 3,
-    });
     expect(
       partySummaries.find((summary) => summary.member.id === 'cassie')?.tierSummaries[2],
     ).toMatchObject({

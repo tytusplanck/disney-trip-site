@@ -2,14 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { casschwlanck2026TripData } from '../../data/trips/casschwlanck-2026';
 import type { TripDataModule } from './types';
 import { getPartyClusterAnalysis, getPartyPersonaProfile } from './party-analytics';
-import { buildPartyClusterBoardView } from './party-view';
+import { buildPartySummaryView } from './party-view';
 
 function analyzeParty(module: TripDataModule) {
   return getPartyClusterAnalysis(module);
 }
 
-function buildBoardView(module: TripDataModule) {
-  return buildPartyClusterBoardView(module);
+function buildSummaryView(module: TripDataModule) {
+  return buildPartySummaryView(module);
 }
 
 const affinityFixture: TripDataModule = {
@@ -617,20 +617,23 @@ describe('party analytics and view helpers', () => {
     ]);
   });
 
-  it('derives shared favorites and title fallbacks for cluster cards', () => {
-    const affinityView = buildBoardView(affinityFixture);
+  it('builds compact cluster summaries with anchor attraction fallbacks', () => {
+    const affinityView = buildSummaryView(affinityFixture);
     const leadCluster = affinityView.clusters[0];
     const soloCluster = affinityView.clusters[2];
-    const longTitleView = buildBoardView(longTitleFixture);
+    const longTitleView = buildSummaryView(longTitleFixture);
 
-    expect(leadCluster?.title).toBe('Pirates + Mansion');
-    expect(leadCluster?.sharedFavorites.map((favorite) => favorite.attractionLabel)).toEqual([
-      'Pirates',
-      'Mansion',
-      'Thunder',
-    ]);
-    expect(soloCluster?.title).toBe("Finn's lane");
-    expect(longTitleView.clusters[0]?.title).toBe('Millennium Falcon: Smugglers Run cluster');
+    expect(leadCluster).toMatchObject({
+      anchorAttraction: 'Pirates',
+      label: 'Ava cluster',
+      memberSummary: 'Ava, Ben, Cara',
+    });
+    expect(soloCluster).toMatchObject({
+      affinityValue: 'Solo lane',
+      label: 'Finn',
+      memberSummary: 'Finn',
+    });
+    expect(longTitleView.clusters[0]?.anchorAttraction).toBe('Millennium Falcon: Smugglers Run');
   });
 
   it('assigns a leftover traveler into the nearest seeded cluster when they miss the seed threshold', () => {
@@ -649,24 +652,25 @@ describe('party analytics and view helpers', () => {
   });
 
   it('falls back to a best-available anchor when a cluster has no shared favorites', () => {
-    const view = buildBoardView(noSharedFavoriteFixture);
+    const view = buildSummaryView(noSharedFavoriteFixture);
     const cluster = view.clusters[0];
 
-    expect(cluster?.sharedFavorites).toEqual([]);
-    expect(cluster?.topAnchorAttraction).toBe('Ride 1');
-    expect(cluster?.dominantParkLabel).toBe('Magic Kingdom');
-    expect(cluster?.title).toBe("Nora's lane");
+    expect(cluster).toMatchObject({
+      anchorAttraction: 'Ride 1',
+      affinityValue: 'Solo lane',
+      label: 'Nora',
+    });
   });
 
   it('switches into cohort mode when the configured kid roster is present', () => {
     const analysis = analyzeParty(cohortFixture);
-    const view = buildBoardView(cohortFixture);
+    const view = buildSummaryView(cohortFixture);
 
     expect(analysis.mode).toBe('named-cohorts');
     expect(analysis.clusters.map((cluster) => cluster.label)).toEqual(['Kids', 'Adults']);
-    expect(view.railEyebrow).toBe('Kid vs adult gaps');
     expect(view.headlineInsight?.eyebrow).toBe('Sharpest split');
-    expect(view.railItems.length).toBeGreaterThan(0);
+    expect(view.gapItems.length).toBeGreaterThan(0);
+    expect(view.gapItems.some((item) => item.badge === 'Adults')).toBe(true);
   });
 
   it('falls back to automatic clustering when a named cohort config is invalid', () => {
@@ -702,7 +706,7 @@ describe('party analytics and view helpers', () => {
 
   it('returns empty cluster data for an empty trip module', () => {
     const analysis = analyzeParty(emptyFixture);
-    const view = buildBoardView(emptyFixture);
+    const view = buildSummaryView(emptyFixture);
 
     expect(analysis).toEqual({
       clusters: [],
@@ -713,10 +717,8 @@ describe('party analytics and view helpers', () => {
     });
     expect(view).toEqual({
       clusters: [],
+      gapItems: [],
       headlineInsight: null,
-      railEyebrow: 'Shared priorities',
-      railItems: [],
-      railTitle: 'Must-do pressure that still moves the whole board',
     });
   });
 
@@ -741,7 +743,7 @@ describe('party analytics and view helpers', () => {
 
   it('uses the explicit kids-versus-adults split for the 2026 trip', () => {
     const analysis = analyzeParty(casschwlanck2026TripData);
-    const view = buildBoardView(casschwlanck2026TripData);
+    const view = buildSummaryView(casschwlanck2026TripData);
 
     expect(analysis.mode).toBe('named-cohorts');
     expect(analysis.clusters).toHaveLength(2);
@@ -757,8 +759,7 @@ describe('party analytics and view helpers', () => {
         members: ['Collin', 'Kayla', 'Kelsey', 'Lisa', 'Tim', 'Tytus'],
       },
     ]);
-    expect(view.railEyebrow).toBe('Kid vs adult gaps');
     expect(view.headlineInsight?.eyebrow).toBe('Sharpest split');
-    expect(new Set(view.railItems.map((item) => item.badge))).toEqual(new Set(['Adults', 'Kids']));
+    expect(view.gapItems.some((item) => item.badge === 'Adults')).toBe(true);
   });
 });

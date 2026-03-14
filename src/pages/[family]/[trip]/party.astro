@@ -1,17 +1,16 @@
 ---
 import EmptyState from '../../../components/EmptyState.astro';
-import DisclosurePanel from '../../../components/DisclosurePanel.astro';
-import PartyCard from '../../../components/PartyCard.astro';
-import PartyClusterBoard from '../../../components/PartyClusterBoard.astro';
+import PartySummary from '../../../components/PartySummary.astro';
+import PartyTravelerCards from '../../../components/PartyTravelerCards.astro';
 import TripPageShell from '../../../components/shells/TripPageShell.astro';
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
 import { allTripsData } from '../../../data/all-trips';
 import { getTripStubStatusCopy, tripStubPages } from '../../../data/trip-stubs';
 import { getTripRouteContext } from '../../../lib/trips/all-trips';
 import { getPartySummaries } from '../../../lib/trips/details';
-import { buildPartyClusterBoardView } from '../../../lib/trips/party-view';
+import { buildPartySummaryView } from '../../../lib/trips/party-view';
 import { hasTripSectionContent } from '../../../lib/trips/readiness';
-import { tripSectionTitles } from './trip-sections.page';
+import { tripSectionCopy } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
@@ -29,12 +28,12 @@ if (!routeContext) {
 const { trip, tripModule } = routeContext;
 
 const stubPage = tripStubPages.party;
-const pageTitle = tripSectionTitles.party;
+const pageCopy = tripSectionCopy.party;
 const statusCopy = getTripStubStatusCopy(trip.status);
 const tripIsStub = !hasTripSectionContent(tripModule, 'party');
 const hasAttractionPreferences = tripModule.attractions.length > 0;
 const partySummaries = getPartySummaries(tripModule);
-const clusterView = buildPartyClusterBoardView(tripModule);
+const summaryView = buildPartySummaryView(tripModule);
 ---
 
 {
@@ -56,51 +55,19 @@ const clusterView = buildPartyClusterBoardView(tripModule);
       description={`Party view for ${trip.title}.`}
       trip={trip}
       activeSection="party"
-      pageTitle={pageTitle}
+      pageTitle={pageCopy.title}
+      pageSummary={pageCopy.summary}
     >
-      <section class="trip-page-section trip-page-section--intro">
-        <div class="trip-page-section__copy">
-          <p class="page-label">Traveler preferences</p>
-          <h2 class="section-title">See where the group lines up or pulls apart</h2>
-          <p class="body-copy">
-            Start with the cluster view to spot the biggest alignment gaps, then drop into each
-            traveler profile when you need the detail.
-          </p>
-        </div>
-      </section>
-
       <section class="trip-page-section">
         {hasAttractionPreferences ? (
-          <PartyClusterBoard view={clusterView} />
+          <PartySummary view={summaryView} />
         ) : (
           <EmptyState text="Traveler names are loaded from the current reservations. Attraction-based groupings will appear here after preferences are added." />
         )}
       </section>
 
       <section class="trip-page-section">
-        <div class="trip-page-section__header">
-          <div class="trip-page-section__copy">
-            <p class="page-label">Traveler cards</p>
-            <h2 class="section-title">Traveler detail, ready when you need the specifics</h2>
-          </div>
-        </div>
-
-        <DisclosurePanel
-          label="Traveler cards"
-          summary="See all traveler profiles"
-          detail={
-            hasAttractionPreferences
-              ? `${partySummaries.length} travelers with full preference counts`
-              : `${partySummaries.length} travelers currently loaded from reservations`
-          }
-          mobileBehavior="expanded"
-        >
-          <div class="party-detail-grid">
-            {partySummaries.map((summary) => (
-              <PartyCard summary={summary} />
-            ))}
-          </div>
-        </DisclosurePanel>
+        <PartyTravelerCards summaries={partySummaries} />
       </section>
     </TripPageShell>
   )

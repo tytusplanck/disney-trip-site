@@ -88,8 +88,8 @@ describe('style guardrails', () => {
 
     expect(getTokenValue(tokenSource, '--tap-target-min')).toBe('2.75rem');
     expect(componentsSource).not.toMatch(/min-height:\s*2\.(6|65)rem/);
-    expect(componentsSource).toContain('.site-header__mobile-back,');
-    expect(componentsSource).toContain('.site-header__mobile-facts-summary {');
+    expect(componentsSource).toContain('.site-header__mobile-back {');
+    expect(componentsSource).toContain('.site-header__mobile-title {');
     expect(componentsSource).toContain('.trip-tabs__link {');
     expect(componentsSource).toContain('min-height: var(--tap-target-min);');
     expect(tripPagesSource).toContain('.attractions-explorer__chip {');

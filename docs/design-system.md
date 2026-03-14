@@ -39,6 +39,17 @@
 - Skip: `#7a7291`
 - Focus ring: `#2b6f8a`
 
+## Schedule Day Semantics
+
+- Schedule day colors are semantic, not trip-theme driven.
+- Use the shared schedule aliases in the token layer:
+  - `travel` maps to plum
+  - `park` maps to lake / brand blue
+  - `resort` maps to teal
+- Apply schedule-day semantics to the day-type badge only.
+- Keep the vertical day marker on one shared trip accent so the timeline rail stays calm and consistent.
+- Badge treatments should stay as soft pills with stronger text, not solid saturated fills.
+
 ## Layout Rules
 
 - Minimum tap target: `2.75rem`
@@ -59,11 +70,12 @@
 
 ## Component Rules
 
-- The homepage remains a chooser. Only the active planning trip gets featured treatment.
-- Trip tabs are a segmented planner rail with label plus supporting detail.
-- Attractions is the densest route and should lead with ranking context, filters, and top ride signals.
+- The homepage remains a chooser. Trip cards should contain only status, title, date, primary action, compact facts, and one supporting sentence.
+- Trip tabs are a segmented planner rail with label-only wayfinding.
+- Attractions should lead with the scoring guide disclosure, the small filter stack, and the ranked ride list. Do not reintroduce side rails, heatmaps, signals, or area breakdowns.
 - Schedule reads as a vertical trip timeline with clear day markers.
-- Party leads with cluster insights and follows with traveler dossier cards.
+- Party leads with one compact split summary and follows with visible slim traveler cards that surface each person's total preference counts.
+- On party traveler cards, color is limited to the 3 stat cells only. Keep the card shell, persona label, description, and top call neutral.
 - Login stays simple: one centered entry panel, no novelty illustration.
 
 ## Motion

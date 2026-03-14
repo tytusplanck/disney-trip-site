@@ -1,5 +1,4 @@
 ---
-import DisclosurePanel from '../../../components/DisclosurePanel.astro';
 import ScheduleDayCard from '../../../components/ScheduleDayCard.astro';
 import TripPageShell from '../../../components/shells/TripPageShell.astro';
 import TripStubShell from '../../../components/shells/TripStubShell.astro';
@@ -8,7 +7,7 @@ import { getTripStubStatusCopy, tripStubPages } from '../../../data/trip-stubs';
 import { getTripRouteContext } from '../../../lib/trips/all-trips';
 import { getScheduleDaySummaries } from '../../../lib/trips/details';
 import { hasTripSectionContent } from '../../../lib/trips/readiness';
-import { tripSectionTitles } from './trip-sections.page';
+import { tripSectionCopy } from './trip-sections.page';
 
 const familyId = Astro.params['family'] ?? '';
 const tripId = Astro.params['trip'] ?? '';
@@ -26,7 +25,7 @@ if (!routeContext) {
 const { trip, tripModule } = routeContext;
 
 const stubPage = tripStubPages.schedule;
-const pageTitle = tripSectionTitles.schedule;
+const pageCopy = tripSectionCopy.schedule;
 const statusCopy = getTripStubStatusCopy(trip.status);
 const tripIsStub = !hasTripSectionContent(tripModule, 'schedule');
 const scheduleDays = getScheduleDaySummaries(tripModule.schedule);
@@ -51,32 +50,15 @@ const scheduleDays = getScheduleDaySummaries(tripModule.schedule);
       description={`Schedule view for ${trip.title}.`}
       trip={trip}
       activeSection="schedule"
-      pageTitle={pageTitle}
+      pageTitle={pageCopy.title}
+      pageSummary={pageCopy.summary}
     >
-      <section class="trip-page-section trip-page-section--intro">
-        <div class="trip-page-section__copy">
-          <p class="page-label">Day-by-day plan</p>
-          <h2 class="section-title">Read the trip as one clean timeline</h2>
-          <p class="body-copy">
-            Each day should scan in seconds, with park anchors, travel days, and notes visible
-            without extra digging.
-          </p>
-        </div>
-      </section>
-
       <section class="trip-page-section">
-        <DisclosurePanel
-          label="Full itinerary"
-          summary="See full itinerary"
-          detail={`${scheduleDays.length} trip days with notes and park labels`}
-          mobileBehavior="expanded"
-        >
-          <div class="schedule-grid">
-            {scheduleDays.map((day) => (
-              <ScheduleDayCard day={day} />
-            ))}
-          </div>
-        </DisclosurePanel>
+        <div class="schedule-grid">
+          {scheduleDays.map((day) => (
+            <ScheduleDayCard day={day} />
+          ))}
+        </div>
       </section>
     </TripPageShell>
   )

@@ -18,42 +18,16 @@ const { maxScoreLabel, partySize, scoreGuide } = Astro.props;
 ---
 
 <div class="attractions-score-grid">
-  <article class="attractions-score-card">
-    <p class="attractions-score-card__eyebrow">The formula</p>
-    <h3 class="attractions-score-card__title">
-      One ballot per traveler, one shared total per ride
-    </h3>
+  <article class="attractions-score-card attractions-score-card--tiers">
+    <p class="attractions-score-card__eyebrow">Point map</p>
+    <h3 class="attractions-score-card__title">How the ride board is scored</h3>
     <p class="attractions-score-card__body">
-      Each traveler marks every attraction on a five-tier preference scale. The planner converts
-      those tiers into points, adds them together, and sorts the board by the total consensus score.
+      Every traveler scores every attraction on the same five-tier scale, and the planner converts
+      those tiers into points before ranking the list.
     </p>
     <p class="attractions-score-card__callout">
       With {partySize} travelers, the maximum possible score is {maxScoreLabel} points.
     </p>
-  </article>
-
-  <article class="attractions-score-card">
-    <p class="attractions-score-card__eyebrow">What to read</p>
-    <h3 class="attractions-score-card__title">Score tells you support, not just hype</h3>
-    <ul class="attractions-score-card__list">
-      <li>
-        <strong>Consensus score</strong>
-        Total points from the whole party. Higher means broader support.
-      </li>
-      <li>
-        <strong>Must-do votes</strong>
-        The number of travelers who marked a ride as tier 1.
-      </li>
-      <li>
-        <strong>Preferred votes</strong>
-        A softer signal that shows where a ride still has wide approval.
-      </li>
-    </ul>
-  </article>
-
-  <article class="attractions-score-card attractions-score-card--tiers">
-    <p class="attractions-score-card__eyebrow">Point map</p>
-    <h3 class="attractions-score-card__title">Every tier converts the same way</h3>
     <ul class="attractions-score-list">
       {
         scoreGuide.map((item) => (
