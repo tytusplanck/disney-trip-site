@@ -27,6 +27,13 @@ export const tripStubPages: Record<TripSection, TripStubPage> = {
       'This placeholder keeps the protected route tree complete so the planner can open straight into group alignment and traveler detail once the data is ready.',
     checklist: ['Cluster highlights', 'Traveler dossier cards', 'Preference distribution bars'],
   },
+  ll: {
+    title: 'Lightning Lane picks',
+    calloutTitle: 'LL planner is queued',
+    calloutBody:
+      'The route is live so the Lightning Lane planner can drop into the shared shell once park inventory data is ready.',
+    checklist: ['Per-park-day selections', 'Tier constraint enforcement', 'Shareable plan links'],
+  },
 };
 
 export const planningStubStatus: TripStubStatusCopy = {

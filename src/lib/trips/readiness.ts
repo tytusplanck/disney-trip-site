@@ -1,6 +1,8 @@
 import type { TripDataModule, TripSection } from './types';
 
-type TripSectionData = Pick<TripDataModule, 'attractions' | 'party' | 'schedule'>;
+type TripSectionData = Pick<TripDataModule, 'attractions' | 'party' | 'schedule'> & {
+  llInventory?: TripDataModule['llInventory'];
+};
 
 export function hasTripSectionContent(module: TripSectionData, section: TripSection): boolean {
   switch (section) {
@@ -10,6 +12,8 @@ export function hasTripSectionContent(module: TripSectionData, section: TripSect
       return module.schedule.length > 0;
     case 'party':
       return module.party.length > 0;
+    case 'll':
+      return module.llInventory != null && Object.keys(module.llInventory).length > 0;
     default:
       throw new Error('Unsupported trip section.');
   }

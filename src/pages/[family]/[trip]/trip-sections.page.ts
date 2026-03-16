@@ -13,4 +13,8 @@ export const tripSectionCopy: Record<TripSection, { title: string; summary: stri
     title: 'Traveler preferences',
     summary: "See the biggest group splits first, then scan each traveler's totals below.",
   },
+  ll: {
+    title: 'Lightning Lane Picks',
+    summary: 'Build a plan for each park day, then share it with the group.',
+  },
 };

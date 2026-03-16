@@ -981,3 +981,399 @@
     padding-top: var(--space-2);
   }
 }
+
+/* ── Lightning Lane Planner ─────────────────────────────────── */
+
+.ll-planner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.ll-planner__controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  border: var(--border-thin) solid var(--color-line-subtle);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-1);
+}
+
+.ll-planner__control-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ll-planner__control-label {
+  font-size: var(--text-meta);
+  font-weight: 600;
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  margin: 0;
+}
+
+.ll-planner__chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.ll-planner__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target-min);
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-strong) solid var(--color-line-subtle);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+  color: var(--color-ink-muted);
+  font-size: var(--text-label);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
+    color var(--motion-base) var(--ease-standard);
+}
+
+.ll-planner__chip:hover {
+  background: var(--color-surface-3);
+}
+
+.ll-planner__chip--active {
+  background: var(--trip-accent-soft, var(--color-brand-soft));
+  border-color: var(--trip-accent, var(--color-brand));
+  color: var(--color-ink);
+}
+
+.ll-planner__chip-meta {
+  font-weight: 400;
+  color: var(--color-ink-faint);
+}
+
+/* Park Day Card */
+
+.ll-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  border: var(--border-thin) solid var(--color-line-subtle);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-1);
+}
+
+.ll-card--readonly {
+  gap: var(--space-4);
+}
+
+.ll-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.ll-card__park-name {
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.ll-card__day-info {
+  font-size: var(--text-body);
+  color: var(--color-ink-muted);
+  margin: 0;
+}
+
+.ll-card__summary {
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--color-ink-muted);
+  padding-top: var(--space-3);
+  border-top: var(--border-thin) solid var(--color-line-subtle);
+}
+
+.ll-card__empty {
+  font-size: var(--text-body);
+  color: var(--color-ink-faint);
+  margin: 0;
+}
+
+/* Section (ILL / Tier 1 / Tier 2 / Multi Pass) */
+
+.ll-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ll-section__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.ll-section__eyebrow {
+  font-size: var(--text-meta);
+  font-weight: 700;
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+  margin: 0;
+}
+
+.ll-section__subtitle {
+  font-size: var(--text-body);
+  color: var(--color-ink-faint);
+  margin: 0;
+}
+
+.ll-section__constraint {
+  font-size: var(--text-meta);
+  font-weight: 600;
+  color: var(--color-ink-faint);
+  white-space: nowrap;
+}
+
+.ll-section__constraint--filled {
+  color: var(--trip-accent, var(--color-brand));
+}
+
+.ll-section__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.ll-section__check-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ll-section__check-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-body);
+  color: var(--color-ink);
+}
+
+/* Attraction Row */
+
+.ll-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--motion-fast) var(--ease-standard);
+}
+
+.ll-row:hover {
+  background: var(--color-surface-2);
+}
+
+.ll-row--closed {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.ll-row--disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.ll-row__input {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--trip-accent, var(--color-brand));
+}
+
+.ll-row__label {
+  font-size: var(--text-body);
+  color: var(--color-ink);
+}
+
+.ll-row__label--closed {
+  text-decoration: line-through;
+}
+
+.ll-badge--height {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-viz-2-soft);
+  color: var(--color-viz-2-strong);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.ll-row__note {
+  width: 100%;
+  padding-left: calc(1.125rem + var(--space-3));
+  font-size: var(--text-body-sm);
+  color: var(--color-ink-faint);
+}
+
+.ll-badge--closed {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-viz-4-soft);
+  color: var(--color-viz-4-strong);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Action Bar */
+
+.ll-planner__actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.ll-planner__action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-target-min);
+  padding: var(--space-3) var(--space-5);
+  border: var(--border-strong) solid var(--trip-accent, var(--color-brand));
+  border-radius: var(--radius-pill);
+  background: var(--trip-accent, var(--color-brand));
+  color: var(--color-canvas);
+  font-size: var(--text-label);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color var(--motion-base) var(--ease-standard),
+    opacity var(--motion-base) var(--ease-standard);
+}
+
+.ll-planner__action-btn:hover {
+  opacity: 0.85;
+}
+
+.ll-planner__action-btn--secondary {
+  background: transparent;
+  color: var(--color-ink-muted);
+  border-color: var(--color-line-subtle);
+}
+
+.ll-planner__action-btn--secondary:hover {
+  background: var(--color-surface-2);
+  opacity: 1;
+}
+
+/* Summary Banner */
+
+.ll-shared-banner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+  background: var(--trip-accent-soft, var(--color-brand-soft));
+  border: var(--border-thin) solid var(--trip-accent, var(--color-brand));
+}
+
+.ll-shared-banner__text {
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.ll-shared-banner__fork {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap-target-min);
+  padding: var(--space-3) var(--space-5);
+  border: var(--border-strong) solid var(--trip-accent, var(--color-brand));
+  border-radius: var(--radius-pill);
+  background: var(--trip-accent, var(--color-brand));
+  color: var(--color-canvas);
+  font-size: var(--text-label);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Toast */
+
+.ll-toast {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-pill);
+  background: var(--color-ink);
+  color: var(--color-canvas);
+  font-size: var(--text-label);
+  font-weight: 600;
+  animation: ll-toast-fade 2s ease-in-out forwards;
+  z-index: 100;
+}
+
+@keyframes ll-toast-fade {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(0.5rem);
+  }
+  15% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  75% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-0.25rem);
+  }
+}
+
+/* Mobile adjustments */
+
+@media (max-width: 720px) {
+  .ll-planner__chip-row {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .ll-planner__chip-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ll-planner__chip {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}

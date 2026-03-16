@@ -1,6 +1,8 @@
+import type { LLMemberPlan, LLParkInventory } from './ll-types';
+
 export type TripStatus = 'planning' | 'upcoming' | 'completed';
 
-export type TripSection = 'attractions' | 'schedule' | 'party';
+export type TripSection = 'attractions' | 'schedule' | 'party' | 'll';
 
 export type TripThemeId = 'primary' | 'secondary';
 
@@ -72,6 +74,8 @@ export interface TripDataModule {
   schedule: TripScheduleEntry[];
   attractions: TripAttractionPreference[];
   partyGrouping?: TripPartyGroupingConfig;
+  llInventory?: Record<string, LLParkInventory>;
+  llDefaultPlan?: LLMemberPlan;
 }
 
 export interface TripStubPage {

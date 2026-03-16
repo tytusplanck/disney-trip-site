@@ -1,0 +1,61 @@
+---
+import LightningLanePlanner from '../../../components/LightningLanePlanner';
+import TripPageShell from '../../../components/shells/TripPageShell.astro';
+import TripStubShell from '../../../components/shells/TripStubShell.astro';
+import { allTripsData } from '../../../data/all-trips';
+import { getTripStubStatusCopy, tripStubPages } from '../../../data/trip-stubs';
+import { getTripRouteContext } from '../../../lib/trips/all-trips';
+import { buildLLPlannerData } from '../../../lib/trips/ll-planner';
+import { hasTripSectionContent } from '../../../lib/trips/readiness';
+import { tripSectionCopy } from './trip-sections.page';
+
+const familyId = Astro.params['family'] ?? '';
+const tripId = Astro.params['trip'] ?? '';
+const routeContext = getTripRouteContext(
+  allTripsData.trips,
+  allTripsData.modules,
+  familyId,
+  tripId,
+);
+
+if (!routeContext) {
+  return Astro.redirect('/');
+}
+
+const { trip, tripModule } = routeContext;
+
+const stubPage = tripStubPages.ll;
+const pageCopy = tripSectionCopy.ll;
+const statusCopy = getTripStubStatusCopy(trip.status);
+const tripIsStub = !hasTripSectionContent(tripModule, 'll');
+const plannerData = !tripIsStub ? buildLLPlannerData(tripModule) : null;
+---
+
+{
+  tripIsStub ? (
+    <TripStubShell
+      title={`${trip.title} | LL Picks`}
+      description={`Protected placeholder LL Picks route for ${trip.title}.`}
+      trip={trip}
+      activeSection="ll"
+      pageTitle={stubPage.title}
+      panelEyebrow={statusCopy.eyebrow}
+      panelTitle={stubPage.calloutTitle}
+      panelBody={`${statusCopy.body} ${stubPage.calloutBody}`}
+      checklist={stubPage.checklist}
+    />
+  ) : (
+    <TripPageShell
+      title={`${trip.title} | LL Picks`}
+      description={`Lightning Lane picks for ${trip.title}.`}
+      trip={trip}
+      activeSection="ll"
+      pageTitle={pageCopy.title}
+      pageSummary={pageCopy.summary}
+    >
+      <section class="trip-page-section">
+        {plannerData && <LightningLanePlanner client:load data={plannerData} />}
+      </section>
+    </TripPageShell>
+  )
+}
