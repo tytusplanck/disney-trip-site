@@ -29,6 +29,7 @@ const pageCopy = tripSectionCopy.schedule;
 const statusCopy = getTripStubStatusCopy(trip.status);
 const tripIsStub = !hasTripSectionContent(tripModule, 'schedule');
 const scheduleDays = getScheduleDaySummaries(tripModule.schedule);
+const todayIso = new Date().toISOString().slice(0, 10);
 ---
 
 {
@@ -56,7 +57,7 @@ const scheduleDays = getScheduleDaySummaries(tripModule.schedule);
       <section class="trip-page-section">
         <div class="schedule-grid">
           {scheduleDays.map((day) => (
-            <ScheduleDayCard day={day} />
+            <ScheduleDayCard day={day} isToday={day.entry.date === todayIso} />
           ))}
         </div>
       </section>

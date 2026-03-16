@@ -218,7 +218,7 @@ describe('trip page style contracts', () => {
           '  --consensus-progress-radius: min(var(--radius-sm), 0.36rem);\n' +
           '  --bar-fill: var(--color-viz-2-strong);\n' +
           '  width: 100%;\n' +
-          '  height: 0.72rem;\n' +
+          '  height: 0.75rem;\n' +
           '  display: block;\n' +
           '  overflow: hidden;\n' +
           '  appearance: none;\n' +

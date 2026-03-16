@@ -11,7 +11,8 @@ describe('schedule page structure', () => {
   it('renders a direct timeline without a disclosure wrapper', () => {
     expect(source.includes('DisclosurePanel')).toBe(false);
     expect(source.includes('<div class="schedule-grid">')).toBe(true);
-    expect(source.includes('<ScheduleDayCard day={day} />')).toBe(true);
+    expect(source.includes('ScheduleDayCard')).toBe(true);
+    expect(source.includes('day={day}')).toBe(true);
   });
 
   it('removes the route intro and redundant daily board copy', () => {

@@ -68,10 +68,10 @@ Do not relax these defaults until the site is intentionally public.
 ## Pre-Deploy Checklist
 
 1. Confirm `SITE_PASSWORD` is set in Vercel.
-2. Run `npm run verify`.
+2. Follow [Verification](./verification.md), including focused tests, manual browser checks, and the final `npm run verify` gate.
 3. Confirm the repo visibility matches the sensitivity of the trip content.
 4. Confirm the Vercel project root points to this project directory.
-5. Deploy and test the login flow, logout flow, and direct access to `/`.
+5. Deploy and test the login flow, logout flow, direct access to `/`, and any changed UI flows in a real browser. Prefer Chrome DevTools MCP for preview verification when it is available.
 
 ## Post-Deploy Checks
 

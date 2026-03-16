@@ -17,7 +17,6 @@ describe('AttractionsExplorer', () => {
   it('renders a reduced decision surface with filters and rankings only', () => {
     renderExplorer();
 
-    expect(screen.getByText('Current scope')).toBeInTheDocument();
     expect(screen.getByLabelText('Search')).toBeInTheDocument();
     expect(screen.getByLabelText('Traveler')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /All Park Days/i })).toBeInTheDocument();
@@ -34,10 +33,8 @@ describe('AttractionsExplorer', () => {
     fireEvent.click(screen.getByRole('button', { name: /EPCOT/i }));
 
     await waitFor(() => {
-      expect(screen.getByText('Day 2: EPCOT • Whole Group')).toBeInTheDocument();
+      expect(screen.getByText(/Living with the Land/)).toBeInTheDocument();
     });
-
-    expect(screen.getByText(/Living with the Land/)).toBeInTheDocument();
     expect(screen.queryAllByText("Peter Pan's Flight")).toHaveLength(0);
   });
 
@@ -49,7 +46,7 @@ describe('AttractionsExplorer', () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText('All Park Days • Ben')).toBeInTheDocument();
+      expect(screen.getByText("Soarin' Around the World")).toBeInTheDocument();
     });
 
     const topRows = screen.getAllByText(/Top [1-3]/).map((node) => node.textContent);
@@ -72,13 +69,11 @@ describe('AttractionsExplorer', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Reset filters' }));
 
     await waitFor(() => {
-      expect(screen.getByText('All Park Days • Whole Group')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /All Park Days/i })).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      );
     });
-
-    expect(screen.getByRole('button', { name: /All Park Days/i })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
   });
 
   it('collapses to the top 15 rides by default and supports expanding the rest', async () => {
@@ -88,7 +83,7 @@ describe('AttractionsExplorer', () => {
       />,
     );
 
-    const toggle = screen.getByRole('button', { name: 'Show Remaining Rides' });
+    const toggle = screen.getByRole('button', { name: /Show \d+ More Rides/ });
     expect(toggle).toBeInTheDocument();
 
     fireEvent.click(toggle);

@@ -95,18 +95,6 @@ export default function AttractionsExplorer({ data }: Props) {
   return (
     <section className="attractions-explorer">
       <article className="attractions-explorer__panel">
-        <div className="attractions-explorer__scope-row">
-          <div className="attractions-explorer__context">
-            <p className="page-label">Current scope</p>
-            <h2 className="section-title">{view.scopeLabel}</h2>
-          </div>
-          {!resetDisabled ? (
-            <button className="attractions-explorer__reset" onClick={handleReset} type="button">
-              Reset filters
-            </button>
-          ) : null}
-        </div>
-
         <label
           className="attractions-explorer__field attractions-explorer__field--search"
           htmlFor={searchFieldId}
@@ -125,6 +113,11 @@ export default function AttractionsExplorer({ data }: Props) {
         <section className="attractions-explorer__filter-group">
           <div className="attractions-explorer__filter-heading">
             <p className="attractions-explorer__filter-label">Day scope</p>
+            {!resetDisabled ? (
+              <button className="attractions-explorer__reset" onClick={handleReset} type="button">
+                Reset filters
+              </button>
+            ) : null}
           </div>
 
           <div className="attractions-explorer__chip-row">
@@ -198,7 +191,9 @@ export default function AttractionsExplorer({ data }: Props) {
               }}
               type="button"
             >
-              {showAllRides ? 'Show Top 15 Only' : 'Show Remaining Rides'}
+              {showAllRides
+                ? 'Show Top 15 Only'
+                : `Show ${String(view.rankedAttractions.length - DEFAULT_VISIBLE_RIDES)} More Rides`}
             </button>
           ) : null}
         </section>

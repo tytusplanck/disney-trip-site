@@ -118,6 +118,16 @@
   white-space: nowrap;
 }
 
+.trip-card__button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+
+.trip-card:hover {
+  cursor: pointer;
+}
+
 .trip-card__button:hover {
   background: var(--trip-accent-strong, var(--color-brand-strong));
   border-color: var(--trip-accent-strong, var(--color-brand-strong));

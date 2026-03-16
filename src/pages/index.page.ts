@@ -55,8 +55,8 @@ export const allTripsPage: AllTripsPage = {
   headerMetaLabel: 'Private trip archive',
   intro: {
     label: 'Private trip archive',
-    title: 'Choose the trip that needs a decision.',
-    body: 'Open the active planner, scan what is next, or revisit a finished trip.',
+    title: 'Your trips',
+    body: '',
   },
   sections: {
     planningLabel: 'Planning Now',

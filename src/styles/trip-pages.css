@@ -252,7 +252,7 @@
 
 .consensus-row {
   display: grid;
-  grid-template-columns: minmax(0, 16rem) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1fr) auto;
   gap: var(--space-4);
   align-items: center;
   padding-top: var(--space-4);
@@ -277,17 +277,19 @@
 
 .consensus-row__label {
   display: flex;
-  align-items: flex-start;
-  flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-2);
   font-size: var(--text-body);
   font-weight: 600;
   color: var(--color-ink);
+  min-width: 0;
 }
 
 .consensus-row__label-text {
-  flex: 1 1 12rem;
   min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .consensus-row__star {
@@ -324,7 +326,7 @@
   --consensus-progress-radius: min(var(--radius-sm), 0.36rem);
   --bar-fill: var(--color-viz-2-strong);
   width: 100%;
-  height: 0.72rem;
+  height: 0.75rem;
   display: block;
   overflow: hidden;
   appearance: none;
@@ -402,6 +404,13 @@
 .schedule-card[data-kind='resort'] {
   --schedule-kind-strong: var(--color-schedule-resort-strong);
   --schedule-kind-soft: var(--color-schedule-resort-soft);
+}
+
+.schedule-card[data-today='true'] {
+  background: var(--trip-accent-soft, var(--color-brand-soft));
+  border-radius: var(--radius-lg);
+  padding-inline: var(--space-4);
+  margin-inline: calc(-1 * var(--space-4));
 }
 
 .schedule-card:first-child {
@@ -906,13 +915,37 @@
     padding: var(--space-4);
   }
 
-  .attractions-explorer__scope-row {
-    flex-direction: column;
-    align-items: start;
+  .trip-page-heading {
+    display: none;
+  }
+
+  .attractions-explorer__chip-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: var(--space-2);
+    padding-bottom: var(--space-1);
+  }
+
+  .attractions-explorer__chip-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .attractions-explorer__chip {
+    flex-shrink: 0;
+  }
+
+  .attractions-explorer__chip-meta {
+    display: none;
   }
 
   .attractions-explorer__field--search {
     max-width: none;
+  }
+
+  .consensus-row__votes {
+    display: none;
   }
 
   .party-summary__cluster-meta {
@@ -928,16 +961,13 @@
     gap: var(--space-2);
   }
 
-  .party-traveler-card__description {
-    max-width: none;
+  .party-traveler-card {
+    padding: var(--space-3);
+    gap: var(--space-2);
   }
 
   .party-traveler-card__stat {
     padding: var(--space-2);
-  }
-
-  .party-traveler-card__top-call {
-    padding-top: var(--space-2);
   }
 }
 

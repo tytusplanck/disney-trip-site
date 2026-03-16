@@ -57,16 +57,16 @@ This repository is a private Disney trip site built to be maintained primarily b
 
 ## Verification Commands
 
-- `npm run lint`
-- `npm run typecheck`
-- `npm run test`
-- `npm run build`
-- `npm run verify`
+- Follow the required workflow in [Verification](./verification.md)
+- Final completion gate: `npm run verify`
 
 ## Testing Expectations
 
+- Prefer updating or adding the narrowest relevant test before implementation when behavior changes
+- Expect the focused test to fail before writing the implementation so the gap is proven red-to-green
 - Coverage settings must include request/auth logic and shared helper modules, not just narrow leaf files
 - When request routing or auth behavior changes, add or update tests for middleware and API routes alongside helper tests
+- UI-affecting changes should be visually verified in a real browser with Chrome DevTools MCP, or an equivalent browser MCP if Chrome DevTools MCP is unavailable
 
 ## Documentation Policy
 
