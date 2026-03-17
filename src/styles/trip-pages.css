@@ -12,7 +12,7 @@
 }
 
 .trip-page-heading__summary {
-  max-width: min(40rem, 38ch);
+  max-width: min(52rem, 60ch);
 }
 
 .trip-page-section {
@@ -1004,6 +1004,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  position: relative;
 }
 
 .ll-planner__control-label {
@@ -1172,11 +1173,11 @@
 /* Attraction Row */
 
 .ll-row {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.5rem 0.875rem;
+  padding: 0.625rem 0;
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: background-color var(--motion-fast) var(--ease-standard);
@@ -1198,18 +1199,48 @@
 
 .ll-row__input {
   flex-shrink: 0;
+  margin: 0;
+  min-width: 0;
+  min-height: 0;
   width: 1.125rem;
   height: 1.125rem;
+  align-self: start;
+  margin-top: 0.18rem;
   accent-color: var(--trip-accent, var(--color-brand));
 }
 
+.ll-row__main {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.ll-row__top {
+  display: flex;
+  align-items: start;
+  flex-wrap: wrap;
+  gap: 0.35rem var(--space-2);
+  min-width: 0;
+}
+
 .ll-row__label {
+  flex: 1 1 15rem;
+  min-width: 0;
   font-size: var(--text-body);
   color: var(--color-ink);
+  line-height: var(--leading-snug);
+  overflow-wrap: anywhere;
 }
 
 .ll-row__label--closed {
   text-decoration: line-through;
+}
+
+.ll-row__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .ll-badge--height {
@@ -1224,11 +1255,10 @@
   letter-spacing: var(--tracking-meta);
   text-transform: uppercase;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .ll-row__note {
-  width: 100%;
-  padding-left: calc(1.125rem + var(--space-3));
   font-size: var(--text-body-sm);
   color: var(--color-ink-faint);
 }
@@ -1245,6 +1275,7 @@
   letter-spacing: var(--tracking-meta);
   text-transform: uppercase;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 /* Action Bar */
@@ -1361,11 +1392,32 @@
 /* Mobile adjustments */
 
 @media (max-width: 720px) {
+  .ll-planner {
+    gap: var(--space-5);
+  }
+
+  .ll-planner__controls {
+    padding: var(--space-4);
+  }
+
+  .ll-planner__control-group::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 3.25rem;
+    height: calc(var(--tap-target-min) + var(--space-2));
+    border-radius: var(--radius-pill);
+    background: linear-gradient(90deg, transparent 0%, var(--color-surface-1) 82%);
+    pointer-events: none;
+  }
+
   .ll-planner__chip-row {
     overflow-x: auto;
     flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    padding-inline-end: var(--space-5);
   }
 
   .ll-planner__chip-row::-webkit-scrollbar {
@@ -1375,5 +1427,91 @@
   .ll-planner__chip {
     white-space: nowrap;
     flex-shrink: 0;
+  }
+
+  .ll-planner__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ll-planner__action-btn {
+    width: 100%;
+  }
+
+  .ll-card {
+    gap: var(--space-4);
+    padding: var(--space-4);
+  }
+
+  .ll-section {
+    gap: var(--space-2);
+  }
+
+  .ll-row {
+    gap: 0.45rem 0.75rem;
+    padding: 0.5rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .trip-shell__main {
+    padding-inline: 1rem;
+  }
+
+  .ll-planner__control-group::after {
+    display: none;
+  }
+
+  .ll-planner__chip-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+    padding-inline-end: 0;
+  }
+
+  .ll-planner__chip {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .ll-planner__controls,
+  .ll-card {
+    padding: var(--space-3);
+  }
+
+  .ll-planner__chip {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-body-sm);
+  }
+
+  .ll-section__header {
+    flex-wrap: wrap;
+  }
+
+  .ll-section__constraint {
+    white-space: normal;
+    text-align: left;
+  }
+
+  .ll-row {
+    gap: 0.35rem 0.65rem;
+  }
+
+  .ll-row__input {
+    margin-top: 0.12rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .trip-shell__main {
+    padding-inline: 0.75rem;
+  }
+
+  .ll-planner__chip-row {
+    gap: var(--space-1);
+  }
+
+  .ll-planner__chip {
+    padding-inline: var(--space-2);
   }
 }

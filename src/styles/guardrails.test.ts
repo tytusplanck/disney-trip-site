@@ -97,6 +97,38 @@ describe('style guardrails', () => {
     expect(tripPagesSource).toContain('.attractions-explorer__select {');
   });
 
+  it('keeps trip tabs and LL planner controls usable on narrow screens', () => {
+    const componentsSource = readFileSync(join(stylesDirectory, 'components.css'), 'utf8');
+    const tripPagesSource = readFileSync(join(stylesDirectory, 'trip-pages.css'), 'utf8');
+
+    expect(componentsSource).toMatch(
+      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?overflow-x: auto;/,
+    );
+    expect(componentsSource).toMatch(
+      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?grid-auto-flow: column;/,
+    );
+    expect(componentsSource).toMatch(
+      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?grid-auto-columns: max-content;/,
+    );
+    expect(componentsSource).toMatch(
+      /@media \(max-width: 360px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/,
+    );
+    expect(tripPagesSource).toMatch(
+      /\.ll-row__label \{[\s\S]*?min-width: 0;[\s\S]*?overflow-wrap: anywhere;/,
+    );
+    expect(tripPagesSource).toMatch(/\.ll-row__main \{/);
+    expect(tripPagesSource).toMatch(/\.ll-row__top \{[\s\S]*?flex-wrap: wrap;/);
+    expect(tripPagesSource).toMatch(
+      /@media \(max-width: 720px\) \{[\s\S]*?\.ll-planner__actions \{[\s\S]*?flex-direction: column;/,
+    );
+    expect(tripPagesSource).toMatch(
+      /@media \(max-width: 720px\) \{[\s\S]*?\.ll-planner__control-group::after \{/,
+    );
+    expect(tripPagesSource).toMatch(
+      /@media \(max-width: 480px\) \{[\s\S]*?\.ll-planner__chip-row \{[\s\S]*?display: grid;[\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/,
+    );
+  });
+
   it('rejects the old parchment canvas palette in active stylesheets', () => {
     const stylesheetSources = getStylesheetPaths().map((filePath) =>
       readFileSync(filePath, 'utf8'),

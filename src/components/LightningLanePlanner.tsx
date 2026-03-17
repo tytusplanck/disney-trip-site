@@ -416,16 +416,24 @@ function LLAttractionRow({
         }}
         className="ll-row__input"
       />
-      <span className={`ll-row__label${isClosed ? ' ll-row__label--closed' : ''}`}>
-        {attraction.attractionLabel}
+      <span className="ll-row__main">
+        <span className="ll-row__top">
+          <span className={`ll-row__label${isClosed ? ' ll-row__label--closed' : ''}`}>
+            {attraction.attractionLabel}
+          </span>
+          {(isClosed || attraction.heightRestriction) && (
+            <span className="ll-row__meta">
+              {isClosed && <span className="ll-badge--closed">CLOSED</span>}
+              {attraction.heightRestriction && (
+                <span className="ll-badge--height">{attraction.heightRestriction}</span>
+              )}
+            </span>
+          )}
+        </span>
+        {attraction.heightRestriction && (
+          <span className="ll-row__note">Not available for children</span>
+        )}
       </span>
-      {isClosed && <span className="ll-badge--closed">CLOSED</span>}
-      {attraction.heightRestriction && (
-        <span className="ll-badge--height">{attraction.heightRestriction}</span>
-      )}
-      {attraction.heightRestriction && (
-        <span className="ll-row__note">Not available for children</span>
-      )}
     </label>
   );
 }
