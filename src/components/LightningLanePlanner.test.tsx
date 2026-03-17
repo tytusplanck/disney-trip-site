@@ -11,10 +11,10 @@ function renderPlanner() {
 }
 
 describe('LightningLanePlanner pricing', () => {
-  it('shows the historic pricing disclaimer and projected costs in summary mode', () => {
+  it('shows the pricing disclaimer and projected costs in summary mode', () => {
     renderPlanner();
 
-    const totalLabel = screen.getAllByText('Current plan total')[0];
+    const totalLabel = screen.getAllByText('Adult total')[0];
     const totalItem = totalLabel?.parentElement;
     const selectedSinglePassLabel = screen.getAllByText('Selected Single Pass')[0];
     const selectedSinglePassItem = selectedSinglePassLabel?.parentElement;
@@ -24,9 +24,9 @@ describe('LightningLanePlanner pricing', () => {
     }
 
     expect(
-      screen.getByText(/Historic per-person projections based on recent Lightning Lane data/i),
-    ).toBeInTheDocument();
-    expect(screen.getAllByText('Projected costs')).not.toHaveLength(0);
+      screen.getAllByText(/Projections based on historical data/i),
+    ).not.toHaveLength(0);
+    expect(screen.getAllByText('Projected per-person costs')).not.toHaveLength(0);
     expect(within(selectedSinglePassItem).getByText('$17')).toBeInTheDocument();
     expect(within(totalItem).getByText('$39')).toBeInTheDocument();
     expect(screen.queryByText('$39 ($37–$41)')).not.toBeInTheDocument();
@@ -37,10 +37,10 @@ describe('LightningLanePlanner pricing', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Customize picks' }));
 
-    const totalLabel = screen.getByText('Current plan total');
+    const totalLabel = screen.getByText('Adult total');
     const totalItem = totalLabel.parentElement;
     if (!totalItem) {
-      throw new Error('Expected the current total cost item to render');
+      throw new Error('Expected the adult total cost item to render');
     }
 
     const selectedSinglePassLabel = screen.getByText('Selected Single Pass');
@@ -54,7 +54,13 @@ describe('LightningLanePlanner pricing', () => {
 
     fireEvent.click(screen.getByRole('checkbox', { name: /Avatar Flight of Passage/i }));
 
-    expect(within(totalItem).getByText('$22')).toBeInTheDocument();
+    const updatedTotalLabel = screen.getByText('Current plan total');
+    const updatedTotalItem = updatedTotalLabel.parentElement;
+    if (!updatedTotalItem) {
+      throw new Error('Expected the current total cost item to render');
+    }
+
+    expect(within(updatedTotalItem).getByText('$22')).toBeInTheDocument();
     expect(screen.queryByText('$39 ($37–$41)')).not.toBeInTheDocument();
     expect(screen.queryByText('$22 ($20–$23)')).not.toBeInTheDocument();
   });

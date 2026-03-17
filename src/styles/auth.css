@@ -62,14 +62,6 @@
   min-width: 0;
 }
 
-.auth-card__note {
-  margin: 0;
-  padding-top: var(--space-4);
-  border-top: var(--border-thin) solid var(--color-line-subtle);
-  color: var(--color-ink-faint);
-  font-size: var(--text-body-sm);
-}
-
 @media (max-width: 720px) {
   .auth-page {
     padding: var(--space-8) var(--gutter-mobile) var(--space-11);

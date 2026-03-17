@@ -27,7 +27,6 @@ export interface AttractionsExplorerDayPreset {
 
 export interface AttractionsExplorerState {
   selectedDayId: string | null;
-  memberId: string | null;
   search: string;
 }
 
@@ -39,7 +38,6 @@ export interface AttractionsExplorerData {
 
 export interface AttractionsExplorerView {
   activeDayPreset: AttractionsExplorerDayPreset | null;
-  activeMember: TripPartyMember | null;
   scopeLabel: string;
   rankedAttractions: AttractionsExplorerAttraction[];
   hasResults: boolean;
@@ -77,13 +75,6 @@ function buildDayPreset(entry: TripScheduleEntry, dayNumber: number): Attraction
   };
 }
 
-function getMemberTier(
-  attraction: AttractionsExplorerAttraction,
-  memberId: string,
-): PreferenceTier {
-  return attraction.memberTiers[memberId] ?? 3;
-}
-
 function sortGroupAttractions(
   attractions: readonly AttractionsExplorerAttraction[],
 ): AttractionsExplorerAttraction[] {
@@ -95,28 +86,15 @@ function sortGroupAttractions(
   );
 }
 
-function sortTravelerAttractions(
-  attractions: readonly AttractionsExplorerAttraction[],
-  memberId: string,
-): AttractionsExplorerAttraction[] {
-  return [...attractions].sort(
-    (left, right) =>
-      getMemberTier(left, memberId) - getMemberTier(right, memberId) ||
-      right.consensusScore - left.consensusScore ||
-      left.attractionLabel.localeCompare(right.attractionLabel),
-  );
-}
-
 function getScopeLabel(
   activeDayPreset: AttractionsExplorerDayPreset | null,
-  activeMember: TripPartyMember | null,
   search: string,
 ): string {
   const scopeParts = [
     activeDayPreset
       ? `Day ${String(activeDayPreset.dayNumber)}: ${activeDayPreset.parkLabel}`
       : 'All Park Days',
-    activeMember ? activeMember.name : 'Whole Group',
+    'Whole Group',
   ];
 
   if (search.length > 0) {
@@ -165,9 +143,6 @@ export function deriveAttractionsExplorerView(
 ): AttractionsExplorerView {
   const activeDayPreset =
     data.dayPresets.find((preset) => preset.id === state.selectedDayId) ?? null;
-  const activeMember = state.memberId
-    ? (data.party.find((member) => member.id === state.memberId) ?? null)
-    : null;
   const normalizedSearch = state.search.trim().toLowerCase();
 
   const filteredAttractions = data.attractions.filter((attraction) => {
@@ -185,15 +160,11 @@ export function deriveAttractionsExplorerView(
     return true;
   });
 
-  const rankedAttractions =
-    activeMember && state.memberId
-      ? sortTravelerAttractions(filteredAttractions, state.memberId)
-      : sortGroupAttractions(filteredAttractions);
+  const rankedAttractions = sortGroupAttractions(filteredAttractions);
 
   return {
     activeDayPreset,
-    activeMember,
-    scopeLabel: getScopeLabel(activeDayPreset, activeMember, state.search.trim()),
+    scopeLabel: getScopeLabel(activeDayPreset, state.search.trim()),
     rankedAttractions,
     hasResults: rankedAttractions.length > 0,
   };

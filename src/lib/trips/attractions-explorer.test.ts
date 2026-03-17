@@ -7,7 +7,6 @@ import {
 
 const defaultState = {
   selectedDayId: null,
-  memberId: null,
   search: '',
 } as const;
 
@@ -42,24 +41,6 @@ describe('attractions explorer helpers', () => {
     );
   });
 
-  it('sorts traveler views by that traveler tier before consensus score', () => {
-    const data = buildAttractionsExplorerData(attractionsExplorerFixtureTrip);
-    const view = deriveAttractionsExplorerView(data, {
-      ...defaultState,
-      memberId: 'ben',
-    });
-
-    expect(view.activeMember?.name).toBe('Ben');
-    expect(
-      view.rankedAttractions.slice(0, 4).map((attraction) => attraction.attractionLabel),
-    ).toEqual([
-      "Soarin' Around the World",
-      'Frozen Ever After',
-      'Living with the Land',
-      "Peter Pan's Flight",
-    ]);
-  });
-
   it('supports combined day and search filtering', () => {
     const data = buildAttractionsExplorerData(attractionsExplorerFixtureTrip);
     const epcotPreset = data.dayPresets.find((preset) => preset.parkLabel === 'EPCOT');
@@ -80,7 +61,6 @@ describe('attractions explorer helpers', () => {
     const data = buildAttractionsExplorerData(attractionsExplorerFixtureTrip);
     const view = deriveAttractionsExplorerView(data, {
       ...defaultState,
-      memberId: 'ben',
       search: 'Not a ride',
     });
 

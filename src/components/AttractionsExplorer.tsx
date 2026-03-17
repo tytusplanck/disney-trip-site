@@ -22,7 +22,6 @@ const DEFAULT_VISIBLE_RIDES = 15;
 function getDefaultState(): AttractionsExplorerState {
   return {
     selectedDayId: null,
-    memberId: null,
     search: '',
   };
 }
@@ -32,7 +31,6 @@ export default function AttractionsExplorer({ data }: Props) {
   const [showAllRides, setShowAllRides] = useState(false);
   const deferredSearch = useDeferredValue(state.search);
   const searchFieldId = useId();
-  const travelerFieldId = useId();
   const deferredState = useMemo(
     () => ({
       ...state,
@@ -45,7 +43,7 @@ export default function AttractionsExplorer({ data }: Props) {
     [data, deferredState],
   );
   const resetDisabled =
-    state.selectedDayId === null && state.memberId === null && state.search.length === 0;
+    state.selectedDayId === null && state.search.length === 0;
   const visibleAttractions = showAllRides
     ? view.rankedAttractions
     : view.rankedAttractions.slice(0, DEFAULT_VISIBLE_RIDES);
@@ -63,16 +61,6 @@ export default function AttractionsExplorer({ data }: Props) {
     updateState((previousState) => ({
       ...previousState,
       selectedDayId: dayId,
-    }));
-    setShowAllRides(false);
-  }
-
-  function handleMemberChange(event: ChangeEvent<HTMLSelectElement>) {
-    const memberId = event.target.value.length > 0 ? event.target.value : null;
-
-    updateState((previousState) => ({
-      ...previousState,
-      memberId,
     }));
     setShowAllRides(false);
   }
@@ -162,22 +150,6 @@ export default function AttractionsExplorer({ data }: Props) {
           </div>
         </section>
 
-        <label className="attractions-explorer__field" htmlFor={travelerFieldId}>
-          <span className="attractions-explorer__filter-label">Traveler</span>
-          <select
-            className="attractions-explorer__select"
-            id={travelerFieldId}
-            onChange={handleMemberChange}
-            value={state.memberId ?? ''}
-          >
-            <option value="">Whole group</option>
-            {data.party.map((member) => (
-              <option key={member.id} value={member.id}>
-                {member.name}
-              </option>
-            ))}
-          </select>
-        </label>
       </article>
 
       {view.hasResults ? (

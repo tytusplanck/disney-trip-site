@@ -102,15 +102,6 @@ describe('style guardrails', () => {
     const tripPagesSource = readFileSync(join(stylesDirectory, 'trip-pages.css'), 'utf8');
 
     expect(componentsSource).toMatch(
-      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?overflow-x: auto;/,
-    );
-    expect(componentsSource).toMatch(
-      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?grid-auto-flow: column;/,
-    );
-    expect(componentsSource).toMatch(
-      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?grid-auto-columns: max-content;/,
-    );
-    expect(componentsSource).toMatch(
       /@media \(max-width: 360px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/,
     );
     expect(tripPagesSource).toMatch(

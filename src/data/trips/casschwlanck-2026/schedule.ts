@@ -48,7 +48,7 @@ export const casschwlanck2026Schedule: TripScheduleEntry[] = [
     kind: 'resort',
     label: 'Resort day',
     parkLabel: null,
-    notes: "Narcossee's for Kelsey's 30th!",
+    notes: "Tytus and Kelsey date night (Narcossee's for Kelsey's 30th!)",
   },
   {
     date: '2026-04-04',

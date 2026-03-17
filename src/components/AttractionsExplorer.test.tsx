@@ -18,7 +18,6 @@ describe('AttractionsExplorer', () => {
     renderExplorer();
 
     expect(screen.getByLabelText('Search')).toBeInTheDocument();
-    expect(screen.getByLabelText('Traveler')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /All Park Days/i })).toBeInTheDocument();
     expect(screen.getByLabelText('Ranked rides')).toBeInTheDocument();
 
@@ -38,29 +37,10 @@ describe('AttractionsExplorer', () => {
     expect(screen.queryAllByText("Peter Pan's Flight")).toHaveLength(0);
   });
 
-  it('sorts by traveler when a specific traveler is selected', async () => {
-    renderExplorer();
-
-    fireEvent.change(screen.getByLabelText('Traveler'), {
-      target: { value: 'ben' },
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText("Soarin' Around the World")).toBeInTheDocument();
-    });
-
-    const topRows = screen.getAllByText(/Top [1-3]/).map((node) => node.textContent);
-    expect(topRows).toEqual(['Top 1', 'Top 2', 'Top 3']);
-    expect(screen.getByText("Soarin' Around the World")).toBeInTheDocument();
-  });
-
   it('restores the default trip-wide state when filters are reset', async () => {
     renderExplorer();
 
     fireEvent.click(screen.getByRole('button', { name: /EPCOT/i }));
-    fireEvent.change(screen.getByLabelText('Traveler'), {
-      target: { value: 'ben' },
-    });
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'Reset filters' })).toBeInTheDocument();
