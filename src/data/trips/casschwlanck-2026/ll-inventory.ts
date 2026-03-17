@@ -71,6 +71,17 @@ const mk: LLAttraction[] = [
     closureNote: null,
     heightRestriction: null,
   },
+  {
+    id: 'mk-big-thunder-mountain-railroad',
+    shortCode: 'btmr',
+    attractionLabel: 'Big Thunder Mountain Railroad',
+    parkId: 'magic-kingdom',
+    passType: 'multipass',
+    tier: 'tier1',
+    closedDuringTrip: true,
+    closureNote: 'Closed for refurbishment — reopening Spring 2026',
+    heightRestriction: '40in+',
+  },
   // Multi Pass — Tier 2
   {
     id: 'mk-the-barnstormer',
@@ -81,6 +92,17 @@ const mk: LLAttraction[] = [
     tier: 'tier2',
     closedDuringTrip: false,
     closureNote: null,
+    heightRestriction: null,
+  },
+  {
+    id: 'mk-buzz-lightyears-space-ranger-spin',
+    shortCode: 'blsrs',
+    attractionLabel: "Buzz Lightyear's Space Ranger Spin",
+    parkId: 'magic-kingdom',
+    passType: 'multipass',
+    tier: 'tier2',
+    closedDuringTrip: true,
+    closureNote: 'Closed for refurbishment — reopens April 8, 2026',
     heightRestriction: null,
   },
   {
