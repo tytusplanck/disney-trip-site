@@ -12,6 +12,7 @@ const mk: LLAttraction[] = [
     closedDuringTrip: false,
     closureNote: null,
     heightRestriction: null,
+    estimatedPriceUsd: 15,
   },
   {
     id: 'mk-tron-lightcycle-run',
@@ -23,6 +24,7 @@ const mk: LLAttraction[] = [
     closedDuringTrip: false,
     closureNote: null,
     heightRestriction: '48in+',
+    estimatedPriceUsd: 22,
   },
   // Multi Pass — Tier 1
   {
@@ -216,6 +218,8 @@ const epcot: LLAttraction[] = [
     closedDuringTrip: false,
     closureNote: null,
     heightRestriction: '42in+',
+    estimatedPriceUsd: 20,
+    estimatedRangeUsd: [20, 21],
   },
   // Multi Pass — Tier 1
   {
@@ -354,6 +358,8 @@ const dhs: LLAttraction[] = [
     closedDuringTrip: false,
     closureNote: null,
     heightRestriction: '40in+',
+    estimatedPriceUsd: 23,
+    estimatedRangeUsd: [22, 24],
   },
   // Multi Pass — Tier 1
   {
@@ -503,6 +509,8 @@ const dak: LLAttraction[] = [
     closedDuringTrip: false,
     closureNote: null,
     heightRestriction: '44in+',
+    estimatedPriceUsd: 17,
+    estimatedRangeUsd: [17, 18],
   },
   // Multi Pass — No Tier
   {
@@ -603,6 +611,8 @@ export const casschwlanck2026LLInventory: Record<LLParkId, LLParkInventory> = {
     maxTier1: 1,
     maxTier2: 2,
     maxMultiPass: 0,
+    multiPassEstimatedPriceUsd: 34,
+    multiPassEstimatedRangeUsd: [31, 37],
     attractions: mk,
   },
   epcot: {
@@ -612,6 +622,8 @@ export const casschwlanck2026LLInventory: Record<LLParkId, LLParkInventory> = {
     maxTier1: 1,
     maxTier2: 2,
     maxMultiPass: 0,
+    multiPassEstimatedPriceUsd: 23,
+    multiPassEstimatedRangeUsd: [21, 25],
     attractions: epcot,
   },
   'hollywood-studios': {
@@ -621,6 +633,8 @@ export const casschwlanck2026LLInventory: Record<LLParkId, LLParkInventory> = {
     maxTier1: 1,
     maxTier2: 2,
     maxMultiPass: 0,
+    multiPassEstimatedPriceUsd: 33,
+    multiPassEstimatedRangeUsd: [32, 34],
     attractions: dhs,
   },
   'animal-kingdom': {
@@ -630,6 +644,8 @@ export const casschwlanck2026LLInventory: Record<LLParkId, LLParkInventory> = {
     maxTier1: 0,
     maxTier2: 0,
     maxMultiPass: 3,
+    multiPassEstimatedPriceUsd: 22,
+    multiPassEstimatedRangeUsd: [20, 23],
     attractions: dak,
   },
 };

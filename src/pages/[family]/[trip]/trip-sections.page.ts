@@ -15,6 +15,7 @@ export const tripSectionCopy: Record<TripSection, { title: string; summary: stri
   },
   ll: {
     title: 'Lightning Lane Picks',
-    summary: 'Build a plan for each park day, then share it with the group.',
+    summary:
+      'Build a plan for each park day with historic per-person projections; Disney shows the final dynamic prices in the app.',
   },
 };

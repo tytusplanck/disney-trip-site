@@ -1,10 +1,12 @@
 import type {
+  LLAttraction,
   LLMemberPlan,
   LLParkDay,
   LLParkDaySelections,
   LLParkId,
   LLParkInventory,
   LLPlannerData,
+  LLProjectedPrice,
 } from './ll-types';
 import type { TripDataModule } from './types';
 
@@ -65,12 +67,19 @@ export function buildLLPlannerData(module: TripDataModule): LLPlannerData {
       };
     });
 
+  const hasChildren =
+    module.partyGrouping?.kind === 'named-cohorts' &&
+    module.partyGrouping.cohorts.some(
+      (cohort) => cohort.id === 'kids' && cohort.memberIds.length > 0,
+    );
+
   return {
     party: module.party,
     parkDays,
     inventory: inventory as Record<LLParkId, LLParkInventory>,
     defaultPlan,
     ownerMemberId: defaultPlan.memberId,
+    hasChildren,
   };
 }
 
@@ -168,6 +177,149 @@ export function getMultiPassCount(
     return (selections.tier1Selection != null ? 1 : 0) + selections.tier2Selections.length;
   }
   return selections.multiPassSelections.length;
+}
+
+export function getAttractionPriceEstimate(attraction: LLAttraction): LLProjectedPrice | null {
+  if (attraction.estimatedPriceUsd == null) {
+    return null;
+  }
+
+  if (attraction.estimatedRangeUsd) {
+    return {
+      estimatedPriceUsd: attraction.estimatedPriceUsd,
+      estimatedRangeUsd: attraction.estimatedRangeUsd,
+    };
+  }
+
+  return {
+    estimatedPriceUsd: attraction.estimatedPriceUsd,
+  };
+}
+
+export function getMultiPassPriceEstimate(inventory: LLParkInventory): LLProjectedPrice {
+  if (inventory.multiPassEstimatedRangeUsd) {
+    return {
+      estimatedPriceUsd: inventory.multiPassEstimatedPriceUsd,
+      estimatedRangeUsd: inventory.multiPassEstimatedRangeUsd,
+    };
+  }
+
+  return {
+    estimatedPriceUsd: inventory.multiPassEstimatedPriceUsd,
+  };
+}
+
+export function getSelectedSinglePassPriceEstimate(
+  selections: LLParkDaySelections,
+  inventory: LLParkInventory,
+): LLProjectedPrice | null {
+  const pricedSelections = selections.illSelections
+    .map((id) => inventory.attractions.find((attraction) => attraction.id === id))
+    .filter((attraction): attraction is LLAttraction => attraction != null)
+    .map(getAttractionPriceEstimate)
+    .filter((estimate): estimate is LLProjectedPrice => estimate != null);
+
+  return combinePriceEstimates(pricedSelections);
+}
+
+export function getChildSinglePassPriceEstimate(
+  selections: LLParkDaySelections,
+  inventory: LLParkInventory,
+): LLProjectedPrice | null {
+  const pricedSelections = selections.illSelections
+    .map((id) => inventory.attractions.find((attraction) => attraction.id === id))
+    .filter((attraction): attraction is LLAttraction => attraction != null)
+    .filter((attraction) => attraction.heightRestriction == null)
+    .map(getAttractionPriceEstimate)
+    .filter((estimate): estimate is LLProjectedPrice => estimate != null);
+
+  return combinePriceEstimates(pricedSelections);
+}
+
+export function getChildParkDayPriceEstimate(
+  selections: LLParkDaySelections,
+  inventory: LLParkInventory,
+): LLProjectedPrice | null {
+  const estimates: LLProjectedPrice[] = [];
+  const childSinglePassEstimate = getChildSinglePassPriceEstimate(selections, inventory);
+
+  if (getMultiPassCount(selections, inventory) > 0) {
+    estimates.push(getMultiPassPriceEstimate(inventory));
+  }
+
+  if (childSinglePassEstimate) {
+    estimates.push(childSinglePassEstimate);
+  }
+
+  return combinePriceEstimates(estimates);
+}
+
+export function getHeightRestrictedSelections(
+  selections: LLParkDaySelections,
+  inventory: LLParkInventory,
+): LLAttraction[] {
+  return selections.illSelections
+    .map((id) => inventory.attractions.find((attraction) => attraction.id === id))
+    .filter(
+      (attraction): attraction is LLAttraction =>
+        attraction != null && attraction.heightRestriction != null,
+    );
+}
+
+export function getProjectedParkDayPriceEstimate(
+  selections: LLParkDaySelections,
+  inventory: LLParkInventory,
+): LLProjectedPrice | null {
+  const estimates: LLProjectedPrice[] = [];
+  const singlePassEstimate = getSelectedSinglePassPriceEstimate(selections, inventory);
+
+  if (getMultiPassCount(selections, inventory) > 0) {
+    estimates.push(getMultiPassPriceEstimate(inventory));
+  }
+
+  if (singlePassEstimate) {
+    estimates.push(singlePassEstimate);
+  }
+
+  return combinePriceEstimates(estimates);
+}
+
+export function formatPriceEstimate(estimate: LLProjectedPrice): string {
+  return formatUsd(estimate.estimatedPriceUsd);
+}
+
+function combinePriceEstimates(estimates: readonly LLProjectedPrice[]): LLProjectedPrice | null {
+  if (estimates.length === 0) {
+    return null;
+  }
+
+  const totalEstimatedPriceUsd = estimates.reduce(
+    (sum, estimate) => sum + estimate.estimatedPriceUsd,
+    0,
+  );
+  const hasRanges = estimates.some((estimate) => estimate.estimatedRangeUsd != null);
+
+  if (!hasRanges) {
+    return {
+      estimatedPriceUsd: totalEstimatedPriceUsd,
+    };
+  }
+
+  const totalRangeMin = estimates.reduce((sum, estimate) => {
+    return sum + (estimate.estimatedRangeUsd?.[0] ?? estimate.estimatedPriceUsd);
+  }, 0);
+  const totalRangeMax = estimates.reduce((sum, estimate) => {
+    return sum + (estimate.estimatedRangeUsd?.[1] ?? estimate.estimatedPriceUsd);
+  }, 0);
+
+  return {
+    estimatedPriceUsd: totalEstimatedPriceUsd,
+    estimatedRangeUsd: [totalRangeMin, totalRangeMax],
+  };
+}
+
+function formatUsd(value: number): string {
+  return `$${String(value)}`;
 }
 
 // URL serialization

@@ -4,7 +4,13 @@ import {
   buildLLPlannerData,
   deserializePlan,
   emptySelections,
+  formatPriceEstimate,
+  getChildParkDayPriceEstimate,
+  getChildSinglePassPriceEstimate,
+  getHeightRestrictedSelections,
   getMultiPassCount,
+  getProjectedParkDayPriceEstimate,
+  getSelectedSinglePassPriceEstimate,
   serializePlan,
   toggleSelection,
 } from './ll-planner';
@@ -39,6 +45,11 @@ describe('buildLLPlannerData', () => {
   it('throws if llInventory is missing', () => {
     const { llInventory: _, ...noLL } = tripModule;
     expect(() => buildLLPlannerData(noLL as typeof tripModule)).toThrow('LL data is required');
+  });
+
+  it('sets hasChildren when party grouping has a kids cohort', () => {
+    const plannerData = buildLLPlannerData(tripModule);
+    expect(plannerData.hasChildren).toBe(true);
   });
 });
 
@@ -130,6 +141,154 @@ describe('getMultiPassCount', () => {
       multiPassSelections: ['dak-kilimanjaro-safaris', 'dak-navi-river-journey'],
     };
     expect(getMultiPassCount(sel, akInventory)).toBe(2);
+  });
+});
+
+describe('pricing helpers', () => {
+  if (!mkInventory || !akInventory) {
+    throw new Error('Test setup: inventory data is required');
+  }
+
+  it('formats exact projected prices without a range', () => {
+    expect(
+      formatPriceEstimate({
+        estimatedPriceUsd: 37,
+      }),
+    ).toBe('$37');
+  });
+
+  it('formats projected prices as a single estimate even when a historic range exists', () => {
+    expect(
+      formatPriceEstimate({
+        estimatedPriceUsd: 39,
+        estimatedRangeUsd: [37, 41],
+      }),
+    ).toBe('$39');
+  });
+
+  it('aggregates selected single pass totals when only exact values exist', () => {
+    const selections: LLParkDaySelections = {
+      illSelections: ['mk-seven-dwarfs-mine-train', 'mk-tron-lightcycle-run'],
+      tier1Selection: null,
+      tier2Selections: [],
+      multiPassSelections: [],
+    };
+
+    expect(getSelectedSinglePassPriceEstimate(selections, mkInventory)).toEqual({
+      estimatedPriceUsd: 37,
+    });
+  });
+
+  it('includes Multi Pass once in the park-day total with historic ranges', () => {
+    const oneSelection: LLParkDaySelections = {
+      illSelections: [],
+      tier1Selection: null,
+      tier2Selections: [],
+      multiPassSelections: ['dak-kilimanjaro-safaris'],
+    };
+    const threeSelections: LLParkDaySelections = {
+      illSelections: [],
+      tier1Selection: null,
+      tier2Selections: [],
+      multiPassSelections: [
+        'dak-kilimanjaro-safaris',
+        'dak-expedition-everest-legend-of-the-forbidden-mountain',
+        'dak-navi-river-journey',
+      ],
+    };
+
+    expect(getProjectedParkDayPriceEstimate(oneSelection, akInventory)).toEqual({
+      estimatedPriceUsd: 22,
+      estimatedRangeUsd: [20, 23],
+    });
+    expect(getProjectedParkDayPriceEstimate(threeSelections, akInventory)).toEqual({
+      estimatedPriceUsd: 22,
+      estimatedRangeUsd: [20, 23],
+    });
+  });
+
+  it('combines Multi Pass and Single Pass ranges into the current park-day total', () => {
+    const selections: LLParkDaySelections = {
+      illSelections: ['dak-avatar-flight-of-passage'],
+      tier1Selection: null,
+      tier2Selections: [],
+      multiPassSelections: [
+        'dak-kilimanjaro-safaris',
+        'dak-expedition-everest-legend-of-the-forbidden-mountain',
+      ],
+    };
+
+    expect(getProjectedParkDayPriceEstimate(selections, akInventory)).toEqual({
+      estimatedPriceUsd: 39,
+      estimatedRangeUsd: [37, 41],
+    });
+  });
+
+  it('returns null when a park day has no priced selections', () => {
+    expect(getProjectedParkDayPriceEstimate(emptySelections(), akInventory)).toBeNull();
+    expect(getSelectedSinglePassPriceEstimate(emptySelections(), mkInventory)).toBeNull();
+  });
+
+  it('excludes height-restricted ILL from child single pass estimate', () => {
+    // TRON (48in+, $22) and Seven Dwarfs ($15) selected at MK
+    const selections: LLParkDaySelections = {
+      illSelections: ['mk-seven-dwarfs-mine-train', 'mk-tron-lightcycle-run'],
+      tier1Selection: null,
+      tier2Selections: [],
+      multiPassSelections: [],
+    };
+
+    // Adult gets both, child only gets Seven Dwarfs (no height restriction)
+    const adultEstimate = getSelectedSinglePassPriceEstimate(selections, mkInventory);
+    const childEstimate = getChildSinglePassPriceEstimate(selections, mkInventory);
+    expect(adultEstimate?.estimatedPriceUsd).toBe(37);
+    expect(childEstimate?.estimatedPriceUsd).toBe(15);
+  });
+
+  it('child park day total excludes height-restricted ILL attractions', () => {
+    // Avatar Flight of Passage (44in+, $17) + multi pass at AK
+    const selections: LLParkDaySelections = {
+      illSelections: ['dak-avatar-flight-of-passage'],
+      tier1Selection: null,
+      tier2Selections: [],
+      multiPassSelections: ['dak-kilimanjaro-safaris'],
+    };
+
+    const adultTotal = getProjectedParkDayPriceEstimate(selections, akInventory);
+    const childTotal = getChildParkDayPriceEstimate(selections, akInventory);
+
+    // Adult: Multi Pass ($22) + Avatar ($17) = $39
+    expect(adultTotal?.estimatedPriceUsd).toBe(39);
+    // Child: Multi Pass ($22) only, Avatar excluded due to height restriction
+    expect(childTotal?.estimatedPriceUsd).toBe(22);
+  });
+
+  it('child estimate equals adult when no height-restricted rides are selected', () => {
+    // Seven Dwarfs only (no height restriction)
+    const selections: LLParkDaySelections = {
+      illSelections: ['mk-seven-dwarfs-mine-train'],
+      tier1Selection: 'mk-jungle-cruise',
+      tier2Selections: ['mk-haunted-mansion'],
+      multiPassSelections: [],
+    };
+
+    const adultTotal = getProjectedParkDayPriceEstimate(selections, mkInventory);
+    const childTotal = getChildParkDayPriceEstimate(selections, mkInventory);
+    expect(childTotal?.estimatedPriceUsd).toBe(adultTotal?.estimatedPriceUsd);
+  });
+
+  it('identifies height-restricted selections', () => {
+    const selections: LLParkDaySelections = {
+      illSelections: ['mk-seven-dwarfs-mine-train', 'mk-tron-lightcycle-run'],
+      tier1Selection: null,
+      tier2Selections: [],
+      multiPassSelections: [],
+    };
+
+    const restricted = getHeightRestrictedSelections(selections, mkInventory);
+    expect(restricted).toHaveLength(1);
+    expect(restricted[0]?.id).toBe('mk-tron-lightcycle-run');
+    expect(restricted[0]?.heightRestriction).toBe('48in+');
   });
 });
 

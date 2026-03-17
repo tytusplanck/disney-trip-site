@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import DisclosurePanel from './islands/DisclosurePanel';
 import type {
   LLAttraction,
   LLMemberPlan,
@@ -7,11 +8,19 @@ import type {
   LLParkId,
   LLParkInventory,
   LLPlannerData,
+  LLProjectedPrice,
 } from '../lib/trips/ll-types';
 import {
   deserializePlan,
   emptySelections,
+  formatPriceEstimate,
+  getAttractionPriceEstimate,
+  getChildParkDayPriceEstimate,
+  getHeightRestrictedSelections,
   getMultiPassCount,
+  getMultiPassPriceEstimate,
+  getProjectedParkDayPriceEstimate,
+  getSelectedSinglePassPriceEstimate,
   serializePlan,
   toggleSelection,
 } from '../lib/trips/ll-planner';
@@ -21,6 +30,15 @@ interface Props {
 }
 
 type ViewMode = 'summary' | 'edit';
+
+const SINGLE_PASS_SUBTITLE = 'Purchased individually';
+
+const CHILD_CARD_ABBREVIATIONS: Record<string, string> = {
+  'Avatar Flight of Passage': 'FOP',
+  'Star Wars: Rise of the Resistance': 'RoTR',
+  'Guardians of the Galaxy: Cosmic Rewind': 'GoTGCR',
+  'TRON Lightcycle / Run': 'TRON',
+};
 
 function getSharedPlan(data: LLPlannerData): LLMemberPlan | null {
   if (typeof window === 'undefined') return null;
@@ -35,7 +53,7 @@ function getSharedPlan(data: LLPlannerData): LLMemberPlan | null {
 function makeEmptyPlan(data: LLPlannerData): LLMemberPlan {
   return {
     memberId: data.ownerMemberId,
-    parkDays: Object.fromEntries(data.parkDays.map((d) => [d.parkDate, emptySelections()])),
+    parkDays: Object.fromEntries(data.parkDays.map((day) => [day.parkDate, emptySelections()])),
   };
 }
 
@@ -49,26 +67,27 @@ export default function LightningLanePlanner({ data }: Props) {
   const [viewMode, setViewMode] = useState<ViewMode>('summary');
   const [toastVisible, setToastVisible] = useState(false);
 
-  const activeParkDay = data.parkDays.find((d) => d.parkDate === activeParkDate) ?? firstParkDay;
+  const activeParkDay =
+    data.parkDays.find((day) => day.parkDate === activeParkDate) ?? firstParkDay;
   const activeDaySelections = currentPlan.parkDays[activeParkDate] ?? emptySelections();
   const activeInventory = activeParkDay ? data.inventory[activeParkDay.parkId] : undefined;
 
   const handleToggle = useCallback(
     (attractionId: string) => {
       if (!activeInventory) return;
-      setCurrentPlan((prev) => {
-        const currentSelections = prev.parkDays[activeParkDate] ?? emptySelections();
+      setCurrentPlan((previousPlan) => {
+        const currentSelections = previousPlan.parkDays[activeParkDate] ?? emptySelections();
         const newSelections = toggleSelection(currentSelections, attractionId, activeInventory);
         return {
-          ...prev,
+          ...previousPlan,
           parkDays: {
-            ...prev.parkDays,
+            ...previousPlan.parkDays,
             [activeParkDate]: newSelections,
           },
         };
       });
     },
-    [activeParkDate, activeInventory],
+    [activeInventory, activeParkDate],
   );
 
   function handleParkDaySwitch(parkDate: string) {
@@ -92,15 +111,21 @@ export default function LightningLanePlanner({ data }: Props) {
     setCurrentPlan(makeEmptyPlan(data));
   }
 
-  const ownerName = data.party.find((m) => m.id === data.ownerMemberId)?.name;
+  const ownerName = data.party.find((member) => member.id === data.ownerMemberId)?.name;
 
-  if (viewMode === 'summary') {
-    return (
-      <div className="ll-planner">
-        {!isSharedLink && ownerName && (
+  return (
+    <div className="ll-planner">
+      {viewMode === 'summary' ? (
+        <>
           <div className="ll-shared-banner">
             <p className="ll-shared-banner__text">
-              Viewing <strong>{ownerName}&rsquo;s</strong> Lightning Lane picks
+              {isSharedLink ? (
+                'Someone thinks they can outplan Tytus\u2026 \uD83D\uDE44'
+              ) : (
+                <>
+                  Viewing <strong>{ownerName}&rsquo;s</strong> Lightning Lane picks
+                </>
+              )}
             </p>
             <button
               className="ll-shared-banner__fork"
@@ -112,88 +137,76 @@ export default function LightningLanePlanner({ data }: Props) {
               Customize picks
             </button>
           </div>
-        )}
-        {data.parkDays.map((day) => (
-          <LLParkDayCardReadOnly
-            key={day.parkDate}
-            day={day}
-            inventory={data.inventory[day.parkId]}
-            selections={currentPlan.parkDays[day.parkDate] ?? emptySelections()}
-          />
-        ))}
-        {isSharedLink && (
+
+          {data.parkDays.map((day) => (
+            <LLParkDayCardReadOnly
+              key={day.parkDate}
+              day={day}
+              inventory={data.inventory[day.parkId]}
+              selections={currentPlan.parkDays[day.parkDate] ?? emptySelections()}
+              hasChildren={data.hasChildren}
+            />
+          ))}
+        </>
+      ) : (
+        <>
+          <div className="ll-planner__controls">
+            <div className="ll-planner__control-group">
+              <p className="ll-planner__control-label">Park day</p>
+              <div className="ll-planner__chip-row">
+                {data.parkDays.map((day) => {
+                  const abbreviation = getParkAbbreviation(day.parkId);
+                  return (
+                    <button
+                      aria-pressed={activeParkDate === day.parkDate}
+                      className={`ll-planner__chip${activeParkDate === day.parkDate ? ' ll-planner__chip--active' : ''}`}
+                      key={day.parkDate}
+                      onClick={() => {
+                        handleParkDaySwitch(day.parkDate);
+                      }}
+                      type="button"
+                    >
+                      {abbreviation} &middot; {day.dateLabel}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {activeParkDay && activeInventory && (
+            <LLParkDayCard
+              day={activeParkDay}
+              inventory={activeInventory}
+              selections={activeDaySelections}
+              onToggle={handleToggle}
+              hasChildren={data.hasChildren}
+            />
+          )}
+
           <div className="ll-planner__actions">
+            <button className="ll-planner__action-btn" onClick={handleCopyLink} type="button">
+              Copy plan link
+            </button>
             <button
-              className="ll-planner__action-btn"
+              className="ll-planner__action-btn ll-planner__action-btn--secondary"
               onClick={() => {
-                setViewMode('edit');
+                setViewMode('summary');
               }}
               type="button"
             >
-              Customize picks
+              Back to summary
+            </button>
+            <button
+              className="ll-planner__action-btn ll-planner__action-btn--secondary"
+              onClick={handleStartFresh}
+              type="button"
+            >
+              Start fresh
             </button>
           </div>
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <div className="ll-planner">
-      <div className="ll-planner__controls">
-        <div className="ll-planner__control-group">
-          <p className="ll-planner__control-label">Park day</p>
-          <div className="ll-planner__chip-row">
-            {data.parkDays.map((day) => {
-              const abbrev = getParkAbbreviation(day.parkId);
-              return (
-                <button
-                  aria-pressed={activeParkDate === day.parkDate}
-                  className={`ll-planner__chip${activeParkDate === day.parkDate ? ' ll-planner__chip--active' : ''}`}
-                  key={day.parkDate}
-                  onClick={() => {
-                    handleParkDaySwitch(day.parkDate);
-                  }}
-                  type="button"
-                >
-                  {abbrev} &middot; {day.dateLabel}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      {activeParkDay && activeInventory && (
-        <LLParkDayCard
-          day={activeParkDay}
-          inventory={activeInventory}
-          selections={activeDaySelections}
-          onToggle={handleToggle}
-        />
+        </>
       )}
-
-      <div className="ll-planner__actions">
-        <button className="ll-planner__action-btn" onClick={handleCopyLink} type="button">
-          Copy plan link
-        </button>
-        <button
-          className="ll-planner__action-btn ll-planner__action-btn--secondary"
-          onClick={() => {
-            setViewMode('summary');
-          }}
-          type="button"
-        >
-          Back to summary
-        </button>
-        <button
-          className="ll-planner__action-btn ll-planner__action-btn--secondary"
-          onClick={handleStartFresh}
-          type="button"
-        >
-          Start fresh
-        </button>
-      </div>
 
       {toastVisible && (
         <div className="ll-toast" role="status">
@@ -217,27 +230,30 @@ function getParkAbbreviation(parkId: LLParkId): string {
   }
 }
 
-// Edit mode park day card
 function LLParkDayCard({
   day,
   inventory,
   selections,
   onToggle,
+  hasChildren,
 }: {
   day: LLParkDay;
   inventory: LLParkInventory;
   selections: LLParkDaySelections;
   onToggle: (id: string) => void;
+  hasChildren?: boolean | undefined;
 }) {
-  const illAttractions = inventory.attractions.filter((a) => a.passType === 'individual');
-  const tier1Attractions = inventory.attractions.filter(
-    (a) => a.passType === 'multipass' && a.tier === 'tier1',
+  const individualAttractions = inventory.attractions.filter(
+    (attraction) => attraction.passType === 'individual',
   );
-  const tier2Attractions = inventory.attractions.filter(
-    (a) => a.passType === 'multipass' && a.tier === 'tier2',
+  const tierOneAttractions = inventory.attractions.filter(
+    (attraction) => attraction.passType === 'multipass' && attraction.tier === 'tier1',
+  );
+  const tierTwoAttractions = inventory.attractions.filter(
+    (attraction) => attraction.passType === 'multipass' && attraction.tier === 'tier2',
   );
   const noTierAttractions = inventory.attractions.filter(
-    (a) => a.passType === 'multipass' && a.tier === 'notier',
+    (attraction) => attraction.passType === 'multipass' && attraction.tier === 'notier',
   );
 
   const multiPassCount = getMultiPassCount(selections, inventory);
@@ -251,20 +267,28 @@ function LLParkDayCard({
         <h3 className="ll-card__park-name">{day.parkLabel}</h3>
         <p className="ll-card__day-info">
           Day {day.dayNumber} &middot; {day.weekdayLabel} {day.dateLabel}
-          {day.scheduleNotes ? ` \u00b7 ${day.scheduleNotes}` : ''}
+          {day.scheduleNotes ? ` · ${day.scheduleNotes}` : ''}
         </p>
       </div>
 
-      {/* ILL Section */}
-      <LLSection
-        eyebrow="Lightning Lane Single Pass"
-        subtitle={'Purchased individually \u00b7 ~$15\u201325/person'}
-      >
-        {illAttractions.map((a) => (
+      <LLProjectedCosts
+        multiPassEstimate={getMultiPassPriceEstimate(inventory)}
+        selectedSinglePassEstimate={getSelectedSinglePassPriceEstimate(selections, inventory)}
+        totalEstimate={getProjectedParkDayPriceEstimate(selections, inventory)}
+        childEstimate={
+          hasChildren ? getChildParkDayPriceEstimate(selections, inventory) : undefined
+        }
+        heightRestrictedSelections={
+          hasChildren ? getHeightRestrictedSelections(selections, inventory) : undefined
+        }
+      />
+
+      <LLSection eyebrow="Lightning Lane Single Pass" subtitle={SINGLE_PASS_SUBTITLE}>
+        {individualAttractions.map((attraction) => (
           <LLAttractionRow
-            key={a.id}
-            attraction={a}
-            checked={selections.illSelections.includes(a.id)}
+            key={attraction.id}
+            attraction={attraction}
+            checked={selections.illSelections.includes(attraction.id)}
             disabled={false}
             inputType="checkbox"
             onToggle={onToggle}
@@ -272,18 +296,17 @@ function LLParkDayCard({
         ))}
       </LLSection>
 
-      {/* Tiered parks */}
       {inventory.hasTiers && (
         <>
           <LLSection
-            eyebrow={'Multi Pass \u00b7 Tier 1'}
+            eyebrow="Multi Pass · Tier 1"
             constraint={`Choose ${String(inventory.maxTier1)}`}
           >
-            {tier1Attractions.map((a) => (
+            {tierOneAttractions.map((attraction) => (
               <LLAttractionRow
-                key={a.id}
-                attraction={a}
-                checked={selections.tier1Selection === a.id}
+                key={attraction.id}
+                attraction={attraction}
+                checked={selections.tier1Selection === attraction.id}
                 disabled={false}
                 inputType="radio"
                 onToggle={onToggle}
@@ -292,18 +315,18 @@ function LLParkDayCard({
           </LLSection>
 
           <LLSection
-            eyebrow={'Multi Pass \u00b7 Tier 2'}
+            eyebrow="Multi Pass · Tier 2"
             constraint={`Choose ${String(inventory.maxTier2)}`}
             count={selections.tier2Selections.length}
             max={inventory.maxTier2}
           >
-            {tier2Attractions.map((a) => {
-              const isSelected = selections.tier2Selections.includes(a.id);
+            {tierTwoAttractions.map((attraction) => {
+              const isSelected = selections.tier2Selections.includes(attraction.id);
               const atCap = selections.tier2Selections.length >= inventory.maxTier2;
               return (
                 <LLAttractionRow
-                  key={a.id}
-                  attraction={a}
+                  key={attraction.id}
+                  attraction={attraction}
                   checked={isSelected}
                   disabled={!isSelected && atCap}
                   inputType="checkbox"
@@ -315,7 +338,6 @@ function LLParkDayCard({
         </>
       )}
 
-      {/* Non-tiered (AK) */}
       {!inventory.hasTiers && (
         <LLSection
           eyebrow="Multi Pass"
@@ -323,13 +345,13 @@ function LLParkDayCard({
           count={selections.multiPassSelections.length}
           max={inventory.maxMultiPass}
         >
-          {noTierAttractions.map((a) => {
-            const isSelected = selections.multiPassSelections.includes(a.id);
+          {noTierAttractions.map((attraction) => {
+            const isSelected = selections.multiPassSelections.includes(attraction.id);
             const atCap = selections.multiPassSelections.length >= inventory.maxMultiPass;
             return (
               <LLAttractionRow
-                key={a.id}
-                attraction={a}
+                key={attraction.id}
+                attraction={attraction}
                 checked={isSelected}
                 disabled={!isSelected && atCap}
                 inputType="checkbox"
@@ -340,7 +362,6 @@ function LLParkDayCard({
         </LLSection>
       )}
 
-      {/* Summary */}
       <div className="ll-card__summary">
         Single Pass: {selections.illSelections.length} selected &middot; Multi Pass:{' '}
         {multiPassCount} of {multiPassMax}
@@ -349,7 +370,86 @@ function LLParkDayCard({
   );
 }
 
-// Section wrapper
+function LLProjectedCosts({
+  multiPassEstimate,
+  selectedSinglePassEstimate,
+  totalEstimate,
+  childEstimate,
+  heightRestrictedSelections,
+}: {
+  multiPassEstimate: LLProjectedPrice;
+  selectedSinglePassEstimate: LLProjectedPrice | null;
+  totalEstimate: LLProjectedPrice | null;
+  childEstimate?: LLProjectedPrice | null | undefined;
+  heightRestrictedSelections?: LLAttraction[] | undefined;
+}) {
+  const showChildRow =
+    childEstimate != null &&
+    totalEstimate != null &&
+    childEstimate.estimatedPriceUsd !== totalEstimate.estimatedPriceUsd;
+
+  const childSubtitle =
+    showChildRow && heightRestrictedSelections && heightRestrictedSelections.length > 0
+      ? `Excl. ${heightRestrictedSelections.map((a) => `${CHILD_CARD_ABBREVIATIONS[a.attractionLabel] ?? a.attractionLabel}${a.heightRestriction ? ` (${a.heightRestriction})` : ''}`).join(', ')}`
+      : undefined;
+
+  return (
+    <DisclosurePanel
+      label="Projected per-person costs"
+      summary={totalEstimate ? formatPriceEstimate(totalEstimate) : 'No selections'}
+      detail="Projections based on historical data · actual prices vary"
+      className="ll-costs"
+      defaultOpen={true}
+      mobileBehavior="collapsed"
+    >
+      <div className="ll-costs__items">
+        <LLProjectedCostItem label="Multi Pass" value={formatPriceEstimate(multiPassEstimate)} />
+        {selectedSinglePassEstimate && (
+          <LLProjectedCostItem
+            label="Selected Single Pass"
+            value={formatPriceEstimate(selectedSinglePassEstimate)}
+          />
+        )}
+        {totalEstimate && (
+          <LLProjectedCostItem
+            emphasized
+            label={showChildRow ? 'Adult total' : 'Current plan total'}
+            value={formatPriceEstimate(totalEstimate)}
+          />
+        )}
+        {showChildRow && childEstimate && (
+          <LLProjectedCostItem
+            emphasized
+            label="Child total"
+            subtitle={childSubtitle}
+            value={formatPriceEstimate(childEstimate)}
+          />
+        )}
+      </div>
+    </DisclosurePanel>
+  );
+}
+
+function LLProjectedCostItem({
+  label,
+  value,
+  emphasized = false,
+  subtitle,
+}: {
+  label: string;
+  value: string;
+  emphasized?: boolean;
+  subtitle?: string | undefined;
+}) {
+  return (
+    <div className={`ll-costs__item${emphasized ? ' ll-costs__item--total' : ''}`}>
+      <span className="ll-costs__label">{label}</span>
+      {subtitle && <span className="ll-costs__subtitle">{subtitle}</span>}
+      <span className="ll-costs__value">{value}</span>
+    </div>
+  );
+}
+
 function LLSection({
   eyebrow,
   subtitle,
@@ -385,7 +485,6 @@ function LLSection({
   );
 }
 
-// Attraction row
 function LLAttractionRow({
   attraction,
   checked,
@@ -401,6 +500,7 @@ function LLAttractionRow({
 }) {
   const isClosed = attraction.closedDuringTrip;
   const isDisabled = disabled || isClosed;
+  const priceEstimate = getAttractionPriceEstimate(attraction);
 
   return (
     <label
@@ -421,8 +521,11 @@ function LLAttractionRow({
           <span className={`ll-row__label${isClosed ? ' ll-row__label--closed' : ''}`}>
             {attraction.attractionLabel}
           </span>
-          {(isClosed || attraction.heightRestriction) && (
+          {(priceEstimate != null || isClosed || attraction.heightRestriction != null) && (
             <span className="ll-row__meta">
+              {priceEstimate && (
+                <span className="ll-badge--price">{formatPriceBadge(priceEstimate)}</span>
+              )}
               {isClosed && <span className="ll-badge--closed">CLOSED</span>}
               {attraction.heightRestriction && (
                 <span className="ll-badge--height">{attraction.heightRestriction}</span>
@@ -438,15 +541,16 @@ function LLAttractionRow({
   );
 }
 
-// Read-only card for summary view
 function LLParkDayCardReadOnly({
   day,
   inventory,
   selections,
+  hasChildren,
 }: {
   day: LLParkDay;
   inventory: LLParkInventory;
   selections: LLParkDaySelections;
+  hasChildren?: boolean | undefined;
 }) {
   const multiPassCount = getMultiPassCount(selections, inventory);
   const multiPassMax = inventory.hasTiers
@@ -455,19 +559,18 @@ function LLParkDayCardReadOnly({
 
   function getSelectedAttractions(ids: string[]): LLAttraction[] {
     return ids
-      .map((id) => inventory.attractions.find((a) => a.id === id))
-      .filter(Boolean) as LLAttraction[];
+      .map((id) => inventory.attractions.find((attraction) => attraction.id === id))
+      .filter((attraction): attraction is LLAttraction => attraction != null);
   }
 
-  const illAttractions = getSelectedAttractions(selections.illSelections);
+  const individualAttractions = getSelectedAttractions(selections.illSelections);
   const multiPassAttractions = inventory.hasTiers
     ? getSelectedAttractions([
         ...(selections.tier1Selection ? [selections.tier1Selection] : []),
         ...selections.tier2Selections,
       ])
     : getSelectedAttractions(selections.multiPassSelections);
-
-  const hasSelections = illAttractions.length > 0 || multiPassAttractions.length > 0;
+  const hasSelections = individualAttractions.length > 0 || multiPassAttractions.length > 0;
 
   return (
     <div className="ll-card ll-card--readonly">
@@ -478,21 +581,46 @@ function LLParkDayCardReadOnly({
         </p>
       </div>
 
+      <LLProjectedCosts
+        multiPassEstimate={getMultiPassPriceEstimate(inventory)}
+        selectedSinglePassEstimate={getSelectedSinglePassPriceEstimate(selections, inventory)}
+        totalEstimate={getProjectedParkDayPriceEstimate(selections, inventory)}
+        childEstimate={
+          hasChildren ? getChildParkDayPriceEstimate(selections, inventory) : undefined
+        }
+        heightRestrictedSelections={
+          hasChildren ? getHeightRestrictedSelections(selections, inventory) : undefined
+        }
+      />
+
       {!hasSelections && <p className="ll-card__empty">No selections for this park day.</p>}
 
-      {illAttractions.length > 0 && (
+      {individualAttractions.length > 0 && (
         <div className="ll-section">
           <p className="ll-section__eyebrow">Single Pass</p>
-          <p className="ll-section__subtitle">{`Purchased individually \u00b7 ~$15\u201325/person`}</p>
+          <p className="ll-section__subtitle">{SINGLE_PASS_SUBTITLE}</p>
           <ul className="ll-section__check-list">
-            {illAttractions.map((a) => (
-              <li key={a.id} className="ll-section__check-item">
-                <span>&#10003; {a.attractionLabel}</span>
-                {a.heightRestriction && (
-                  <span className="ll-badge--height">{a.heightRestriction}</span>
-                )}
-              </li>
-            ))}
+            {individualAttractions.map((attraction) => {
+              const priceEstimate = getAttractionPriceEstimate(attraction);
+
+              return (
+                <li key={attraction.id} className="ll-section__check-item">
+                  <span className="ll-section__check-main">
+                    &#10003; {attraction.attractionLabel}
+                  </span>
+                  {(priceEstimate != null || attraction.heightRestriction != null) && (
+                    <span className="ll-section__check-meta">
+                      {priceEstimate && (
+                        <span className="ll-badge--price">{formatPriceBadge(priceEstimate)}</span>
+                      )}
+                      {attraction.heightRestriction && (
+                        <span className="ll-badge--height">{attraction.heightRestriction}</span>
+                      )}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
@@ -503,11 +631,15 @@ function LLParkDayCardReadOnly({
             Multi Pass ({multiPassCount} of {multiPassMax})
           </p>
           <ul className="ll-section__check-list">
-            {multiPassAttractions.map((a) => (
-              <li key={a.id} className="ll-section__check-item">
-                <span>&#10003; {a.attractionLabel}</span>
-                {a.heightRestriction && (
-                  <span className="ll-badge--height">{a.heightRestriction}</span>
+            {multiPassAttractions.map((attraction) => (
+              <li key={attraction.id} className="ll-section__check-item">
+                <span className="ll-section__check-main">
+                  &#10003; {attraction.attractionLabel}
+                </span>
+                {attraction.heightRestriction && (
+                  <span className="ll-section__check-meta">
+                    <span className="ll-badge--height">{attraction.heightRestriction}</span>
+                  </span>
                 )}
               </li>
             ))}
@@ -516,4 +648,8 @@ function LLParkDayCardReadOnly({
       )}
     </div>
   );
+}
+
+function formatPriceBadge(estimate: LLProjectedPrice): string {
+  return `$${String(estimate.estimatedPriceUsd)}`;
 }

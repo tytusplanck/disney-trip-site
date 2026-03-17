@@ -6,6 +6,13 @@ export type LLTier = 'tier1' | 'tier2' | 'notier';
 
 export type LLPassType = 'individual' | 'multipass';
 
+export type LLPriceRange = readonly [number, number];
+
+export interface LLProjectedPrice {
+  estimatedPriceUsd: number;
+  estimatedRangeUsd?: LLPriceRange;
+}
+
 export interface LLAttraction {
   id: string;
   shortCode: string;
@@ -16,6 +23,8 @@ export interface LLAttraction {
   closedDuringTrip: boolean;
   closureNote: string | null;
   heightRestriction: string | null;
+  estimatedPriceUsd?: number;
+  estimatedRangeUsd?: LLPriceRange;
 }
 
 export interface LLParkInventory {
@@ -25,6 +34,8 @@ export interface LLParkInventory {
   maxTier1: number;
   maxTier2: number;
   maxMultiPass: number;
+  multiPassEstimatedPriceUsd: number;
+  multiPassEstimatedRangeUsd?: LLPriceRange;
   attractions: LLAttraction[];
 }
 
@@ -56,4 +67,5 @@ export interface LLPlannerData {
   inventory: Record<LLParkId, LLParkInventory>;
   defaultPlan: LLMemberPlan;
   ownerMemberId: string;
+  hasChildren?: boolean | undefined;
 }
