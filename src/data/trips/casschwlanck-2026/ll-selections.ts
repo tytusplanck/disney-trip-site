@@ -27,7 +27,7 @@ export const casschwlanck2026LLDefaultPlan: LLMemberPlan = {
     },
     '2026-04-04': {
       illSelections: ['mk-seven-dwarfs-mine-train', 'mk-tron-lightcycle-run'],
-      tier1Selection: 'mk-jungle-cruise',
+      tier1Selection: 'mk-tianas-bayou-adventure',
       tier2Selections: ['mk-haunted-mansion', 'mk-the-many-adventures-of-winnie-the-pooh'],
       multiPassSelections: [],
     },
