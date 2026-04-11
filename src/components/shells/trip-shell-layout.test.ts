@@ -14,7 +14,7 @@ const tripStubShellSource = readFileSync(
 describe('trip page shell layout', () => {
   it('renders tabs, then the visible heading block, then the page slot', () => {
     const tabsIndex = tripPageShellSource.indexOf(
-      '<TripTabs trip={trip} activeSection={activeSection} />',
+      '<TripTabs trip={trip} activeSection={activeSection} sectionConfig={sectionConfig} />',
     );
     const headingIndex = tripPageShellSource.indexOf('<section class="trip-page-heading">');
     const slotIndex = tripPageShellSource.indexOf('<slot />');
@@ -36,7 +36,7 @@ describe('trip page shell layout', () => {
 describe('trip stub shell layout', () => {
   it('keeps tabs embedded in the content shell ahead of the stub panel', () => {
     const tabsIndex = tripStubShellSource.indexOf(
-      '<TripTabs trip={trip} activeSection={activeSection} />',
+      '<TripTabs trip={trip} activeSection={activeSection} sectionConfig={sectionConfig} />',
     );
     const panelIndex = tripStubShellSource.indexOf('<section class="stub-panel">');
 

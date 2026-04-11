@@ -1,32 +1,26 @@
 ---
-import AttractionsScoreGuide from '../../../components/AttractionsScoreGuide.astro';
-import AttractionsExplorer from '../../../components/AttractionsExplorer';
-import DisclosurePanel from '../../../components/DisclosurePanel.astro';
-import TripPageShell from '../../../components/shells/TripPageShell.astro';
-import TripStubShell from '../../../components/shells/TripStubShell.astro';
-import { allTripsData } from '../../../data/all-trips';
-import { getTripStubStatusCopy, tripStubPages } from '../../../data/trip-stubs';
-import { buildAttractionsExplorerData } from '../../../lib/trips/attractions-explorer';
-import { getPreferenceTierPoints } from '../../../lib/trips/data';
-import { getPreferenceMeta } from '../../../lib/trips/details';
-import { getTripRouteContext } from '../../../lib/trips/all-trips';
-import { hasTripSectionContent } from '../../../lib/trips/readiness';
+import AttractionsScoreGuide from '../../components/AttractionsScoreGuide.astro';
+import AttractionsExplorer from '../../components/AttractionsExplorer';
+import DisclosurePanel from '../../components/DisclosurePanel.astro';
+import TripPageShell from '../../components/shells/TripPageShell.astro';
+import TripStubShell from '../../components/shells/TripStubShell.astro';
+import { allTripsData } from '../../data/all-trips';
+import { getTripStubStatusCopy, tripStubPages } from '../../data/trip-stubs';
+import { buildAttractionsExplorerData } from '../../lib/trips/attractions-explorer';
+import { getPreferenceTierPoints } from '../../lib/trips/data';
+import { getPreferenceMeta } from '../../lib/trips/details';
+import { getTripRouteContext } from '../../lib/trips/all-trips';
+import { hasTripSectionContent } from '../../lib/trips/readiness';
 import { tripSectionCopy } from './trip-sections.page';
 
-const familyId = Astro.params['family'] ?? '';
-const tripId = Astro.params['trip'] ?? '';
-const routeContext = getTripRouteContext(
-  allTripsData.trips,
-  allTripsData.modules,
-  familyId,
-  tripId,
-);
+const tripSlug = Astro.params['trip'] ?? '';
+const routeContext = getTripRouteContext(allTripsData.trips, allTripsData.modules, tripSlug);
 
 if (!routeContext) {
   return Astro.redirect('/');
 }
 
-const { trip, tripModule } = routeContext;
+const { trip, tripModule, sectionConfig } = routeContext;
 
 const stubPage = tripStubPages.attractions;
 const pageCopy = tripSectionCopy.attractions;
@@ -47,6 +41,7 @@ const scoreGuide = ([1, 2, 3, 4, 5] as const).map((tier) => ({
       description={`Protected placeholder attractions route for ${trip.title}.`}
       trip={trip}
       activeSection="attractions"
+      sectionConfig={sectionConfig}
       pageTitle={stubPage.title}
       panelEyebrow={statusCopy.eyebrow}
       panelTitle={stubPage.calloutTitle}
@@ -59,6 +54,7 @@ const scoreGuide = ([1, 2, 3, 4, 5] as const).map((tier) => ({
       description={`Attractions view for ${trip.title}.`}
       trip={trip}
       activeSection="attractions"
+      sectionConfig={sectionConfig}
       pageTitle={pageCopy.title}
       pageSummary={pageCopy.summary}
     >

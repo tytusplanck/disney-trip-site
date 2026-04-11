@@ -2,16 +2,37 @@ import type {
   AllTripsSection,
   TripDataModule,
   TripSection,
+  TripSectionTab,
   TripStatus,
   TripSummary,
 } from './types';
 
 const SECTION_ORDER: TripStatus[] = ['planning', 'upcoming', 'completed'];
-const DEFAULT_TRIP_SECTION: TripSection = 'attractions';
+const VALID_TRIP_SECTIONS = new Set<TripSection>([
+  'attractions',
+  'schedule',
+  'party',
+  'll',
+  'guide',
+  'travelers',
+  'logistics',
+]);
+
+export const DEFAULT_SECTION_CONFIG: TripSectionTab[] = [
+  { label: 'Attractions', section: 'attractions' },
+  { label: 'Schedule', section: 'schedule' },
+  { label: 'Party', section: 'party' },
+  { label: 'LL Picks', section: 'll' },
+];
+
+export function getTripSectionConfig(tripModule: TripDataModule): TripSectionTab[] {
+  return tripModule.sectionConfig ?? DEFAULT_SECTION_CONFIG;
+}
 
 export interface TripRouteContext {
   trip: TripSummary;
   tripModule: TripDataModule;
+  sectionConfig: TripSectionTab[];
 }
 
 function formatCountLabel(count: number): string {
@@ -48,47 +69,72 @@ export function getAllTripsSections(trips: TripSummary[]): AllTripsSection[] {
 
 export function findTripSummary(
   trips: TripSummary[],
-  groupId: string,
-  tripId: string,
+  tripSlug: string,
 ): TripSummary | undefined {
-  return trips.find((trip) => trip.groupId === groupId && trip.id === tripId);
+  return trips.find((trip) => trip.slug === tripSlug);
 }
 
 export function findTripDataModule(
   modules: TripDataModule[],
-  groupId: string,
-  tripId: string,
+  tripSlug: string,
 ): TripDataModule | undefined {
-  return modules.find(
-    (module) => module.summary.groupId === groupId && module.summary.id === tripId,
-  );
+  return modules.find((module) => module.summary.slug === tripSlug);
 }
 
 export function getTripRouteContext(
   trips: TripSummary[],
   modules: TripDataModule[],
-  groupId: string,
-  tripId: string,
+  tripSlug: string,
 ): TripRouteContext | null {
-  const trip = findTripSummary(trips, groupId, tripId);
-  const tripModule = findTripDataModule(modules, groupId, tripId);
+  const trip = findTripSummary(trips, tripSlug);
+  const tripModule = findTripDataModule(modules, tripSlug);
 
-  return trip && tripModule ? { trip, tripModule } : null;
+  if (!trip || !tripModule) return null;
+
+  return { trip, tripModule, sectionConfig: getTripSectionConfig(tripModule) };
 }
 
 export function getTripSectionPath(
-  trip: Pick<TripSummary, 'groupId' | 'id'>,
+  trip: Pick<TripSummary, 'slug'>,
   section: TripSection,
 ): string {
   return `${getTripBasePath(trip)}/${section}`;
 }
 
-export function getTripLandingPath(trip: Pick<TripSummary, 'groupId' | 'id'>): string {
-  return getTripSectionPath(trip, DEFAULT_TRIP_SECTION);
+export function getTripLandingPath(
+  trip: Pick<TripSummary, 'slug'>,
+  tripModule?: TripDataModule,
+): string {
+  const config = tripModule ? getTripSectionConfig(tripModule) : DEFAULT_SECTION_CONFIG;
+  const firstSection = config[0]?.section ?? 'attractions';
+  return getTripSectionPath(trip, firstSection);
 }
 
-export function getTripBasePath(trip: Pick<TripSummary, 'groupId' | 'id'>): string {
-  return `/${trip.groupId}/${trip.id}`;
+export function getTripBasePath(trip: Pick<TripSummary, 'slug'>): string {
+  return `/${trip.slug}`;
+}
+
+export function getLegacyTripRedirectPath(
+  modules: TripDataModule[],
+  familySlug: string,
+  tripSlug: string,
+  section?: string,
+): string | null {
+  const tripModule = modules.find((module) =>
+    module.summary.legacyRoutes?.some(
+      (route) => route.familySlug === familySlug && route.tripSlug === tripSlug,
+    ),
+  );
+
+  if (!tripModule) return null;
+
+  if (section && !VALID_TRIP_SECTIONS.has(section as TripSection)) {
+    return null;
+  }
+
+  return section
+    ? getTripSectionPath(tripModule.summary, section as TripSection)
+    : getTripLandingPath(tripModule.summary, tripModule);
 }
 
 export function getTripCompactFactsLine(trip: TripSummary): string {

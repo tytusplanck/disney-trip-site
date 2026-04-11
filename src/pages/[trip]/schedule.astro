@@ -1,28 +1,22 @@
 ---
-import ScheduleDayCard from '../../../components/ScheduleDayCard.astro';
-import TripPageShell from '../../../components/shells/TripPageShell.astro';
-import TripStubShell from '../../../components/shells/TripStubShell.astro';
-import { allTripsData } from '../../../data/all-trips';
-import { getTripStubStatusCopy, tripStubPages } from '../../../data/trip-stubs';
-import { getTripRouteContext } from '../../../lib/trips/all-trips';
-import { getScheduleDaySummaries } from '../../../lib/trips/details';
-import { hasTripSectionContent } from '../../../lib/trips/readiness';
+import ScheduleDayCard from '../../components/ScheduleDayCard.astro';
+import TripPageShell from '../../components/shells/TripPageShell.astro';
+import TripStubShell from '../../components/shells/TripStubShell.astro';
+import { allTripsData } from '../../data/all-trips';
+import { getTripStubStatusCopy, tripStubPages } from '../../data/trip-stubs';
+import { getTripRouteContext } from '../../lib/trips/all-trips';
+import { getScheduleDaySummaries } from '../../lib/trips/details';
+import { hasTripSectionContent } from '../../lib/trips/readiness';
 import { tripSectionCopy } from './trip-sections.page';
 
-const familyId = Astro.params['family'] ?? '';
-const tripId = Astro.params['trip'] ?? '';
-const routeContext = getTripRouteContext(
-  allTripsData.trips,
-  allTripsData.modules,
-  familyId,
-  tripId,
-);
+const tripSlug = Astro.params['trip'] ?? '';
+const routeContext = getTripRouteContext(allTripsData.trips, allTripsData.modules, tripSlug);
 
 if (!routeContext) {
   return Astro.redirect('/');
 }
 
-const { trip, tripModule } = routeContext;
+const { trip, tripModule, sectionConfig } = routeContext;
 
 const stubPage = tripStubPages.schedule;
 const pageCopy = tripSectionCopy.schedule;
@@ -39,6 +33,7 @@ const todayIso = new Date().toISOString().slice(0, 10);
       description={`Protected placeholder schedule route for ${trip.title}.`}
       trip={trip}
       activeSection="schedule"
+      sectionConfig={sectionConfig}
       pageTitle={stubPage.title}
       panelEyebrow={statusCopy.eyebrow}
       panelTitle={stubPage.calloutTitle}
@@ -51,6 +46,7 @@ const todayIso = new Date().toISOString().slice(0, 10);
       description={`Schedule view for ${trip.title}.`}
       trip={trip}
       activeSection="schedule"
+      sectionConfig={sectionConfig}
       pageTitle={pageCopy.title}
       pageSummary={pageCopy.summary}
     >

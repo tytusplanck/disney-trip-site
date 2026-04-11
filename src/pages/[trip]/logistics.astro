@@ -1,0 +1,58 @@
+---
+import LogisticsEntryCard from '../../components/LogisticsEntryCard.astro';
+import TripPageShell from '../../components/shells/TripPageShell.astro';
+import TripStubShell from '../../components/shells/TripStubShell.astro';
+import { allTripsData } from '../../data/all-trips';
+import { getTripStubStatusCopy, tripStubPages } from '../../data/trip-stubs';
+import { getTripRouteContext } from '../../lib/trips/all-trips';
+import { hasTripSectionContent } from '../../lib/trips/readiness';
+import { tripSectionCopy } from './trip-sections.page';
+
+const tripSlug = Astro.params['trip'] ?? '';
+const routeContext = getTripRouteContext(allTripsData.trips, allTripsData.modules, tripSlug);
+
+if (!routeContext) {
+  return Astro.redirect('/');
+}
+
+const { trip, tripModule, sectionConfig } = routeContext;
+
+const stubPage = tripStubPages.logistics;
+const pageCopy = tripSectionCopy.logistics;
+const statusCopy = getTripStubStatusCopy(trip.status);
+const tripIsStub = !hasTripSectionContent(tripModule, 'logistics');
+const entries = tripModule.logistics ?? [];
+---
+
+{
+  tripIsStub ? (
+    <TripStubShell
+      title={`${trip.title} | Logistics`}
+      description={`Placeholder logistics route for ${trip.title}.`}
+      trip={trip}
+      activeSection="logistics"
+      sectionConfig={sectionConfig}
+      pageTitle={stubPage.title}
+      panelEyebrow={statusCopy.eyebrow}
+      panelTitle={stubPage.calloutTitle}
+      panelBody={`${statusCopy.body} ${stubPage.calloutBody}`}
+      checklist={stubPage.checklist}
+    />
+  ) : (
+    <TripPageShell
+      title={`${trip.title} | Logistics`}
+      description={`Trip logistics for ${trip.title}.`}
+      trip={trip}
+      activeSection="logistics"
+      sectionConfig={sectionConfig}
+      pageTitle={pageCopy.title}
+      pageSummary={pageCopy.summary}
+    >
+      <section class="trip-page-section">
+        {entries.map((entry) => (
+          <LogisticsEntryCard entry={entry} />
+        ))}
+      </section>
+    </TripPageShell>
+  )
+}

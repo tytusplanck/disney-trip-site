@@ -1,0 +1,38 @@
+---
+import type { LogisticsEntry } from '../lib/trips/types';
+
+interface Props {
+  entry: LogisticsEntry;
+}
+
+const { entry } = Astro.props;
+
+const kindLabelByValue: Record<LogisticsEntry['kind'], string> = {
+  dining: 'Dining',
+  resort: 'Resort',
+  transport: 'Transport',
+  tip: 'Tip',
+  general: 'General',
+};
+
+const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
+  weekday: 'short',
+  month: 'short',
+  day: 'numeric',
+});
+
+const formattedDate = entry.date
+  ? DATE_FORMATTER.format(new Date(`${entry.date}T12:00:00`))
+  : null;
+---
+
+<article class="logistics-card" data-kind={entry.kind}>
+  <div class="logistics-card__header">
+    <div class="logistics-card__title-row">
+      <h3 class="logistics-card__title">{entry.title}</h3>
+      <span class="logistics-card__kind">{kindLabelByValue[entry.kind]}</span>
+    </div>
+    {formattedDate && <p class="logistics-card__date">{formattedDate}</p>}
+  </div>
+  <p class="logistics-card__notes">{entry.notes}</p>
+</article>

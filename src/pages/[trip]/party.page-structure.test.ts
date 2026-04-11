@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const source = readFileSync(join(process.cwd(), 'src/pages/[family]/[trip]/party.astro'), 'utf-8');
+const source = readFileSync(join(process.cwd(), 'src/pages/[trip]/party.astro'), 'utf-8');
 
 describe('party page structure', () => {
   it('renders visible traveler cards instead of a disclosure', () => {

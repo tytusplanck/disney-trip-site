@@ -120,6 +120,21 @@ describe('style guardrails', () => {
     );
   });
 
+  it('supports five-section trip tab configs without falling into a four-column rail', () => {
+    const componentsSource = readFileSync(join(stylesDirectory, 'components.css'), 'utf8');
+    const tripTabsSource = readFileSync(
+      join(process.cwd(), 'src/components/TripTabs.astro'),
+      'utf8',
+    );
+
+    expect(tripTabsSource).toContain('data-tab-count={tabs.length}');
+    expect(componentsSource).toContain(".trip-tabs__rail[data-tab-count='5'] {");
+    expect(componentsSource).toContain('grid-template-columns: repeat(5, minmax(0, 1fr));');
+    expect(componentsSource).toMatch(
+      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail\[data-tab-count='5'\] \{[\s\S]*?grid-auto-flow: column;/,
+    );
+  });
+
   it('rejects the old parchment canvas palette in active stylesheets', () => {
     const stylesheetSources = getStylesheetPaths().map((filePath) =>
       readFileSync(filePath, 'utf8'),

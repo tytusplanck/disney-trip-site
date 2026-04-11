@@ -1,0 +1,38 @@
+---
+import type { TravelerProfile } from '../lib/trips/types';
+
+interface TravelerProfileWithName extends TravelerProfile {
+  name: string;
+}
+
+interface Props {
+  profiles: TravelerProfileWithName[];
+}
+
+const { profiles } = Astro.props;
+---
+
+<ul class="traveler-profile-cards">
+  {
+    profiles.map((profile) => (
+      <li class="traveler-profile-card">
+        <h3 class="traveler-profile-card__name">{profile.name}</h3>
+
+        {profile.notes && (
+          <p class="traveler-profile-card__notes">{profile.notes}</p>
+        )}
+
+        {profile.priorities.length > 0 && (
+          <div class="traveler-profile-card__priorities">
+            <p class="traveler-profile-card__priorities-label">Top priorities</p>
+            <ol class="traveler-profile-card__priority-list">
+              {profile.priorities.map((priority) => (
+                <li class="traveler-profile-card__priority-item">{priority}</li>
+              ))}
+            </ol>
+          </div>
+        )}
+      </li>
+    ))
+  }
+</ul>

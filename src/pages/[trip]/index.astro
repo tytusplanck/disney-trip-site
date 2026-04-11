@@ -1,0 +1,20 @@
+---
+import { allTripsData } from '../../data/all-trips';
+import { findTripDataModule, findTripSummary, getTripLandingPath } from '../../lib/trips/all-trips';
+
+const tripSlug = Astro.params['trip'] ?? '';
+const trip = findTripSummary(allTripsData.trips, tripSlug);
+
+if (!trip) {
+  return Astro.redirect('/');
+}
+
+const tripModule = findTripDataModule(allTripsData.modules, tripSlug);
+const tripLandingPath = getTripLandingPath(trip, tripModule);
+
+if (tripLandingPath === '') {
+  return Astro.redirect('/');
+}
+
+return Astro.redirect(tripLandingPath);
+---

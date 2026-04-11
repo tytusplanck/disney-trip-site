@@ -25,7 +25,7 @@ afterAll(() => {
 
 describe('middleware', () => {
   it('redirects unauthenticated protected requests to login with a safe next target', async () => {
-    const context = createMiddlewareContext('https://example.com/casschwlanck/2026?view=full');
+    const context = createMiddlewareContext('https://example.com/casschwlanck-2026?view=full');
     const next = vi.fn<() => Promise<Response>>(() => Promise.resolve(new Response('protected')));
 
     const response = await onRequest(context, next);
@@ -34,7 +34,7 @@ describe('middleware', () => {
     expect(next).not.toHaveBeenCalled();
     expect(response.status).toBe(302);
     expect(response.headers.get('location')).toBe(
-      '/login?next=%2Fcasschwlanck%2F2026%3Fview%3Dfull',
+      '/login?next=%2Fcasschwlanck-2026%3Fview%3Dfull',
     );
     expect(response.headers.get('cache-control')).toBe('private, no-store, max-age=0');
     expect(response.headers.get('x-frame-options')).toBe('DENY');

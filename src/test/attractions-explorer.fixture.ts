@@ -45,8 +45,7 @@ const schedule: TripScheduleEntry[] = [
 ];
 
 const summary: TripSummary = {
-  groupId: 'fixture-family',
-  id: 'fixture-trip',
+  slug: 'fixture-trip',
   title: 'Explorer Fixture Trip',
   dateLabel: 'Apr 1-4, 2026',
   parkLabels: ['EPCOT', 'Magic Kingdom'],

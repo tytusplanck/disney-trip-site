@@ -1,0 +1,15 @@
+---
+import { allTripsData } from '../../../data/all-trips';
+import { getLegacyTripRedirectPath } from '../../../lib/trips/all-trips';
+
+const familySlug = Astro.params['family'] ?? '';
+const tripSlug = Astro.params['trip'] ?? '';
+const section = Astro.params['section'] ?? '';
+const redirectPath = getLegacyTripRedirectPath(allTripsData.modules, familySlug, tripSlug, section);
+
+if (redirectPath) {
+  return Astro.redirect(redirectPath, 302);
+}
+
+return Astro.redirect('/');
+---

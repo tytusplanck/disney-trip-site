@@ -1,31 +1,25 @@
 ---
-import EmptyState from '../../../components/EmptyState.astro';
-import PartySummary from '../../../components/PartySummary.astro';
-import PartyTravelerCards from '../../../components/PartyTravelerCards.astro';
-import TripPageShell from '../../../components/shells/TripPageShell.astro';
-import TripStubShell from '../../../components/shells/TripStubShell.astro';
-import { allTripsData } from '../../../data/all-trips';
-import { getTripStubStatusCopy, tripStubPages } from '../../../data/trip-stubs';
-import { getTripRouteContext } from '../../../lib/trips/all-trips';
-import { getPartySummaries } from '../../../lib/trips/details';
-import { buildPartySummaryView } from '../../../lib/trips/party-view';
-import { hasTripSectionContent } from '../../../lib/trips/readiness';
+import EmptyState from '../../components/EmptyState.astro';
+import PartySummary from '../../components/PartySummary.astro';
+import PartyTravelerCards from '../../components/PartyTravelerCards.astro';
+import TripPageShell from '../../components/shells/TripPageShell.astro';
+import TripStubShell from '../../components/shells/TripStubShell.astro';
+import { allTripsData } from '../../data/all-trips';
+import { getTripStubStatusCopy, tripStubPages } from '../../data/trip-stubs';
+import { getTripRouteContext } from '../../lib/trips/all-trips';
+import { getPartySummaries } from '../../lib/trips/details';
+import { buildPartySummaryView } from '../../lib/trips/party-view';
+import { hasTripSectionContent } from '../../lib/trips/readiness';
 import { tripSectionCopy } from './trip-sections.page';
 
-const familyId = Astro.params['family'] ?? '';
-const tripId = Astro.params['trip'] ?? '';
-const routeContext = getTripRouteContext(
-  allTripsData.trips,
-  allTripsData.modules,
-  familyId,
-  tripId,
-);
+const tripSlug = Astro.params['trip'] ?? '';
+const routeContext = getTripRouteContext(allTripsData.trips, allTripsData.modules, tripSlug);
 
 if (!routeContext) {
   return Astro.redirect('/');
 }
 
-const { trip, tripModule } = routeContext;
+const { trip, tripModule, sectionConfig } = routeContext;
 
 const stubPage = tripStubPages.party;
 const pageCopy = tripSectionCopy.party;
@@ -43,6 +37,7 @@ const summaryView = buildPartySummaryView(tripModule);
       description={`Protected placeholder party route for ${trip.title}.`}
       trip={trip}
       activeSection="party"
+      sectionConfig={sectionConfig}
       pageTitle={stubPage.title}
       panelEyebrow={statusCopy.eyebrow}
       panelTitle={stubPage.calloutTitle}
@@ -55,6 +50,7 @@ const summaryView = buildPartySummaryView(tripModule);
       description={`Party view for ${trip.title}.`}
       trip={trip}
       activeSection="party"
+      sectionConfig={sectionConfig}
       pageTitle={pageCopy.title}
       pageSummary={pageCopy.summary}
     >

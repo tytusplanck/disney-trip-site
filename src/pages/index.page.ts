@@ -15,7 +15,7 @@ interface AllTripsSectionsCopy {
   planningLabel: string;
   upcomingLabel: string;
   completedLabel: string;
-  completedEmptyState: string;
+  emptyStateByStatus: Record<TripStatus, string>;
 }
 
 export interface AllTripsCardCopy {
@@ -36,6 +36,13 @@ export function getAllTripsCardPresentation(
     primaryActionLabel: copy.primaryActionLabelByStatus[status],
     supportingCopy: copy.supportingCopyByStatus[status],
   };
+}
+
+export function getAllTripsSectionEmptyState(
+  sections: AllTripsSectionsCopy,
+  status: TripStatus,
+): string {
+  return sections.emptyStateByStatus[status];
 }
 
 export interface AllTripsPage {
@@ -62,8 +69,12 @@ export const allTripsPage: AllTripsPage = {
     planningLabel: 'Planning Now',
     upcomingLabel: 'Coming Later',
     completedLabel: 'Archive',
-    completedEmptyState:
-      'No completed trips yet. Finished itineraries will land here once the first trip wraps.',
+    emptyStateByStatus: {
+      planning:
+        'No active planning trip right now. The next live plan will move here when decisions start.',
+      upcoming: 'No later trips are parked here right now.',
+      completed: 'No completed trips yet. Finished itineraries will land here once the first trip wraps.',
+    },
   },
   card: {
     primaryActionLabelByStatus: {

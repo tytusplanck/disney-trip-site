@@ -1,6 +1,6 @@
 import type { TripScheduleEntry } from '../../../lib/trips/types';
 
-export const futureTripSchedule: TripScheduleEntry[] = [
+export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
   {
     date: '2026-11-07',
     kind: 'travel',

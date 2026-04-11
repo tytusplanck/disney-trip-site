@@ -1,28 +1,22 @@
 ---
-import LightningLanePlanner from '../../../components/LightningLanePlanner';
-import TripPageShell from '../../../components/shells/TripPageShell.astro';
-import TripStubShell from '../../../components/shells/TripStubShell.astro';
-import { allTripsData } from '../../../data/all-trips';
-import { getTripStubStatusCopy, tripStubPages } from '../../../data/trip-stubs';
-import { getTripRouteContext } from '../../../lib/trips/all-trips';
-import { buildLLPlannerData } from '../../../lib/trips/ll-planner';
-import { hasTripSectionContent } from '../../../lib/trips/readiness';
+import LightningLanePlanner from '../../components/LightningLanePlanner';
+import TripPageShell from '../../components/shells/TripPageShell.astro';
+import TripStubShell from '../../components/shells/TripStubShell.astro';
+import { allTripsData } from '../../data/all-trips';
+import { getTripStubStatusCopy, tripStubPages } from '../../data/trip-stubs';
+import { getTripRouteContext } from '../../lib/trips/all-trips';
+import { buildLLPlannerData } from '../../lib/trips/ll-planner';
+import { hasTripSectionContent } from '../../lib/trips/readiness';
 import { tripSectionCopy } from './trip-sections.page';
 
-const familyId = Astro.params['family'] ?? '';
-const tripId = Astro.params['trip'] ?? '';
-const routeContext = getTripRouteContext(
-  allTripsData.trips,
-  allTripsData.modules,
-  familyId,
-  tripId,
-);
+const tripSlug = Astro.params['trip'] ?? '';
+const routeContext = getTripRouteContext(allTripsData.trips, allTripsData.modules, tripSlug);
 
 if (!routeContext) {
   return Astro.redirect('/');
 }
 
-const { trip, tripModule } = routeContext;
+const { trip, tripModule, sectionConfig } = routeContext;
 
 const stubPage = tripStubPages.ll;
 const pageCopy = tripSectionCopy.ll;
@@ -38,6 +32,7 @@ const plannerData = !tripIsStub ? buildLLPlannerData(tripModule) : null;
       description={`Protected placeholder LL Picks route for ${trip.title}.`}
       trip={trip}
       activeSection="ll"
+      sectionConfig={sectionConfig}
       pageTitle={stubPage.title}
       panelEyebrow={statusCopy.eyebrow}
       panelTitle={stubPage.calloutTitle}
@@ -50,6 +45,7 @@ const plannerData = !tripIsStub ? buildLLPlannerData(tripModule) : null;
       description={`Lightning Lane picks for ${trip.title}.`}
       trip={trip}
       activeSection="ll"
+      sectionConfig={sectionConfig}
       pageTitle={pageCopy.title}
       pageSummary={pageCopy.summary}
     >

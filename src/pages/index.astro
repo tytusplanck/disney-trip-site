@@ -5,7 +5,7 @@ import TripCard from '../components/TripCard.astro';
 import AllTripsShell from '../components/shells/AllTripsShell.astro';
 import { allTripsData } from '../data/all-trips';
 import { getAllTripsSections } from '../lib/trips/all-trips';
-import { allTripsPage } from './index.page';
+import { allTripsPage, getAllTripsSectionEmptyState } from './index.page';
 
 const { card, footerNote, headerMetaLabel, intro, meta, sections } = allTripsPage;
 const allTripsSections = getAllTripsSections(allTripsData.trips);
@@ -42,7 +42,7 @@ const sectionLabelByStatus = {
             ))}
           </div>
         ) : (
-          section.status === 'completed' && <EmptyState text={sections.completedEmptyState} />
+          <EmptyState text={getAllTripsSectionEmptyState(sections, section.status)} />
         )}
       </section>
     ))

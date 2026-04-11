@@ -8,7 +8,7 @@ Keep the helper logic even when the live UI no longer shows these cards.
 
 ## Retired Overview Landing Summaries
 
-Before the trip root route was simplified into a redirect, the old overview landing page in [`/src/pages/[family]/[trip]/index.astro`](../src/pages/[family]/[trip]/index.astro) opened with a four-card stat strip:
+Before the trip root route was simplified into a redirect, the old overview landing page in [`/src/pages/[trip]/index.astro`](../src/pages/[trip]/index.astro) opened with a four-card stat strip:
 
 - `Travel window`
 - `Parks lined up`
@@ -43,7 +43,7 @@ That combination worked as a fast "state of the plan" readout: trip dates, trip 
 
 ## Attractions Stats
 
-The attractions page used to open with a four-card stat strip in [`/src/pages/[family]/[trip]/attractions.astro`](../src/pages/[family]/[trip]/attractions.astro):
+The attractions page used to open with a four-card stat strip in [`/src/pages/[trip]/attractions.astro`](../src/pages/[trip]/attractions.astro):
 
 - `Top score`
 - `Must-do votes`
@@ -71,7 +71,7 @@ Useful recap copy should make clear that:
 
 ## Retired Attraction Spotlight
 
-The attractions page no longer shows the three-card spotlight section that had been restored in [`/src/pages/[family]/[trip]/attractions.astro`](../src/pages/[family]/[trip]/attractions.astro):
+The attractions page no longer shows the three-card spotlight section that had been restored in [`/src/pages/[trip]/attractions.astro`](../src/pages/[trip]/attractions.astro):
 
 - `#1 group signal`
 - `#2 group signal`
@@ -98,7 +98,7 @@ Keep this note even though the live page no longer surfaces those cards, because
 
 ## Retired Party Stats
 
-The party page no longer shows the top stat-card row that used to appear in [`/src/pages/[family]/[trip]/party.astro`](../src/pages/[family]/[trip]/party.astro):
+The party page no longer shows the top stat-card row that used to appear in [`/src/pages/[trip]/party.astro`](../src/pages/[trip]/party.astro):
 
 - `Party members`
 - `Avg must-dos`
@@ -126,7 +126,7 @@ Per traveler, [`getPartySummaries`](../src/lib/trips/details.ts) derives:
 
 ## Retired Schedule Stats
 
-The schedule page no longer shows the top stat-card row that used to appear in [`/src/pages/[family]/[trip]/schedule.astro`](../src/pages/[family]/[trip]/schedule.astro):
+The schedule page no longer shows the top stat-card row that used to appear in [`/src/pages/[trip]/schedule.astro`](../src/pages/[trip]/schedule.astro):
 
 - `Park days`
 - `Resort resets`
@@ -147,7 +147,7 @@ These values come from [`getScheduleOverview`](../src/lib/trips/details.ts).
 
 ## Retired Schedule Rhythm Callout
 
-The schedule page also used to open with a narrative summary card in [`/src/pages/[family]/[trip]/schedule.astro`](../src/pages/[family]/[trip]/schedule.astro):
+The schedule page also used to open with a narrative summary card in [`/src/pages/[trip]/schedule.astro`](../src/pages/[trip]/schedule.astro):
 
 - heading: `Park cadence and reset days`
 - supporting chips: `scheduleOverview.parkLineup`

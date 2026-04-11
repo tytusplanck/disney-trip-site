@@ -3,7 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../Breadcrumbs.astro';
 import SiteHeader from '../SiteHeader.astro';
 import TripTabs from '../TripTabs.astro';
-import type { TripSection, TripSummary } from '../../lib/trips/types';
+import type { TripSection, TripSectionTab, TripSummary } from '../../lib/trips/types';
 
 interface Props {
   title: string;
@@ -15,6 +15,7 @@ interface Props {
   panelTitle: string;
   panelBody: string;
   checklist: string[];
+  sectionConfig?: TripSectionTab[] | undefined;
 }
 
 const {
@@ -27,6 +28,7 @@ const {
   panelTitle,
   panelBody,
   checklist,
+  sectionConfig,
 } = Astro.props;
 
 const tripLabel = `${trip.title} / ${trip.dateLabel}`;
@@ -46,7 +48,7 @@ const tripLabel = `${trip.title} / ${trip.dateLabel}`;
 
     <main class="trip-shell__main" id="main-content">
       <h1 class="visually-hidden">{pageTitle}</h1>
-      <TripTabs trip={trip} activeSection={activeSection} />
+      <TripTabs trip={trip} activeSection={activeSection} sectionConfig={sectionConfig} />
       <section class="stub-panel">
         <div class="stub-panel__header">
           <p class="stub-panel__eyebrow">{panelEyebrow}</p>

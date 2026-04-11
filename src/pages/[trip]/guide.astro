@@ -1,0 +1,65 @@
+---
+import GuideAttractionList from '../../components/GuideAttractionList.astro';
+import TripPageShell from '../../components/shells/TripPageShell.astro';
+import TripStubShell from '../../components/shells/TripStubShell.astro';
+import { allTripsData } from '../../data/all-trips';
+import { getTripStubStatusCopy, tripStubPages } from '../../data/trip-stubs';
+import { getTripRouteContext } from '../../lib/trips/all-trips';
+import { hasTripSectionContent } from '../../lib/trips/readiness';
+import { tripSectionCopy } from './trip-sections.page';
+
+const tripSlug = Astro.params['trip'] ?? '';
+const routeContext = getTripRouteContext(allTripsData.trips, allTripsData.modules, tripSlug);
+
+if (!routeContext) {
+  return Astro.redirect('/');
+}
+
+const { trip, tripModule, sectionConfig } = routeContext;
+
+const stubPage = tripStubPages.guide;
+const pageCopy = tripSectionCopy.guide;
+const statusCopy = getTripStubStatusCopy(trip.status);
+const tripIsStub = !hasTripSectionContent(tripModule, 'guide');
+const guideAttractions = tripModule.guide ?? [];
+
+const parkLabels = [...new Set(guideAttractions.map((a) => a.parkLabel))];
+const attractionsByPark = parkLabels.map((parkLabel) => ({
+  parkLabel,
+  attractions: guideAttractions.filter((a) => a.parkLabel === parkLabel),
+}));
+---
+
+{
+  tripIsStub ? (
+    <TripStubShell
+      title={`${trip.title} | Attractions`}
+      description={`Placeholder guide route for ${trip.title}.`}
+      trip={trip}
+      activeSection="guide"
+      sectionConfig={sectionConfig}
+      pageTitle={stubPage.title}
+      panelEyebrow={statusCopy.eyebrow}
+      panelTitle={stubPage.calloutTitle}
+      panelBody={`${statusCopy.body} ${stubPage.calloutBody}`}
+      checklist={stubPage.checklist}
+    />
+  ) : (
+    <TripPageShell
+      title={`${trip.title} | Attractions`}
+      description={`Ride guide for ${trip.title}.`}
+      trip={trip}
+      activeSection="guide"
+      sectionConfig={sectionConfig}
+      pageTitle={pageCopy.title}
+      pageSummary={pageCopy.summary}
+    >
+      {attractionsByPark.map((group) => (
+        <section class="trip-page-section">
+          <h2 class="guide-park-heading">{group.parkLabel}</h2>
+          <GuideAttractionList attractions={group.attractions} />
+        </section>
+      ))}
+    </TripPageShell>
+  )
+}

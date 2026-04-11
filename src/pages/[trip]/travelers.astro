@@ -1,0 +1,60 @@
+---
+import TravelerProfileCards from '../../components/TravelerProfileCards.astro';
+import TripPageShell from '../../components/shells/TripPageShell.astro';
+import TripStubShell from '../../components/shells/TripStubShell.astro';
+import { allTripsData } from '../../data/all-trips';
+import { getTripStubStatusCopy, tripStubPages } from '../../data/trip-stubs';
+import { getTripRouteContext } from '../../lib/trips/all-trips';
+import { hasTripSectionContent } from '../../lib/trips/readiness';
+import { tripSectionCopy } from './trip-sections.page';
+
+const tripSlug = Astro.params['trip'] ?? '';
+const routeContext = getTripRouteContext(allTripsData.trips, allTripsData.modules, tripSlug);
+
+if (!routeContext) {
+  return Astro.redirect('/');
+}
+
+const { trip, tripModule, sectionConfig } = routeContext;
+
+const stubPage = tripStubPages.travelers;
+const pageCopy = tripSectionCopy.travelers;
+const statusCopy = getTripStubStatusCopy(trip.status);
+const tripIsStub = !hasTripSectionContent(tripModule, 'travelers');
+
+const profiles = (tripModule.travelerProfiles ?? []).map((profile) => {
+  const member = tripModule.party.find((m) => m.id === profile.memberId);
+  return { ...profile, name: member?.name ?? profile.memberId };
+});
+---
+
+{
+  tripIsStub ? (
+    <TripStubShell
+      title={`${trip.title} | Party`}
+      description={`Placeholder travelers route for ${trip.title}.`}
+      trip={trip}
+      activeSection="travelers"
+      sectionConfig={sectionConfig}
+      pageTitle={stubPage.title}
+      panelEyebrow={statusCopy.eyebrow}
+      panelTitle={stubPage.calloutTitle}
+      panelBody={`${statusCopy.body} ${stubPage.calloutBody}`}
+      checklist={stubPage.checklist}
+    />
+  ) : (
+    <TripPageShell
+      title={`${trip.title} | Party`}
+      description={`Traveler notes for ${trip.title}.`}
+      trip={trip}
+      activeSection="travelers"
+      sectionConfig={sectionConfig}
+      pageTitle={pageCopy.title}
+      pageSummary={pageCopy.summary}
+    >
+      <section class="trip-page-section">
+        <TravelerProfileCards profiles={profiles} />
+      </section>
+    </TripPageShell>
+  )
+}

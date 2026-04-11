@@ -1,8 +1,9 @@
 ---
 import StatusBadge from './StatusBadge.astro';
-import { getTripCompactFactsLine, getTripLandingPath } from '../lib/trips/all-trips';
+import { findTripDataModule, getTripCompactFactsLine, getTripLandingPath } from '../lib/trips/all-trips';
 import type { TripSummary } from '../lib/trips/types';
 import { getAllTripsCardPresentation, type AllTripsCardCopy } from '../pages/index.page';
+import { allTripsData } from '../data/all-trips';
 
 interface Props {
   trip: TripSummary;
@@ -11,7 +12,8 @@ interface Props {
 
 const { trip, copy } = Astro.props;
 
-const cardHref = getTripLandingPath(trip);
+const tripModule = findTripDataModule(allTripsData.modules, trip.slug);
+const cardHref = getTripLandingPath(trip, tripModule);
 const cardPresentation = getAllTripsCardPresentation(copy, trip.status);
 const factsLine = getTripCompactFactsLine(trip);
 ---

@@ -36,7 +36,7 @@ describe('auth route handlers', () => {
       'https://example.com/api/auth/login',
       cookies,
       buildLoginForm({
-        next: '/casschwlanck/2026/schedule',
+        next: '/casschwlanck-2026/schedule',
         siteKey: SITE_PASSWORD,
       }),
     );
@@ -45,7 +45,7 @@ describe('auth route handlers', () => {
     const cookieWrite = cookies.setCalls[0];
 
     expect(response.status).toBe(303);
-    expect(response.headers.get('location')).toBe('/casschwlanck/2026/schedule');
+    expect(response.headers.get('location')).toBe('/casschwlanck-2026/schedule');
     expect(cookieWrite).toBeDefined();
     expect(cookieWrite?.name).toBe(AUTH_COOKIE_NAME);
     expect(cookieWrite?.options).toMatchObject({
@@ -131,7 +131,7 @@ describe('auth route handlers', () => {
       'https://example.com/api/auth/login',
       new MockCookies(),
       buildLoginForm({
-        next: '/casschwlanck/2026/party',
+        next: '/casschwlanck-2026/party',
       }),
     );
 
@@ -139,7 +139,7 @@ describe('auth route handlers', () => {
 
     expect(response.status).toBe(303);
     expect(response.headers.get('location')).toBe(
-      '/login?error=invalid-site-key&next=%2Fcasschwlanck%2F2026%2Fparty',
+      '/login?error=invalid-site-key&next=%2Fcasschwlanck-2026%2Fparty',
     );
   });
 
@@ -148,7 +148,7 @@ describe('auth route handlers', () => {
       'https://example.com/api/auth/login',
       new MockCookies(),
       buildLoginForm({
-        next: '/casschwlanck/2026/party',
+        next: '/casschwlanck-2026/party',
         siteKey: 'wrong-site-key',
       }),
     );
@@ -157,7 +157,7 @@ describe('auth route handlers', () => {
 
     expect(response.status).toBe(303);
     expect(response.headers.get('location')).toBe(
-      '/login?error=invalid-site-key&next=%2Fcasschwlanck%2F2026%2Fparty',
+      '/login?error=invalid-site-key&next=%2Fcasschwlanck-2026%2Fparty',
     );
   });
 

@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const source = readFileSync(
-  join(process.cwd(), 'src/pages/[family]/[trip]/attractions.astro'),
+  join(process.cwd(), 'src/pages/[trip]/attractions.astro'),
   'utf-8',
 );
 

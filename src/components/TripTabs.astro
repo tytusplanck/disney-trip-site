@@ -1,24 +1,20 @@
 ---
-import { getTripSectionPath } from '../lib/trips/all-trips';
-import type { TripSection, TripSummary } from '../lib/trips/types';
+import { DEFAULT_SECTION_CONFIG, getTripSectionPath } from '../lib/trips/all-trips';
+import type { TripSection, TripSectionTab, TripSummary } from '../lib/trips/types';
 
 interface Props {
-  trip: Pick<TripSummary, 'groupId' | 'id'>;
+  trip: Pick<TripSummary, 'slug'>;
   activeSection?: TripSection | undefined;
+  sectionConfig?: TripSectionTab[] | undefined;
 }
 
-const { trip, activeSection } = Astro.props;
+const { trip, activeSection, sectionConfig } = Astro.props;
 
-const tabs: { label: string; section: TripSection }[] = [
-  { label: 'Attractions', section: 'attractions' },
-  { label: 'Schedule', section: 'schedule' },
-  { label: 'Party', section: 'party' },
-  { label: 'LL Picks', section: 'll' },
-];
+const tabs = sectionConfig ?? DEFAULT_SECTION_CONFIG;
 ---
 
 <nav class="trip-tabs" aria-label="Trip sections">
-  <div class="trip-tabs__rail">
+  <div class="trip-tabs__rail" data-tab-count={tabs.length}>
     {
       tabs.map((tab) => (
         <a

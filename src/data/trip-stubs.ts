@@ -34,6 +34,27 @@ export const tripStubPages: Record<TripSection, TripStubPage> = {
       'The route is live so the Lightning Lane planner can drop into the shared shell once park inventory data is ready.',
     checklist: ['Per-park-day selections', 'Tier constraint enforcement', 'Shareable plan links'],
   },
+  guide: {
+    title: 'Ride guide',
+    calloutTitle: 'Guide view is reserved',
+    calloutBody:
+      'The route is live so the curated ride guide can drop into the shared shell once attraction notes are written.',
+    checklist: ['Park-grouped ride list', 'Priority labels', 'Written notes per attraction'],
+  },
+  travelers: {
+    title: 'Traveler notes',
+    calloutTitle: 'Traveler notes are queued',
+    calloutBody:
+      'The route is ready for per-person notes and priorities once those are written.',
+    checklist: ['Per-person priority list', 'Written notes', 'Group awareness summary'],
+  },
+  logistics: {
+    title: 'Trip logistics',
+    calloutTitle: 'Logistics view is queued',
+    calloutBody:
+      'The route is ready for dining, resort, and transport details once those are entered.',
+    checklist: ['Dining reservations', 'Resort details', 'Transport plans'],
+  },
 };
 
 export const planningStubStatus: TripStubStatusCopy = {

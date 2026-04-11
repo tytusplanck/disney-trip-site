@@ -1,7 +1,7 @@
 import type { TripDataModule } from './types';
 import { describe, expect, it } from 'vitest';
 import { casschwlanck2026TripData } from '../../data/trips/casschwlanck-2026';
-import { futureTripData } from '../../data/trips/future-trip';
+import { planckMegaDisneyTripData } from '../../data/trips/planck-mega-disney-trip';
 import {
   getAttractionMustDoVoteCount,
   getPartyOverview,
@@ -18,8 +18,7 @@ const fallbackTripData: TripDataModule = {
     attractionCount: 4,
     dateLabel: 'TBD',
     dayCount: 0,
-    groupId: 'casschwlanck',
-    id: 'fallback-test',
+    slug: 'fallback-test',
     parkLabels: ['Magic Kingdom'],
     partySize: 2,
     status: 'planning',
@@ -73,8 +72,7 @@ const personaFixtureTripData: TripDataModule = {
     attractionCount: 9,
     dateLabel: 'TBD',
     dayCount: 0,
-    groupId: 'casschwlanck',
-    id: 'persona-fixture',
+    slug: 'persona-fixture',
     parkLabels: ['Magic Kingdom'],
     partySize: 4,
     status: 'planning',
@@ -214,8 +212,8 @@ describe('trip detail helpers', () => {
   });
 
   it('derives schedule summaries for an itinerary-only upcoming trip', () => {
-    const overview = getScheduleOverview(futureTripData.schedule);
-    const days = getScheduleDaySummaries(futureTripData.schedule);
+    const overview = getScheduleOverview(planckMegaDisneyTripData.schedule);
+    const days = getScheduleDaySummaries(planckMegaDisneyTripData.schedule);
 
     expect(overview).toEqual({
       parkDays: 4,
@@ -235,7 +233,7 @@ describe('trip detail helpers', () => {
   });
 
   it('keeps party summaries useful when only the traveler list is loaded', () => {
-    const summaries = getPartySummaries(futureTripData);
+    const summaries = getPartySummaries(planckMegaDisneyTripData);
     const overview = getPartyOverview(summaries);
 
     expect(summaries).toHaveLength(14);

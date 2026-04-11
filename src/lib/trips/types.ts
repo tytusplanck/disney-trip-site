@@ -2,7 +2,12 @@ import type { LLMemberPlan, LLParkInventory } from './ll-types';
 
 export type TripStatus = 'planning' | 'upcoming' | 'completed';
 
-export type TripSection = 'attractions' | 'schedule' | 'party' | 'll';
+export type TripSection = 'attractions' | 'schedule' | 'party' | 'll' | 'guide' | 'travelers' | 'logistics';
+
+export interface TripSectionTab {
+  label: string;
+  section: TripSection;
+}
 
 export type TripThemeId = 'primary' | 'secondary';
 
@@ -10,9 +15,14 @@ export type PreferenceTier = 1 | 2 | 3 | 4 | 5;
 
 export type ScheduleEntryKind = 'travel' | 'park' | 'resort';
 
+export interface TripLegacyRoute {
+  familySlug: string;
+  tripSlug: string;
+}
+
 export interface TripSummary {
-  groupId: string;
-  id: string;
+  slug: string;
+  legacyRoutes?: TripLegacyRoute[];
   title: string;
   dateLabel: string;
   parkLabels: string[];
@@ -68,6 +78,31 @@ export interface TripAttractionPreference {
   preferenceByPartyMemberId: Record<string, PreferenceTier>;
 }
 
+export interface GuideAttraction {
+  id: string;
+  parkLabel: string;
+  areaLabel: string;
+  attractionLabel: string;
+  priority: 'must-do' | 'recommended' | 'if-time' | 'skip';
+  notes: string;
+}
+
+export interface TravelerProfile {
+  memberId: string;
+  notes: string;
+  priorities: string[];
+}
+
+export type LogisticsEntryKind = 'dining' | 'resort' | 'transport' | 'tip' | 'general';
+
+export interface LogisticsEntry {
+  id: string;
+  kind: LogisticsEntryKind;
+  title: string;
+  date: string | null;
+  notes: string;
+}
+
 export interface TripDataModule {
   summary: TripSummary;
   party: TripPartyMember[];
@@ -76,6 +111,10 @@ export interface TripDataModule {
   partyGrouping?: TripPartyGroupingConfig;
   llInventory?: Record<string, LLParkInventory>;
   llDefaultPlan?: LLMemberPlan;
+  sectionConfig?: TripSectionTab[];
+  guide?: GuideAttraction[];
+  travelerProfiles?: TravelerProfile[];
+  logistics?: LogisticsEntry[];
 }
 
 export interface TripStubPage {

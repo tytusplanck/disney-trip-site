@@ -1,6 +1,6 @@
 import type { TripPartyMember } from '../../../lib/trips/types';
 
-export const futureTripParty: TripPartyMember[] = [
+export const planckMegaDisneyTripParty: TripPartyMember[] = [
   {
     id: 'andrea-planck',
     name: 'Andrea Planck',

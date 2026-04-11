@@ -5,6 +5,7 @@ import {
   findTripDataModule,
   findTripSummary,
   getAllTripsSections,
+  getLegacyTripRedirectPath,
   getTripBasePath,
   getTripCompactFactsLine,
   getTripLandingPath,
@@ -23,70 +24,83 @@ describe('all trips helpers', () => {
       })),
     ).toEqual([
       { status: 'planning', count: 1 },
-      { status: 'upcoming', count: 1 },
-      { status: 'completed', count: 0 },
+      { status: 'upcoming', count: 0 },
+      { status: 'completed', count: 1 },
     ]);
 
-    expect(sections[0]?.trips[0]?.title).toBe('Casschwlanck 2026');
-    expect(sections[1]?.trips[0]?.title).toBe('Planck Mega Disney trip');
-    expect(sections[1]?.countLabel).toBe('1 trip');
-    expect(sections[2]?.countLabel).toBe('0 trips');
+    expect(sections[0]?.trips[0]?.title).toBe('Planck Mega Disney trip');
+    expect(sections[1]?.countLabel).toBe('0 trips');
+    expect(sections[2]?.trips[0]?.title).toBe('Casschwlanck 2026');
+    expect(sections[2]?.countLabel).toBe('1 trip');
   });
 
-  it('routes both planning and upcoming trips to the first planner section', () => {
-    const planningTrip = findTripSummary(allTripsData.trips, 'casschwlanck', '2026');
-    const upcomingTrip = findTripSummary(allTripsData.trips, 'casschwlanck', 'future-trip');
+  it('routes trips to canonical single-slug planner sections', () => {
+    const archivedTrip = findTripSummary(allTripsData.trips, 'casschwlanck-2026');
+    const planningTrip = findTripSummary(allTripsData.trips, 'planck-mega-disney-trip');
+    const archivedModule = findTripDataModule(allTripsData.modules, 'casschwlanck-2026');
+    const planningModule = findTripDataModule(allTripsData.modules, 'planck-mega-disney-trip');
 
+    expect(archivedTrip).toBeDefined();
     expect(planningTrip).toBeDefined();
-    expect(upcomingTrip).toBeDefined();
 
-    if (!planningTrip || !upcomingTrip) {
-      throw new Error('Expected seeded planning and upcoming trips to exist.');
+    if (!archivedTrip || !planningTrip) {
+      throw new Error('Expected seeded archived and planning trips to exist.');
     }
 
-    expect(getTripLandingPath(planningTrip)).toBe('/casschwlanck/2026/attractions');
-    expect(getTripLandingPath(upcomingTrip)).toBe('/casschwlanck/future-trip/attractions');
-    expect(getTripSectionPath(planningTrip, 'schedule')).toBe('/casschwlanck/2026/schedule');
+    expect(getTripLandingPath(archivedTrip, archivedModule)).toBe('/casschwlanck-2026/attractions');
+    expect(getTripLandingPath(planningTrip, planningModule)).toBe(
+      '/planck-mega-disney-trip/guide',
+    );
+    expect(getTripSectionPath(archivedTrip, 'schedule')).toBe('/casschwlanck-2026/schedule');
   });
 
   it('finds trip modules and derives route context', () => {
-    const planningTrip = findTripSummary(allTripsData.trips, 'casschwlanck', '2026');
-    const planningModule = findTripDataModule(allTripsData.modules, 'casschwlanck', '2026');
+    const planningTrip = findTripSummary(allTripsData.trips, 'planck-mega-disney-trip');
+    const planningModule = findTripDataModule(allTripsData.modules, 'planck-mega-disney-trip');
     const routeContext = getTripRouteContext(
       allTripsData.trips,
       allTripsData.modules,
-      'casschwlanck',
-      '2026',
+      'planck-mega-disney-trip',
     );
 
-    expect(planningModule?.summary.id).toBe('2026');
-    expect(findTripDataModule(allTripsData.modules, 'missing', 'trip')).toBeUndefined();
-    expect(routeContext?.trip.id).toBe('2026');
-    expect(routeContext?.tripModule.summary.id).toBe('2026');
+    expect(planningModule?.summary.slug).toBe('planck-mega-disney-trip');
+    expect(findTripDataModule(allTripsData.modules, 'missing-trip')).toBeUndefined();
+    expect(routeContext?.trip.slug).toBe('planck-mega-disney-trip');
+    expect(routeContext?.tripModule.summary.slug).toBe('planck-mega-disney-trip');
+    expect(routeContext?.sectionConfig).toBeDefined();
 
     if (!planningTrip) {
       throw new Error('Expected seeded planning trip to exist.');
     }
 
-    expect(getTripBasePath(planningTrip)).toBe('/casschwlanck/2026');
+    expect(getTripBasePath(planningTrip)).toBe('/planck-mega-disney-trip');
+  });
+
+  it('maps legacy two-segment routes to canonical trip paths', () => {
+    expect(getLegacyTripRedirectPath(allTripsData.modules, 'casschwlanck', '2026')).toBe(
+      '/casschwlanck-2026/attractions',
+    );
+    expect(
+      getLegacyTripRedirectPath(allTripsData.modules, 'casschwlanck', 'future-trip', 'guide'),
+    ).toBe('/planck-mega-disney-trip/guide');
+    expect(getLegacyTripRedirectPath(allTripsData.modules, 'missing', 'trip')).toBeNull();
   });
 
   it('builds the compact facts row used on the simplified trip cards', () => {
-    const planningTrip = findTripSummary(allTripsData.trips, 'casschwlanck', '2026');
-    const upcomingTrip = findTripSummary(allTripsData.trips, 'casschwlanck', 'future-trip');
+    const archivedTrip = findTripSummary(allTripsData.trips, 'casschwlanck-2026');
+    const planningTrip = findTripSummary(allTripsData.trips, 'planck-mega-disney-trip');
 
-    if (!planningTrip || !upcomingTrip) {
-      throw new Error('Expected seeded planning and upcoming trips to exist.');
+    if (!archivedTrip || !planningTrip) {
+      throw new Error('Expected seeded archived and planning trips to exist.');
     }
 
-    expect(getTripCompactFactsLine(planningTrip)).toBe('10 people • 9 days • 4 parks');
-    expect(getTripCompactFactsLine(upcomingTrip)).toBe('14 people • 9 days • 4 parks');
+    expect(getTripCompactFactsLine(archivedTrip)).toBe('10 people • 9 days • 4 parks');
+    expect(getTripCompactFactsLine(planningTrip)).toBe('14 people • 9 days • 4 parks');
   });
 
   it('uses TBD copy for missing compact fact values', () => {
     const draftTrip: TripSummary = {
-      groupId: 'test',
-      id: 'draft',
+      slug: 'draft',
       title: 'Draft Trip',
       dateLabel: 'Dates TBD',
       parkLabels: [],

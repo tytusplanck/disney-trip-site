@@ -4,6 +4,8 @@
 
 - Store trip summaries shared across multiple routes in [`/src/data/all-trips.ts`](../src/data/all-trips.ts).
 - Keep shared trip data typed so All Trips cards, stub routes, and future trip pages read the same source of truth.
+- Use `TripSummary.slug` as the canonical public trip identifier. Trip pages live at `/:tripSlug/:section`, and helper-generated URLs should use the single-slug path instead of family/trip pairs.
+- Store old two-part URLs in `TripSummary.legacyRoutes` when an existing trip URL needs a compatibility redirect.
 - Store full trip payloads as separate modules under [`/src/data/trips`](../src/data/trips) so `summary`, `party`, `schedule`, and `attractions` can evolve independently while sharing one interface.
 - Trip-specific grouping rules such as named party cohorts belong in the trip data module itself so reusable analytics stay free of hardcoded trip ids, member ids, or family-specific presets.
 - Use helpers in [`/src/lib/trips/all-trips.ts`](../src/lib/trips/all-trips.ts) to derive grouped sections, compact card facts, and route paths instead of hard-coding those rules in Astro templates.
@@ -15,7 +17,7 @@
 ## Route-Owned Copy
 
 - Keep page-specific labels, metadata, and supporting copy in route-adjacent `.page.ts` modules.
-- Keep trip section copy in [`/src/pages/[family]/[trip]/trip-sections.page.ts`](../src/pages/[family]/[trip]/trip-sections.page.ts) so the planner routes stay in sync.
+- Keep trip section copy in [`/src/pages/[trip]/trip-sections.page.ts`](../src/pages/[trip]/trip-sections.page.ts) so the planner routes stay in sync.
 - Treat Astro components as presentation-only wherever practical. Shared components should receive typed props, not own page copy decisions.
 - If route-owned copy needs status-aware behavior, resolve that in the route-adjacent page module or a route-owned helper rather than burying those decisions inside a shared component.
 
@@ -23,7 +25,8 @@
 
 - [`/src/layouts/BaseLayout.astro`](../src/layouts/BaseLayout.astro) owns only document concerns: fonts, metadata, global styles, and skip-link behavior.
 - Visible page chrome lives in page-level shell components such as All Trips, auth, and trip shells.
-- The trip root route redirects to the first planner section, with the protected planner continuing under attractions, schedule, and party routes.
+- The trip root route redirects to the first planner section, with the protected planner continuing under single-slug attractions, schedule, and party routes.
+- Legacy family/trip URLs redirect to their canonical single-slug trip route instead of rendering duplicate pages.
 - Planning trip tabs render inside the shared content shell so attractions, schedule, and party pages all open with the same content-width embedded tab strip.
 - The embedded planner tabs are label-only. Supporting detail belongs in the shell-owned page summary, not inside each tab.
 - On narrow screens, the embedded planner tabs switch to a horizontally scrollable rail instead of shrinking until labels clip.
