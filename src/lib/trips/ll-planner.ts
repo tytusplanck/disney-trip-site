@@ -260,10 +260,7 @@ export function getHeightRestrictedSelections(
 ): LLAttraction[] {
   return selections.illSelections
     .map((id) => inventory.attractions.find((attraction) => attraction.id === id))
-    .filter(
-      (attraction): attraction is LLAttraction =>
-        attraction != null && attraction.heightRestriction != null,
-    );
+    .filter((attraction): attraction is LLAttraction => attraction?.heightRestriction != null);
 }
 
 export function getProjectedParkDayPriceEstimate(

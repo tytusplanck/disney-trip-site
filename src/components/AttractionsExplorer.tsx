@@ -42,8 +42,7 @@ export default function AttractionsExplorer({ data }: Props) {
     () => deriveAttractionsExplorerView(data, deferredState),
     [data, deferredState],
   );
-  const resetDisabled =
-    state.selectedDayId === null && state.search.length === 0;
+  const resetDisabled = state.selectedDayId === null && state.search.length === 0;
   const visibleAttractions = showAllRides
     ? view.rankedAttractions
     : view.rankedAttractions.slice(0, DEFAULT_VISIBLE_RIDES);
@@ -149,7 +148,6 @@ export default function AttractionsExplorer({ data }: Props) {
             ))}
           </div>
         </section>
-
       </article>
 
       {view.hasResults ? (

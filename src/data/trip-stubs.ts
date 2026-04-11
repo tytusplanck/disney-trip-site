@@ -44,8 +44,7 @@ export const tripStubPages: Record<TripSection, TripStubPage> = {
   travelers: {
     title: 'Traveler notes',
     calloutTitle: 'Traveler notes are queued',
-    calloutBody:
-      'The route is ready for per-person notes and priorities once those are written.',
+    calloutBody: 'The route is ready for per-person notes and priorities once those are written.',
     checklist: ['Per-person priority list', 'Written notes', 'Group awareness summary'],
   },
   logistics: {

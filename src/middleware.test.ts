@@ -33,9 +33,7 @@ describe('middleware', () => {
 
     expect(next).not.toHaveBeenCalled();
     expect(response.status).toBe(302);
-    expect(response.headers.get('location')).toBe(
-      '/login?next=%2Fcasschwlanck-2026%3Fview%3Dfull',
-    );
+    expect(response.headers.get('location')).toBe('/login?next=%2Fcasschwlanck-2026%3Fview%3Dfull');
     expect(response.headers.get('cache-control')).toBe('private, no-store, max-age=0');
     expect(response.headers.get('x-frame-options')).toBe('DENY');
   });

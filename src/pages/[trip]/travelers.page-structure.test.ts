@@ -2,10 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const source = readFileSync(
-  join(process.cwd(), 'src/pages/[trip]/travelers.astro'),
-  'utf-8',
-);
+const source = readFileSync(join(process.cwd(), 'src/pages/[trip]/travelers.astro'), 'utf-8');
 
 describe('travelers page structure', () => {
   it('uses the informational profile component, not the preference analytics cards', () => {

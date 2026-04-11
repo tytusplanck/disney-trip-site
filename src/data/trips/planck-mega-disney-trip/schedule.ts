@@ -34,7 +34,7 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
     kind: 'resort',
     label: 'Resort day',
     parkLabel: null,
-    notes: 'Chef Mickeys',
+    notes: null,
   },
   {
     date: '2026-11-12',

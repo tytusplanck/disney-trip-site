@@ -59,11 +59,15 @@
 .schedule-card__date,
 .schedule-card__kind,
 .attractions-explorer__filter-label,
+.guide-attraction-card__badge,
+.logistics-card__kind,
+.logistics-card__date,
 .party-summary__eyebrow,
 .party-summary__gap-badge,
 .party-traveler-card__style,
 .party-traveler-card__stat-label,
-.party-traveler-card__top-call-label {
+.party-traveler-card__top-call-label,
+.traveler-profile-card__priorities-label {
   font-size: var(--text-meta);
   font-weight: 600;
   letter-spacing: var(--tracking-meta);
@@ -73,8 +77,10 @@
 .disclosure-panel__label,
 .schedule-card__day-index,
 .schedule-card__date,
+.logistics-card__date,
 .attractions-explorer__filter-label,
-.party-summary__eyebrow {
+.party-summary__eyebrow,
+.traveler-profile-card__priorities-label {
   color: var(--color-ink-faint);
 }
 
@@ -855,6 +861,258 @@
   }
 }
 
+/* -- Guide Attraction List -------------------------------- */
+
+.guide-park-heading {
+  margin: 0;
+  padding-bottom: var(--space-3);
+  border-bottom: 2px solid var(--trip-accent, var(--color-brand));
+  font-family: var(--font-display);
+  font-size: var(--text-headline-2);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-title);
+  color: var(--color-ink);
+}
+
+.guide-attraction-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: var(--border-thin) solid var(--color-line-subtle);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-1);
+  overflow: hidden;
+}
+
+.guide-attraction-card {
+  --attraction-priority-strong: var(--color-ink-soft);
+  --attraction-priority-soft: transparent;
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border-thin) solid var(--color-line-subtle);
+}
+
+.guide-attraction-card:last-child {
+  border-bottom: none;
+}
+
+.guide-attraction-card[data-priority='must-do'] {
+  --attraction-priority-strong: var(--color-viz-1-strong);
+  --attraction-priority-soft: var(--color-viz-1-soft);
+}
+
+.guide-attraction-card[data-priority='recommended'] {
+  --attraction-priority-strong: var(--color-viz-2-strong);
+  --attraction-priority-soft: var(--color-viz-2-soft);
+}
+
+.guide-attraction-card[data-priority='if-time'] {
+  --attraction-priority-strong: var(--color-viz-3-strong);
+  --attraction-priority-soft: var(--color-viz-3-soft);
+}
+
+.guide-attraction-card[data-priority='skip'] {
+  --attraction-priority-strong: var(--color-viz-5-strong);
+  --attraction-priority-soft: var(--color-viz-5-soft);
+}
+
+.guide-attraction-card__header {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.guide-attraction-card__title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+}
+
+.guide-attraction-card__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-title);
+  color: var(--color-ink);
+}
+
+.guide-attraction-card__badge {
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background: var(--attraction-priority-soft);
+  color: var(--attraction-priority-strong);
+}
+
+.guide-attraction-card__area {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: var(--text-body-sm);
+}
+
+.guide-attraction-card__notes {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+}
+
+/* -- Traveler Profile Cards ------------------------------- */
+
+.traveler-profile-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.traveler-profile-card {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: var(--border-thin) solid var(--color-line-subtle);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-1);
+}
+
+.traveler-profile-card__name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2vw, 1.65rem);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-title);
+  color: var(--color-ink);
+}
+
+.traveler-profile-card__notes {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+}
+
+.traveler-profile-card__priorities {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: var(--border-thin) solid var(--color-line-subtle);
+}
+
+.traveler-profile-card__priorities-label {
+  margin: 0;
+}
+
+.traveler-profile-card__priority-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0 0 0 var(--space-5);
+}
+
+.traveler-profile-card__priority-item {
+  color: var(--color-ink-muted);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-snug);
+}
+
+@media (min-width: 720px) {
+  .traveler-profile-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1100px) {
+  .traveler-profile-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* -- Logistics Cards -------------------------------------- */
+
+.logistics-card {
+  --logistics-kind-strong: var(--color-ink-soft);
+  --logistics-kind-soft: transparent;
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: var(--border-thin) solid var(--color-line-subtle);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-1);
+}
+
+.logistics-card[data-kind='dining'] {
+  --logistics-kind-strong: var(--color-schedule-resort-strong);
+  --logistics-kind-soft: var(--color-schedule-resort-soft);
+}
+
+.logistics-card[data-kind='resort'] {
+  --logistics-kind-strong: var(--color-viz-2-strong);
+  --logistics-kind-soft: var(--color-viz-2-soft);
+}
+
+.logistics-card[data-kind='transport'] {
+  --logistics-kind-strong: var(--color-schedule-travel-strong);
+  --logistics-kind-soft: var(--color-schedule-travel-soft);
+}
+
+.logistics-card[data-kind='tip'] {
+  --logistics-kind-strong: var(--color-viz-1-strong);
+  --logistics-kind-soft: var(--color-viz-1-soft);
+}
+
+.logistics-card[data-kind='general'] {
+  --logistics-kind-strong: var(--color-viz-3-strong);
+  --logistics-kind-soft: var(--color-viz-3-soft);
+}
+
+.logistics-card__header {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.logistics-card__title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+}
+
+.logistics-card__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 2vw, 1.7rem);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-title);
+  color: var(--color-ink);
+}
+
+.logistics-card__kind {
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  background: var(--logistics-kind-soft);
+  color: var(--logistics-kind-strong);
+}
+
+.logistics-card__date {
+  margin: 0;
+}
+
+.logistics-card__notes {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+}
+
 @media (max-width: 900px) {
   .trip-shell__main {
     padding-inline: var(--gutter-tablet);
@@ -909,9 +1167,12 @@
   .attractions-explorer__panel,
   .attractions-explorer__results,
   .attractions-explorer__empty,
+  .guide-attraction-list,
+  .logistics-card,
   .party-summary__highlight,
   .party-summary__section,
-  .party-traveler-card {
+  .party-traveler-card,
+  .traveler-profile-card {
     padding: var(--space-4);
   }
 
@@ -957,6 +1218,10 @@
     gap: var(--space-3);
   }
 
+  .guide-attraction-card {
+    padding: var(--space-3) var(--space-4);
+  }
+
   .party-traveler-card {
     gap: var(--space-2);
   }
@@ -968,6 +1233,15 @@
 
   .party-traveler-card__stat {
     padding: var(--space-2);
+  }
+
+  .traveler-profile-cards {
+    gap: var(--space-3);
+  }
+
+  .traveler-profile-card {
+    padding: var(--space-4);
+    gap: var(--space-3);
   }
 }
 

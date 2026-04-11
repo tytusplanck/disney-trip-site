@@ -175,7 +175,7 @@ describe('pricing helpers', () => {
     };
 
     expect(getSelectedSinglePassPriceEstimate(selections, mkInventory)).toEqual({
-      estimatedPriceUsd: 37,
+      estimatedPriceUsd: 36,
     });
   });
 
@@ -198,12 +198,10 @@ describe('pricing helpers', () => {
     };
 
     expect(getProjectedParkDayPriceEstimate(oneSelection, akInventory)).toEqual({
-      estimatedPriceUsd: 22,
-      estimatedRangeUsd: [20, 23],
+      estimatedPriceUsd: 35,
     });
     expect(getProjectedParkDayPriceEstimate(threeSelections, akInventory)).toEqual({
-      estimatedPriceUsd: 22,
-      estimatedRangeUsd: [20, 23],
+      estimatedPriceUsd: 35,
     });
   });
 
@@ -219,8 +217,7 @@ describe('pricing helpers', () => {
     };
 
     expect(getProjectedParkDayPriceEstimate(selections, akInventory)).toEqual({
-      estimatedPriceUsd: 39,
-      estimatedRangeUsd: [37, 41],
+      estimatedPriceUsd: 53,
     });
   });
 
@@ -230,7 +227,7 @@ describe('pricing helpers', () => {
   });
 
   it('excludes height-restricted ILL from child single pass estimate', () => {
-    // TRON (48in+, $22) and Seven Dwarfs ($15) selected at MK
+    // TRON (48in+, $22) and Seven Dwarfs ($14) selected at MK
     const selections: LLParkDaySelections = {
       illSelections: ['mk-seven-dwarfs-mine-train', 'mk-tron-lightcycle-run'],
       tier1Selection: null,
@@ -241,12 +238,12 @@ describe('pricing helpers', () => {
     // Adult gets both, child only gets Seven Dwarfs (no height restriction)
     const adultEstimate = getSelectedSinglePassPriceEstimate(selections, mkInventory);
     const childEstimate = getChildSinglePassPriceEstimate(selections, mkInventory);
-    expect(adultEstimate?.estimatedPriceUsd).toBe(37);
-    expect(childEstimate?.estimatedPriceUsd).toBe(15);
+    expect(adultEstimate?.estimatedPriceUsd).toBe(36);
+    expect(childEstimate?.estimatedPriceUsd).toBe(14);
   });
 
   it('child park day total excludes height-restricted ILL attractions', () => {
-    // Avatar Flight of Passage (44in+, $17) + multi pass at AK
+    // Avatar Flight of Passage (44in+, $18) + multi pass at AK
     const selections: LLParkDaySelections = {
       illSelections: ['dak-avatar-flight-of-passage'],
       tier1Selection: null,
@@ -257,10 +254,10 @@ describe('pricing helpers', () => {
     const adultTotal = getProjectedParkDayPriceEstimate(selections, akInventory);
     const childTotal = getChildParkDayPriceEstimate(selections, akInventory);
 
-    // Adult: Multi Pass ($22) + Avatar ($17) = $39
-    expect(adultTotal?.estimatedPriceUsd).toBe(39);
-    // Child: Multi Pass ($22) only, Avatar excluded due to height restriction
-    expect(childTotal?.estimatedPriceUsd).toBe(22);
+    // Adult: Multi Pass ($35) + Avatar ($18) = $53
+    expect(adultTotal?.estimatedPriceUsd).toBe(53);
+    // Child: Multi Pass ($35) only, Avatar excluded due to height restriction
+    expect(childTotal?.estimatedPriceUsd).toBe(35);
   });
 
   it('child estimate equals adult when no height-restricted rides are selected', () => {

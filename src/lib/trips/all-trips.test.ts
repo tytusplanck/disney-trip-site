@@ -48,9 +48,7 @@ describe('all trips helpers', () => {
     }
 
     expect(getTripLandingPath(archivedTrip, archivedModule)).toBe('/casschwlanck-2026/attractions');
-    expect(getTripLandingPath(planningTrip, planningModule)).toBe(
-      '/planck-mega-disney-trip/guide',
-    );
+    expect(getTripLandingPath(planningTrip, planningModule)).toBe('/planck-mega-disney-trip/guide');
     expect(getTripSectionPath(archivedTrip, 'schedule')).toBe('/casschwlanck-2026/schedule');
   });
 

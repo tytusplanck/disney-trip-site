@@ -2,7 +2,14 @@ import type { LLMemberPlan, LLParkInventory } from './ll-types';
 
 export type TripStatus = 'planning' | 'upcoming' | 'completed';
 
-export type TripSection = 'attractions' | 'schedule' | 'party' | 'll' | 'guide' | 'travelers' | 'logistics';
+export type TripSection =
+  | 'attractions'
+  | 'schedule'
+  | 'party'
+  | 'll'
+  | 'guide'
+  | 'travelers'
+  | 'logistics';
 
 export interface TripSectionTab {
   label: string;

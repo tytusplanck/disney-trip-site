@@ -28,6 +28,6 @@ export const tripSectionCopy: Record<TripSection, { title: string; summary: stri
   },
   logistics: {
     title: 'Logistics',
-    summary: 'Dining reservations, resort details, transport plans, and everything the family needs.',
+    summary: 'Resort details, transportation plans, and everything the family needs.',
   },
 };

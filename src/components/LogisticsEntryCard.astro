@@ -21,9 +21,7 @@ const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
   day: 'numeric',
 });
 
-const formattedDate = entry.date
-  ? DATE_FORMATTER.format(new Date(`${entry.date}T12:00:00`))
-  : null;
+const formattedDate = entry.date ? DATE_FORMATTER.format(new Date(`${entry.date}T12:00:00`)) : null;
 ---
 
 <article class="logistics-card" data-kind={entry.kind}>

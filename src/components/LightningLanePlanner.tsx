@@ -387,6 +387,7 @@ function LLProjectedCosts({
     childEstimate != null &&
     totalEstimate != null &&
     childEstimate.estimatedPriceUsd !== totalEstimate.estimatedPriceUsd;
+  const visibleChildEstimate = showChildRow ? childEstimate : null;
 
   const childSubtitle =
     showChildRow && heightRestrictedSelections && heightRestrictedSelections.length > 0
@@ -417,12 +418,12 @@ function LLProjectedCosts({
             value={formatPriceEstimate(totalEstimate)}
           />
         )}
-        {showChildRow && childEstimate && (
+        {visibleChildEstimate && (
           <LLProjectedCostItem
             emphasized
             label="Child total"
             subtitle={childSubtitle}
-            value={formatPriceEstimate(childEstimate)}
+            value={formatPriceEstimate(visibleChildEstimate)}
           />
         )}
       </div>

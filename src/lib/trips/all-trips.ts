@@ -67,10 +67,7 @@ export function getAllTripsSections(trips: TripSummary[]): AllTripsSection[] {
   });
 }
 
-export function findTripSummary(
-  trips: TripSummary[],
-  tripSlug: string,
-): TripSummary | undefined {
+export function findTripSummary(trips: TripSummary[], tripSlug: string): TripSummary | undefined {
   return trips.find((trip) => trip.slug === tripSlug);
 }
 
@@ -94,10 +91,7 @@ export function getTripRouteContext(
   return { trip, tripModule, sectionConfig: getTripSectionConfig(tripModule) };
 }
 
-export function getTripSectionPath(
-  trip: Pick<TripSummary, 'slug'>,
-  section: TripSection,
-): string {
+export function getTripSectionPath(trip: Pick<TripSummary, 'slug'>, section: TripSection): string {
   return `${getTripBasePath(trip)}/${section}`;
 }
 

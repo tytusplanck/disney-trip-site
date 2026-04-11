@@ -12,6 +12,18 @@ const partyTravelerCardsSource = readFileSync(
   join(process.cwd(), 'src/components/PartyTravelerCards.astro'),
   'utf-8',
 );
+const guideAttractionListSource = readFileSync(
+  join(process.cwd(), 'src/components/GuideAttractionList.astro'),
+  'utf-8',
+);
+const travelerProfileCardsSource = readFileSync(
+  join(process.cwd(), 'src/components/TravelerProfileCards.astro'),
+  'utf-8',
+);
+const logisticsEntryCardSource = readFileSync(
+  join(process.cwd(), 'src/components/LogisticsEntryCard.astro'),
+  'utf-8',
+);
 
 describe('trip page style contracts', () => {
   it('defines a shared ordered planner data-viz spectrum', () => {
@@ -209,6 +221,110 @@ describe('trip page style contracts', () => {
     expect(tripPagesStyles.includes('color: var(--color-viz-2-strong);')).toBe(true);
     expect(tripPagesStyles.includes('color: var(--color-viz-4-strong);')).toBe(true);
     expect(tripPagesStyles.includes('color: var(--color-viz-5-strong);')).toBe(true);
+  });
+
+  it('styles guide, traveler profile, and logistics cards from their emitted classes', () => {
+    expect(guideAttractionListSource.includes('guide-attraction-card')).toBe(true);
+    expect(guideAttractionListSource.includes('data-priority={attraction.priority}')).toBe(true);
+    expect(travelerProfileCardsSource.includes('traveler-profile-card__priorities')).toBe(true);
+    expect(logisticsEntryCardSource.includes('logistics-card__kind')).toBe(true);
+    expect(logisticsEntryCardSource.includes('data-kind={entry.kind}')).toBe(true);
+
+    expect(
+      tripPagesStyles.includes(
+        '.guide-park-heading {\n' +
+          '  margin: 0;\n' +
+          '  padding-bottom: var(--space-3);\n' +
+          '  border-bottom: 2px solid var(--trip-accent, var(--color-brand));',
+      ),
+    ).toBe(true);
+    expect(
+      tripPagesStyles.includes(
+        '.guide-attraction-list {\n' +
+          '  display: grid;\n' +
+          '  gap: 0;\n' +
+          '  margin: 0;\n' +
+          '  padding: 0;\n' +
+          '  list-style: none;\n' +
+          '  border: var(--border-thin) solid var(--color-line-subtle);\n' +
+          '  border-radius: var(--radius-xl);\n' +
+          '  background: var(--color-surface-1);\n' +
+          '  overflow: hidden;\n' +
+          '}',
+      ),
+    ).toBe(true);
+    expect(
+      tripPagesStyles.includes(
+        '.guide-attraction-card {\n' +
+          '  --attraction-priority-strong: var(--color-ink-soft);\n' +
+          '  --attraction-priority-soft: transparent;\n' +
+          '  display: grid;\n' +
+          '  gap: var(--space-3);\n' +
+          '  padding: var(--space-4) var(--space-5);\n' +
+          '  border-bottom: var(--border-thin) solid var(--color-line-subtle);\n' +
+          '}',
+      ),
+    ).toBe(true);
+    expect(
+      tripPagesStyles.includes(
+        ".guide-attraction-card[data-priority='must-do'] {\n" +
+          '  --attraction-priority-strong: var(--color-viz-1-strong);',
+      ),
+    ).toBe(true);
+    expect(
+      tripPagesStyles.includes(
+        '.guide-attraction-card__badge {\n' +
+          '  padding: 0.3rem 0.7rem;\n' +
+          '  border-radius: var(--radius-pill);\n' +
+          '  background: var(--attraction-priority-soft);\n' +
+          '  color: var(--attraction-priority-strong);\n' +
+          '}',
+      ),
+    ).toBe(true);
+
+    expect(tripPagesStyles.includes('.traveler-profile-cards')).toBe(true);
+    expect(tripPagesStyles.includes('.traveler-profile-card__priority-list')).toBe(true);
+    expect(
+      tripPagesStyles.includes(
+        '@media (min-width: 1100px) {\n' +
+          '  .traveler-profile-cards {\n' +
+          '    grid-template-columns: repeat(3, minmax(0, 1fr));\n' +
+          '  }\n' +
+          '}',
+      ),
+    ).toBe(true);
+    expect(
+      tripPagesStyles.includes(
+        '.attractions-explorer__panel,\n' +
+          '  .attractions-explorer__results,\n' +
+          '  .attractions-explorer__empty,\n' +
+          '  .guide-attraction-list,\n' +
+          '  .logistics-card,',
+      ),
+    ).toBe(true);
+    expect(
+      tripPagesStyles.includes(
+        '.guide-attraction-card {\n' + '    padding: var(--space-3) var(--space-4);\n' + '  }',
+      ),
+    ).toBe(true);
+
+    expect(tripPagesStyles.includes('.logistics-card')).toBe(true);
+    expect(
+      tripPagesStyles.includes(
+        ".logistics-card[data-kind='transport'] {\n" +
+          '  --logistics-kind-strong: var(--color-schedule-travel-strong);',
+      ),
+    ).toBe(true);
+    expect(
+      tripPagesStyles.includes(
+        '.logistics-card__kind {\n' +
+          '  padding: 0.3rem 0.7rem;\n' +
+          '  border-radius: var(--radius-pill);\n' +
+          '  background: var(--logistics-kind-soft);\n' +
+          '  color: var(--logistics-kind-strong);\n' +
+          '}',
+      ),
+    ).toBe(true);
   });
 
   it('styles the consensus progress bar as a rounded native progress control', () => {

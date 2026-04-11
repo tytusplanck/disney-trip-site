@@ -3,72 +3,106 @@ import type { TravelerProfile } from '../../../lib/trips/types';
 export const planckMegaDisneyTripTravelerProfiles: TravelerProfile[] = [
   {
     memberId: 'tytus-planck',
-    notes: 'Trip organizer. Has been to Disney World multiple times and has planned this itinerary. Will be managing Lightning Lane bookings for the group.',
-    priorities: ['Rise of the Resistance', 'TRON Lightcycle / Run', 'Guardians of the Galaxy: Cosmic Rewind', 'Tower of Terror', 'Avatar Flight of Passage'],
+    notes:
+      'Trip organizer. Focused on the biggest shared wins, EPCOT time, and keeping the plan moving without losing the fun parts.',
+    priorities: [
+      'Guardians of the Galaxy: Cosmic Rewind',
+      'EPCOT Food & Wine Festival',
+      'Fantasmic!',
+      'Big Thunder Mountain Railroad',
+      'The Land',
+    ],
   },
   {
     memberId: 'kelsey-planck',
-    notes: 'Loves the experience and atmosphere. Enjoys rides but not extreme thrill. A fan of the storytelling side of Disney.',
-    priorities: ['Avatar Flight of Passage', 'Seven Dwarfs Mine Train', "Remy's Ratatouille Adventure", 'Frozen Ever After', 'Fantasmic!'],
+    notes:
+      'Main goal is to have fun with the family and make sure the trip feels good for the kids.',
+    priorities: ['Have fun', 'Guardians of the Galaxy: Cosmic Rewind'],
   },
   {
     memberId: 'truman-planck',
-    notes: 'Older kid — ready for the big rides. Will want to hit the major coasters.',
-    priorities: ['TRON Lightcycle / Run', 'Space Mountain', 'Expedition Everest', 'Big Thunder Mountain Railroad', 'Rise of the Resistance'],
+    notes: 'Older kid with a mix of coasters, classics, and animal highlights on his list.',
+    priorities: [
+      'Seven Dwarfs Mine Train',
+      'Journey Into Imagination With Figment',
+      'Slinky Dog Dash',
+      "Tiana's Bayou Adventure",
+      'Kilimanjaro Safaris',
+    ],
   },
   {
     memberId: 'cassian-planck',
-    notes: 'Younger kid. Check height requirements carefully. Focus on family-friendly rides and character moments.',
-    priorities: ['Seven Dwarfs Mine Train', "Na'vi River Journey", 'Kilimanjaro Safaris', "Remy's Ratatouille Adventure", 'Slinky Dog Dash'],
+    notes:
+      'Younger kid. Focus on playful, colorful rides with no-pressure pacing and easy breaks between bigger park moments.',
+    priorities: [
+      'The Many Adventures of Winnie the Pooh',
+      '"it\'s a small world"',
+      "Remy's Ratatouille Adventure",
+      'Alien Swirling Saucers',
+    ],
   },
   {
     memberId: 'andrea-planck',
-    notes: 'First Disney World trip. Priority is the overall experience — walking the parks, seeing the characters, taking it all in. Not focused on major thrill rides.',
-    priorities: ['Kilimanjaro Safaris', 'Haunted Mansion', 'Pirates of the Caribbean', 'EPCOT Food & Wine Festival', 'Frozen Ever After'],
+    notes:
+      'Not her first Disney trip. This trip is about nice photos, Avatar Flight of Passage, and taking care of the grandchildren more than chasing every ride.',
+    priorities: [
+      'Nice family photos',
+      'Avatar Flight of Passage',
+      'Taking care of the grandchildren',
+    ],
   },
   {
     memberId: 'tom-planck',
-    notes: "Likely first or early Disney World visit. Enjoy the classics and the scenery. Food & Wine at EPCOT will be a highlight.",
-    priorities: ['Kilimanjaro Safaris', 'EPCOT Food & Wine Festival', 'Haunted Mansion', 'Big Thunder Mountain Railroad', 'Pirates of the Caribbean'],
+    notes:
+      'Go with the flow. His only real priorities are having fun with the family and changing diapers when needed.',
+    priorities: ['Have fun', 'Changing diapers'],
   },
   {
     memberId: 'everett-planck',
-    notes: 'Happy to go along with the group. Enjoys rides but will need context on what to expect. A positive addition who will make anything fun.',
-    priorities: ['Avatar Flight of Passage', 'Expedition Everest', 'Big Thunder Mountain Railroad', 'Tower of Terror', 'Rock \'n\' Roller Coaster'],
+    notes:
+      'Great grandpa and has not been in 20+ years. Goal is not to get hurt while still getting to share top thrill rides with the kids.',
+    priorities: ['Top thrill rides with the kids', 'Stay safe and avoid injuries'],
   },
   {
     memberId: 'barbara-planck',
-    notes: 'Focus on comfort and accessibility. Gentle rides and shows are ideal. The atmosphere and family time is the priority over specific attractions.',
-    priorities: ["Na'vi River Journey", 'Kilimanjaro Safaris', 'Frozen Ever After', "Remy's Ratatouille Adventure", 'Fantasmic!'],
+    notes:
+      'Great grandma and has not been in 20+ years. Goal is to not get hurt or fall, with the biggest focus on pictures and time with family.',
+    priorities: ['Pictures with family', 'Time with family', 'Do not get hurt or fall'],
   },
   {
     memberId: 'hannah-stevenson',
-    notes: 'Part of the Stevenson crew. Will be joining for several days. Add notes about her preferences when known.',
-    priorities: [],
+    notes:
+      'First time back at Walt Disney World in a long time and first time with Macy. Focus should be thrill rides and introducing Macy to the parks.',
+    priorities: ['Thrill rides', 'Introduce Macy to Walt Disney World'],
   },
   {
     memberId: 'macy-stevenson',
-    notes: 'Younger Stevenson. Focus on family rides and character experiences. Check height requirements.',
-    priorities: [],
+    notes:
+      'First Walt Disney World trip with Hannah. Keep her day centered on fun first impressions, kid-friendly rides, photos, snacks, and breaks.',
+    priorities: ['Kid-friendly first Disney moments', 'Family photos', 'Breaks when needed'],
   },
   {
     memberId: 'brody-stevenson',
-    notes: 'Part of the Stevenson crew. Add notes about his preferences when known.',
-    priorities: [],
+    notes:
+      'Has never been to Walt Disney World at all. Priority is experiencing everything, doing thrill rides, and bringing his daughter for her first trip.',
+    priorities: ['Experience everything', 'Thrill rides', 'First trip with his daughter'],
   },
   {
     memberId: 'david-everett',
-    notes: 'Arriving Nov 9, leaving Nov 13. Will be there for EPCOT and resort days. EPCOT Food & Wine is a natural fit.',
-    priorities: ['EPCOT Food & Wine Festival', 'Test Track', 'Frozen Ever After'],
+    notes:
+      'Uncle who has not been in a very long time. Priority is to do as much as he can while he is here.',
+    priorities: ['Do as much as possible while here'],
   },
   {
     memberId: 'barbara-ford',
-    notes: 'Grammy. Arriving Nov 9, leaving Nov 13. Comfort and accessibility are the priority. Will love the atmosphere and character moments.',
-    priorities: ["Na'vi River Journey", 'Kilimanjaro Safaris', 'Frozen Ever After', 'Fantasmic!'],
+    notes:
+      'Great grandma. Priorities are to not get hurt, drink water, and get good pictures with the family.',
+    priorities: ['Do not get hurt', 'Drink water', 'Good pictures'],
   },
   {
     memberId: 'lee-bastyr',
-    notes: 'Arriving Nov 9, leaving Nov 13. Add notes about preferences when known.',
-    priorities: [],
+    notes:
+      'Same overall plan as David: has not been in a very long time and wants to do as much as he can while he is here.',
+    priorities: ['Do as much as possible while here'],
   },
 ];

@@ -73,7 +73,8 @@ export const allTripsPage: AllTripsPage = {
       planning:
         'No active planning trip right now. The next live plan will move here when decisions start.',
       upcoming: 'No later trips are parked here right now.',
-      completed: 'No completed trips yet. Finished itineraries will land here once the first trip wraps.',
+      completed:
+        'No completed trips yet. Finished itineraries will land here once the first trip wraps.',
     },
   },
   card: {

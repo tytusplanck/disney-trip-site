@@ -18,9 +18,7 @@ const { profiles } = Astro.props;
       <li class="traveler-profile-card">
         <h3 class="traveler-profile-card__name">{profile.name}</h3>
 
-        {profile.notes && (
-          <p class="traveler-profile-card__notes">{profile.notes}</p>
-        )}
+        {profile.notes && <p class="traveler-profile-card__notes">{profile.notes}</p>}
 
         {profile.priorities.length > 0 && (
           <div class="traveler-profile-card__priorities">

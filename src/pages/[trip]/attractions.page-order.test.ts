@@ -2,10 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const source = readFileSync(
-  join(process.cwd(), 'src/pages/[trip]/attractions.astro'),
-  'utf-8',
-);
+const source = readFileSync(join(process.cwd(), 'src/pages/[trip]/attractions.astro'), 'utf-8');
 
 describe('attractions page section order', () => {
   it('keeps the scoring guide ahead of the reduced decision board', () => {

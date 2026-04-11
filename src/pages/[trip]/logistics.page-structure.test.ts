@@ -2,10 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const source = readFileSync(
-  join(process.cwd(), 'src/pages/[trip]/logistics.astro'),
-  'utf-8',
-);
+const source = readFileSync(join(process.cwd(), 'src/pages/[trip]/logistics.astro'), 'utf-8');
 
 describe('logistics page structure', () => {
   it('uses the logistics entry card component', () => {

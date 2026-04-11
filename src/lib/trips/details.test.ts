@@ -219,7 +219,7 @@ describe('trip detail helpers', () => {
       parkDays: 4,
       resortDays: 3,
       travelDays: 2,
-      scheduledNotes: 5,
+      scheduledNotes: 4,
       parkLineup: [
         "Disney's Animal Kingdom",
         'EPCOT',
@@ -229,7 +229,7 @@ describe('trip detail helpers', () => {
     });
     expect(days[0]?.weekdayLabel).toBe('Sat');
     expect(days[0]?.dateLabel).toBe('Nov 7');
-    expect(days[4]?.entry.notes).toBe('Chef Mickeys');
+    expect(days[4]?.entry.notes).toBeNull();
   });
 
   it('keeps party summaries useful when only the traveler list is loaded', () => {

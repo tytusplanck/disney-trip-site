@@ -15,7 +15,8 @@ interface Props {
   sectionConfig?: TripSectionTab[] | undefined;
 }
 
-const { title, description, trip, activeSection, pageTitle, pageSummary, sectionConfig } = Astro.props;
+const { title, description, trip, activeSection, pageTitle, pageSummary, sectionConfig } =
+  Astro.props;
 
 const tripLabel = `${trip.title} / ${trip.dateLabel}`;
 ---
