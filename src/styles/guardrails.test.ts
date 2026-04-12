@@ -102,7 +102,20 @@ describe('style guardrails', () => {
     const tripPagesSource = readFileSync(join(stylesDirectory, 'trip-pages.css'), 'utf8');
 
     expect(componentsSource).toMatch(
-      /@media \(max-width: 360px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/,
+      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?grid-template-columns: none;[\s\S]*?grid-auto-flow: column;[\s\S]*?grid-auto-columns: minmax\(6\.5rem, max-content\);[\s\S]*?overflow-x: auto;/,
+    );
+    expect(componentsSource).toContain('.trip-tabs__rail::-webkit-scrollbar {');
+    expect(componentsSource).not.toMatch(
+      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail\[data-tab-count='5'\]/,
+    );
+    expect(componentsSource).not.toMatch(
+      /@media \(max-width: 520px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?gap: 0\.35rem;/,
+    );
+    expect(componentsSource).not.toMatch(
+      /@media \(max-width: 360px\) \{[\s\S]*?\.trip-tabs__rail \{/,
+    );
+    expect(componentsSource).toMatch(
+      /@media \(max-width: 360px\) \{[\s\S]*?\.trip-tabs__link \{[\s\S]*?padding: var\(--space-2\) var\(--space-3\);/,
     );
     expect(tripPagesSource).toMatch(
       /\.ll-row__label \{[\s\S]*?min-width: 0;[\s\S]*?overflow-wrap: anywhere;/,
@@ -120,7 +133,7 @@ describe('style guardrails', () => {
     );
   });
 
-  it('supports five-section trip tab configs without falling into a four-column rail', () => {
+  it('supports five-section trip tabs on desktop and universal mobile scrolling', () => {
     const componentsSource = readFileSync(join(stylesDirectory, 'components.css'), 'utf8');
     const tripTabsSource = readFileSync(
       join(process.cwd(), 'src/components/TripTabs.astro'),
@@ -131,7 +144,7 @@ describe('style guardrails', () => {
     expect(componentsSource).toContain(".trip-tabs__rail[data-tab-count='5'] {");
     expect(componentsSource).toContain('grid-template-columns: repeat(5, minmax(0, 1fr));');
     expect(componentsSource).toMatch(
-      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail\[data-tab-count='5'\] \{[\s\S]*?grid-auto-flow: column;/,
+      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?grid-auto-flow: column;/,
     );
   });
 
