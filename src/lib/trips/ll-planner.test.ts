@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { LLMemberPlan, LLParkDaySelections } from './ll-types';
+import type { ScheduleEntryKind } from './types';
 import {
   buildLLPlannerData,
   deserializePlan,
@@ -50,6 +51,38 @@ describe('buildLLPlannerData', () => {
   it('sets hasChildren when party grouping has a kids cohort', () => {
     const plannerData = buildLLPlannerData(tripModule);
     expect(plannerData.hasChildren).toBe(true);
+  });
+
+  it('keeps mixed travel and park days in the planner park-day list', () => {
+    const mixedTripModule = {
+      ...tripModule,
+      schedule: tripModule.schedule.map((entry, index) =>
+        index === 0
+          ? {
+              ...entry,
+              kind: 'travel' as const,
+              kinds: ['travel', 'park'] as ScheduleEntryKind[],
+              parkLabel: "Disney's Animal Kingdom",
+            }
+          : entry,
+      ),
+    };
+    const plannerData = buildLLPlannerData(mixedTripModule);
+
+    expect(plannerData.parkDays.map((day) => day.parkDate)).toEqual([
+      '2026-03-28',
+      '2026-03-29',
+      '2026-03-31',
+      '2026-04-02',
+      '2026-04-04',
+    ]);
+    expect(plannerData.parkDays.map((day) => day.parkLabel)).toEqual([
+      "Disney's Animal Kingdom",
+      "Disney's Animal Kingdom",
+      "Disney's Hollywood Studios",
+      'EPCOT',
+      'Magic Kingdom',
+    ]);
   });
 });
 

@@ -1,6 +1,7 @@
 import type { TripDataModule } from './types';
 import { describe, expect, it } from 'vitest';
 import { casschwlanck2026TripData } from '../../data/trips/casschwlanck-2026';
+import { declanBigSummerTripData } from '../../data/trips/declan-big-summer-trip';
 import { planckMegaDisneyTripData } from '../../data/trips/planck-mega-disney-trip';
 import {
   getAttractionMustDoVoteCount,
@@ -230,6 +231,28 @@ describe('trip detail helpers', () => {
     expect(days[0]?.weekdayLabel).toBe('Sat');
     expect(days[0]?.dateLabel).toBe('Nov 7');
     expect(days[4]?.entry.notes).toBeNull();
+  });
+
+  it('counts mixed travel and park itinerary days in both categories', () => {
+    const overview = getScheduleOverview(declanBigSummerTripData.schedule);
+    const days = getScheduleDaySummaries(declanBigSummerTripData.schedule);
+
+    expect(overview).toEqual({
+      parkDays: 4,
+      resortDays: 0,
+      travelDays: 2,
+      scheduledNotes: 4,
+      parkLineup: [
+        "Disney's Animal Kingdom",
+        'Magic Kingdom',
+        "Disney's Hollywood Studios",
+        'EPCOT',
+      ],
+    });
+    expect(days[0]?.entry.label).toBe("Disney's Animal Kingdom / Epcot");
+    expect(days[0]?.entry.kinds).toEqual(['travel', 'park']);
+    expect(days[3]?.entry.label).toBe('EPCOT / Clean-up');
+    expect(days[3]?.entry.kinds).toEqual(['travel', 'park']);
   });
 
   it('keeps party summaries useful when only the traveler list is loaded', () => {

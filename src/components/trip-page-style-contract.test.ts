@@ -24,6 +24,10 @@ const logisticsEntryCardSource = readFileSync(
   join(process.cwd(), 'src/components/LogisticsEntryCard.astro'),
   'utf-8',
 );
+const scheduleDayCardSource = readFileSync(
+  join(process.cwd(), 'src/components/ScheduleDayCard.astro'),
+  'utf-8',
+);
 
 describe('trip page style contracts', () => {
   it('defines a shared ordered planner data-viz spectrum', () => {
@@ -101,11 +105,44 @@ describe('trip page style contracts', () => {
     ).toBe(true);
     expect(
       tripPagesStyles.includes(
+        '.schedule-card__kinds {\n  display: flex;\n  flex-wrap: wrap;\n  gap: var(--space-2);\n}',
+      ),
+    ).toBe(true);
+    expect(scheduleDayCardSource.includes('day.badges.map((badge) => (')).toBe(true);
+    expect(scheduleDayCardSource.includes('schedule-card__kind--${badge.kind}')).toBe(true);
+    expect(
+      tripPagesStyles.includes(
         '.schedule-card__kind {\n' +
+          '  --schedule-kind-strong: var(--color-ink-soft);\n' +
+          '  --schedule-kind-soft: transparent;\n' +
           '  padding: 0.3rem 0.7rem;\n' +
           '  border-radius: var(--radius-pill);\n' +
           '  background: var(--schedule-kind-soft);\n' +
           '  color: var(--schedule-kind-strong);\n' +
+          '}',
+      ),
+    ).toBe(true);
+    expect(
+      tripPagesStyles.includes(
+        '.schedule-card__kind--travel {\n' +
+          '  --schedule-kind-strong: var(--color-schedule-travel-strong);\n' +
+          '  --schedule-kind-soft: var(--color-schedule-travel-soft);\n' +
+          '}',
+      ),
+    ).toBe(true);
+    expect(
+      tripPagesStyles.includes(
+        '.schedule-card__kind--park {\n' +
+          '  --schedule-kind-strong: var(--color-schedule-park-strong);\n' +
+          '  --schedule-kind-soft: var(--color-schedule-park-soft);\n' +
+          '}',
+      ),
+    ).toBe(true);
+    expect(
+      tripPagesStyles.includes(
+        '.schedule-card__kind--resort {\n' +
+          '  --schedule-kind-strong: var(--color-schedule-resort-strong);\n' +
+          '  --schedule-kind-soft: var(--color-schedule-resort-soft);\n' +
           '}',
       ),
     ).toBe(true);

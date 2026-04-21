@@ -1,4 +1,5 @@
 import type { PreferenceTier, TripDataModule, TripPartyMember, TripScheduleEntry } from './types';
+import { hasScheduleEntryKind } from './schedule';
 
 type AttractionTone = 'high' | 'medium' | 'low';
 
@@ -110,7 +111,7 @@ export function buildAttractionsExplorerData(module: TripDataModule): Attraction
   return {
     party: module.party,
     dayPresets: module.schedule.flatMap((entry, index) =>
-      entry.kind === 'park' ? [buildDayPreset(entry, index + 1)] : [],
+      hasScheduleEntryKind(entry, 'park') ? [buildDayPreset(entry, index + 1)] : [],
     ),
     attractions: module.attractions.map((attraction) => {
       const memberTiers = module.party.reduce<Record<string, PreferenceTier>>((tiers, member) => {

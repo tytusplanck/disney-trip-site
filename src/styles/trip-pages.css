@@ -455,6 +455,12 @@
   gap: var(--space-2) var(--space-3);
 }
 
+.schedule-card__kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
 .schedule-card__date,
 .schedule-card__kind,
 .schedule-card__title,
@@ -464,10 +470,27 @@
 }
 
 .schedule-card__kind {
+  --schedule-kind-strong: var(--color-ink-soft);
+  --schedule-kind-soft: transparent;
   padding: 0.3rem 0.7rem;
   border-radius: var(--radius-pill);
   background: var(--schedule-kind-soft);
   color: var(--schedule-kind-strong);
+}
+
+.schedule-card__kind--travel {
+  --schedule-kind-strong: var(--color-schedule-travel-strong);
+  --schedule-kind-soft: var(--color-schedule-travel-soft);
+}
+
+.schedule-card__kind--park {
+  --schedule-kind-strong: var(--color-schedule-park-strong);
+  --schedule-kind-soft: var(--color-schedule-park-soft);
+}
+
+.schedule-card__kind--resort {
+  --schedule-kind-strong: var(--color-schedule-resort-strong);
+  --schedule-kind-soft: var(--color-schedule-resort-soft);
 }
 
 .schedule-card__title {

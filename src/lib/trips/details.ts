@@ -6,6 +6,7 @@ import type {
   TripScheduleEntry,
 } from './types';
 import { getPartyPersonaProfile, getPartyPreferenceCounts } from './party-analytics';
+import { getScheduleEntryBadges, hasScheduleEntryKind } from './schedule';
 
 export interface PreferenceMeta {
   tier: PreferenceTier;
@@ -60,6 +61,7 @@ export interface ScheduleDaySummary {
   weekdayLabel: string;
   dateLabel: string;
   entry: TripScheduleEntry;
+  badges: ReturnType<typeof getScheduleEntryBadges>;
 }
 
 const PREFERENCE_META_BY_TIER: Record<PreferenceTier, PreferenceMeta> = {
@@ -223,12 +225,14 @@ export function getPartyOverview(summaries: PartyMemberSummary[]): PartyOverview
 }
 
 export function getScheduleOverview(schedule: TripScheduleEntry[]): ScheduleOverview {
-  const parkLineup = schedule.flatMap((entry) => (entry.parkLabel ? [entry.parkLabel] : []));
+  const parkLineup = schedule.flatMap((entry) =>
+    entry.parkLabel && hasScheduleEntryKind(entry, 'park') ? [entry.parkLabel] : [],
+  );
 
   return {
-    parkDays: schedule.filter((entry) => entry.kind === 'park').length,
-    resortDays: schedule.filter((entry) => entry.kind === 'resort').length,
-    travelDays: schedule.filter((entry) => entry.kind === 'travel').length,
+    parkDays: schedule.filter((entry) => hasScheduleEntryKind(entry, 'park')).length,
+    resortDays: schedule.filter((entry) => hasScheduleEntryKind(entry, 'resort')).length,
+    travelDays: schedule.filter((entry) => hasScheduleEntryKind(entry, 'travel')).length,
     scheduledNotes: schedule.filter((entry) => entry.notes !== null).length,
     parkLineup: Array.from(new Set(parkLineup)),
   };
@@ -243,6 +247,7 @@ export function getScheduleDaySummaries(schedule: TripScheduleEntry[]): Schedule
       weekdayLabel: WEEKDAY_FORMATTER.format(date),
       dateLabel: DATE_FORMATTER.format(date),
       entry,
+      badges: getScheduleEntryBadges(entry),
     };
   });
 }

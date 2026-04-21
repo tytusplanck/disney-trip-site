@@ -1,18 +1,11 @@
 ---
 import type { ScheduleDaySummary } from '../lib/trips/details';
-
 interface Props {
   day: ScheduleDaySummary;
   isToday?: boolean;
 }
 
 const { day, isToday = false } = Astro.props;
-
-const kindLabelByValue = {
-  travel: 'Travel',
-  park: 'Park Day',
-  resort: 'Resort Reset',
-} as const;
 ---
 
 <article class="schedule-card" data-kind={day.entry.kind} data-today={isToday ? 'true' : undefined}>
@@ -26,11 +19,19 @@ const kindLabelByValue = {
       <p class="schedule-card__date">
         {day.weekdayLabel} / {day.dateLabel}
       </p>
-      <p class="schedule-card__kind">{kindLabelByValue[day.entry.kind]}</p>
+      <div class="schedule-card__kinds">
+        {
+          day.badges.map((badge) => (
+            <p class:list={['schedule-card__kind', `schedule-card__kind--${badge.kind}`]}>
+              {badge.label}
+            </p>
+          ))
+        }
+      </div>
     </div>
     <h3 class="schedule-card__title">{day.entry.label}</h3>
     {
-      day.entry.parkLabel && day.entry.parkLabel !== day.entry.label && (
+      day.badges.length === 1 && day.entry.parkLabel && day.entry.parkLabel !== day.entry.label && (
         <p class="schedule-card__park">{day.entry.parkLabel}</p>
       )
     }

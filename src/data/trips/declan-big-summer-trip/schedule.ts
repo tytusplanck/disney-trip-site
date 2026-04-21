@@ -4,8 +4,9 @@ export const declanBigSummerTripSchedule: TripScheduleEntry[] = [
   {
     date: '2026-07-07',
     kind: 'travel',
-    label: 'Travel early',
-    parkLabel: null,
+    kinds: ['travel', 'park'],
+    label: "Disney's Animal Kingdom / Epcot",
+    parkLabel: "Disney's Animal Kingdom",
     notes: 'Land at 9:31am at MCO. DAK day with the evening in EPCOT.',
   },
   {
@@ -25,8 +26,9 @@ export const declanBigSummerTripSchedule: TripScheduleEntry[] = [
   {
     date: '2026-07-10',
     kind: 'travel',
-    label: 'Travel late',
-    parkLabel: null,
+    kinds: ['travel', 'park'],
+    label: 'EPCOT / Clean-up',
+    parkLabel: 'EPCOT',
     notes: 'EPCOT rope drop, then clean up other parks if applicable. Flight leaves MCO at 9:19pm.',
   },
 ];

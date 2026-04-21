@@ -9,6 +9,7 @@ import type {
   LLProjectedPrice,
 } from './ll-types';
 import type { TripDataModule } from './types';
+import { hasScheduleEntryKind } from './schedule';
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
 const MONTHS = [
@@ -47,7 +48,7 @@ export function buildLLPlannerData(module: TripDataModule): LLPlannerData {
   const parkDays: LLParkDay[] = module.schedule
     .filter(
       (entry): entry is typeof entry & { parkLabel: string } =>
-        entry.kind === 'park' && entry.parkLabel != null,
+        hasScheduleEntryKind(entry, 'park') && entry.parkLabel != null,
     )
     .map((entry) => {
       const d = new Date(entry.date + 'T12:00:00');

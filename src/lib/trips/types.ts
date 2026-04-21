@@ -71,6 +71,7 @@ export type TripPartyGroupingConfig =
 export interface TripScheduleEntry {
   date: string;
   kind: ScheduleEntryKind;
+  kinds?: ScheduleEntryKind[];
   label: string;
   parkLabel: string | null;
   notes: string | null;

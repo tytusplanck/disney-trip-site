@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { declanBigSummerTripData } from '../../data/trips/declan-big-summer-trip';
 import { attractionsExplorerFixtureTrip } from '../../test/attractions-explorer.fixture';
 import {
   buildAttractionsExplorerData,
@@ -66,5 +67,21 @@ describe('attractions explorer helpers', () => {
 
     expect(view.hasResults).toBe(false);
     expect(view.rankedAttractions).toEqual([]);
+  });
+
+  it('includes mixed travel and park days in park-day presets', () => {
+    const data = buildAttractionsExplorerData(declanBigSummerTripData);
+
+    expect(
+      data.dayPresets.map((preset) => ({
+        dayNumber: preset.dayNumber,
+        parkLabel: preset.parkLabel,
+      })),
+    ).toEqual([
+      { dayNumber: 1, parkLabel: "Disney's Animal Kingdom" },
+      { dayNumber: 2, parkLabel: 'Magic Kingdom' },
+      { dayNumber: 3, parkLabel: "Disney's Hollywood Studios" },
+      { dayNumber: 4, parkLabel: 'EPCOT' },
+    ]);
   });
 });
