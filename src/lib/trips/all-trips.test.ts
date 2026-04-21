@@ -79,6 +79,12 @@ describe('all trips helpers', () => {
     expect(routeContext?.trip.slug).toBe('planck-mega-disney-trip');
     expect(routeContext?.tripModule.summary.slug).toBe('planck-mega-disney-trip');
     expect(routeContext?.sectionConfig).toBeDefined();
+    expect(declanRouteContext?.sectionConfig.map((tab) => tab.label)).toEqual([
+      'Rides',
+      'Plan',
+      'Party',
+      'LL',
+    ]);
     expect(declanRouteContext?.sectionConfig.map((tab) => tab.section)).toEqual([
       'guide',
       'schedule',

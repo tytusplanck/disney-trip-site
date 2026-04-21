@@ -19,10 +19,10 @@ const VALID_TRIP_SECTIONS = new Set<TripSection>([
 ]);
 
 export const DEFAULT_SECTION_CONFIG: TripSectionTab[] = [
-  { label: 'Attractions', section: 'attractions' },
-  { label: 'Schedule', section: 'schedule' },
+  { label: 'Rides', section: 'attractions' },
+  { label: 'Plan', section: 'schedule' },
   { label: 'Party', section: 'party' },
-  { label: 'LL Picks', section: 'll' },
+  { label: 'LL', section: 'll' },
 ];
 
 export function getTripSectionConfig(tripModule: TripDataModule): TripSectionTab[] {

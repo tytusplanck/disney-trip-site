@@ -12,10 +12,10 @@ export const declanBigSummerTripData: TripDataModule = {
   schedule: declanBigSummerTripSchedule,
   attractions: declanBigSummerTripAttractions,
   sectionConfig: [
-    { label: 'Attractions', section: 'guide' },
-    { label: 'Schedule', section: 'schedule' },
+    { label: 'Rides', section: 'guide' },
+    { label: 'Plan', section: 'schedule' },
     { label: 'Party', section: 'travelers' },
-    { label: 'LL Picks', section: 'll' },
+    { label: 'LL', section: 'll' },
   ],
   guide: declanBigSummerTripGuide,
   travelerProfiles: declanBigSummerTripTravelerProfiles,
