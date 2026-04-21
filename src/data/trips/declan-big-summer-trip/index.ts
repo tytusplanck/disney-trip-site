@@ -14,9 +14,7 @@ export const declanBigSummerTripData: TripDataModule = {
   schedule: declanBigSummerTripSchedule,
   attractions: declanBigSummerTripAttractions,
   sectionConfig: [
-    { label: 'Rides', section: 'guide' },
     { label: 'Plan', section: 'schedule' },
-    { label: 'Party', section: 'travelers' },
     { label: 'LL', section: 'll' },
   ],
   llInventory: declanBigSummerTripLLInventory,

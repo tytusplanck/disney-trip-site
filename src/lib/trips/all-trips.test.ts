@@ -73,24 +73,14 @@ describe('all trips helpers', () => {
     expect(declanTrip?.title).toBe("Declan's Big Summer Trip");
     expect(declanModule?.summary.slug).toBe('declan-big-summer-trip');
     expect(getTripLandingPath(declanTrip ?? { slug: 'declan-big-summer-trip' }, declanModule)).toBe(
-      '/declan-big-summer-trip/guide',
+      '/declan-big-summer-trip/schedule',
     );
     expect(findTripDataModule(allTripsData.modules, 'missing-trip')).toBeUndefined();
     expect(routeContext?.trip.slug).toBe('planck-mega-disney-trip');
     expect(routeContext?.tripModule.summary.slug).toBe('planck-mega-disney-trip');
     expect(routeContext?.sectionConfig).toBeDefined();
-    expect(declanRouteContext?.sectionConfig.map((tab) => tab.label)).toEqual([
-      'Rides',
-      'Plan',
-      'Party',
-      'LL',
-    ]);
-    expect(declanRouteContext?.sectionConfig.map((tab) => tab.section)).toEqual([
-      'guide',
-      'schedule',
-      'travelers',
-      'll',
-    ]);
+    expect(declanRouteContext?.sectionConfig.map((tab) => tab.label)).toEqual(['Plan', 'LL']);
+    expect(declanRouteContext?.sectionConfig.map((tab) => tab.section)).toEqual(['schedule', 'll']);
 
     if (!planningTrip) {
       throw new Error('Expected seeded planning trip to exist.');

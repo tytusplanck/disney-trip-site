@@ -142,6 +142,10 @@ describe('style guardrails', () => {
 
     expect(tripTabsSource).toContain('data-tab-count={tabs.length}');
     expect(tripTabsSource).toContain('trip-tabs__link-label');
+    expect(componentsSource).toContain(".trip-tabs__rail[data-tab-count='2'] {");
+    expect(componentsSource).toContain('grid-template-columns: repeat(2, minmax(0, 1fr));');
+    expect(componentsSource).toContain(".trip-tabs__rail[data-tab-count='3'] {");
+    expect(componentsSource).toContain('grid-template-columns: repeat(3, minmax(0, 1fr));');
     expect(componentsSource).toContain(".trip-tabs__rail[data-tab-count='5'] {");
     expect(componentsSource).toContain('grid-template-columns: repeat(5, minmax(0, 1fr));');
     expect(componentsSource).toMatch(
