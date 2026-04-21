@@ -87,4 +87,24 @@ describe('trip section readiness helpers', () => {
     expect(hasTripSectionContent(guideData, 'travelers')).toBe(true);
     expect(hasTripSectionContent(guideData, 'logistics')).toBe(true);
   });
+
+  it('treats Lightning Lane as ready when inventory data exists', () => {
+    const llReadyTripData = {
+      ...emptyTripData,
+      llInventory: {
+        'magic-kingdom': {
+          parkId: 'magic-kingdom' as const,
+          parkLabel: 'Magic Kingdom',
+          hasTiers: true,
+          maxTier1: 1,
+          maxTier2: 2,
+          maxMultiPass: 0,
+          multiPassEstimatedPriceUsd: 29,
+          attractions: [],
+        },
+      },
+    };
+
+    expect(hasTripSectionContent(llReadyTripData, 'll')).toBe(true);
+  });
 });

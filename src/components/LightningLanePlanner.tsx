@@ -145,6 +145,7 @@ export default function LightningLanePlanner({ data }: Props) {
               inventory={data.inventory[day.parkId]}
               selections={currentPlan.parkDays[day.parkDate] ?? emptySelections()}
               hasChildren={data.hasChildren}
+              heightRestrictionsMatter={data.heightRestrictionsMatter}
             />
           ))}
         </>
@@ -181,6 +182,7 @@ export default function LightningLanePlanner({ data }: Props) {
               selections={activeDaySelections}
               onToggle={handleToggle}
               hasChildren={data.hasChildren}
+              heightRestrictionsMatter={data.heightRestrictionsMatter}
             />
           )}
 
@@ -236,12 +238,14 @@ function LLParkDayCard({
   selections,
   onToggle,
   hasChildren,
+  heightRestrictionsMatter,
 }: {
   day: LLParkDay;
   inventory: LLParkInventory;
   selections: LLParkDaySelections;
   onToggle: (id: string) => void;
   hasChildren?: boolean | undefined;
+  heightRestrictionsMatter: boolean;
 }) {
   const individualAttractions = inventory.attractions.filter(
     (attraction) => attraction.passType === 'individual',
@@ -276,10 +280,14 @@ function LLParkDayCard({
         selectedSinglePassEstimate={getSelectedSinglePassPriceEstimate(selections, inventory)}
         totalEstimate={getProjectedParkDayPriceEstimate(selections, inventory)}
         childEstimate={
-          hasChildren ? getChildParkDayPriceEstimate(selections, inventory) : undefined
+          hasChildren
+            ? getChildParkDayPriceEstimate(selections, inventory, heightRestrictionsMatter)
+            : undefined
         }
         heightRestrictedSelections={
-          hasChildren ? getHeightRestrictedSelections(selections, inventory) : undefined
+          hasChildren
+            ? getHeightRestrictedSelections(selections, inventory, heightRestrictionsMatter)
+            : undefined
         }
       />
 
@@ -292,6 +300,7 @@ function LLParkDayCard({
             disabled={false}
             inputType="checkbox"
             onToggle={onToggle}
+            showHeightRestrictions={heightRestrictionsMatter}
           />
         ))}
       </LLSection>
@@ -310,6 +319,7 @@ function LLParkDayCard({
                 disabled={false}
                 inputType="radio"
                 onToggle={onToggle}
+                showHeightRestrictions={heightRestrictionsMatter}
               />
             ))}
           </LLSection>
@@ -331,6 +341,7 @@ function LLParkDayCard({
                   disabled={!isSelected && atCap}
                   inputType="checkbox"
                   onToggle={onToggle}
+                  showHeightRestrictions={heightRestrictionsMatter}
                 />
               );
             })}
@@ -356,6 +367,7 @@ function LLParkDayCard({
                 disabled={!isSelected && atCap}
                 inputType="checkbox"
                 onToggle={onToggle}
+                showHeightRestrictions={heightRestrictionsMatter}
               />
             );
           })}
@@ -492,12 +504,14 @@ function LLAttractionRow({
   disabled,
   inputType,
   onToggle,
+  showHeightRestrictions,
 }: {
   attraction: LLAttraction;
   checked: boolean;
   disabled: boolean;
   inputType: 'checkbox' | 'radio';
   onToggle: (id: string) => void;
+  showHeightRestrictions: boolean;
 }) {
   const isClosed = attraction.closedDuringTrip;
   const isDisabled = disabled || isClosed;
@@ -522,19 +536,21 @@ function LLAttractionRow({
           <span className={`ll-row__label${isClosed ? ' ll-row__label--closed' : ''}`}>
             {attraction.attractionLabel}
           </span>
-          {(priceEstimate != null || isClosed || attraction.heightRestriction != null) && (
+          {(priceEstimate != null ||
+            isClosed ||
+            (showHeightRestrictions && attraction.heightRestriction != null)) && (
             <span className="ll-row__meta">
               {priceEstimate && (
                 <span className="ll-badge--price">{formatPriceBadge(priceEstimate)}</span>
               )}
               {isClosed && <span className="ll-badge--closed">CLOSED</span>}
-              {attraction.heightRestriction && (
+              {showHeightRestrictions && attraction.heightRestriction && (
                 <span className="ll-badge--height">{attraction.heightRestriction}</span>
               )}
             </span>
           )}
         </span>
-        {attraction.heightRestriction && (
+        {showHeightRestrictions && attraction.heightRestriction && (
           <span className="ll-row__note">Not available for children</span>
         )}
       </span>
@@ -547,11 +563,13 @@ function LLParkDayCardReadOnly({
   inventory,
   selections,
   hasChildren,
+  heightRestrictionsMatter,
 }: {
   day: LLParkDay;
   inventory: LLParkInventory;
   selections: LLParkDaySelections;
   hasChildren?: boolean | undefined;
+  heightRestrictionsMatter: boolean;
 }) {
   const multiPassCount = getMultiPassCount(selections, inventory);
   const multiPassMax = inventory.hasTiers
@@ -587,10 +605,14 @@ function LLParkDayCardReadOnly({
         selectedSinglePassEstimate={getSelectedSinglePassPriceEstimate(selections, inventory)}
         totalEstimate={getProjectedParkDayPriceEstimate(selections, inventory)}
         childEstimate={
-          hasChildren ? getChildParkDayPriceEstimate(selections, inventory) : undefined
+          hasChildren
+            ? getChildParkDayPriceEstimate(selections, inventory, heightRestrictionsMatter)
+            : undefined
         }
         heightRestrictedSelections={
-          hasChildren ? getHeightRestrictedSelections(selections, inventory) : undefined
+          hasChildren
+            ? getHeightRestrictedSelections(selections, inventory, heightRestrictionsMatter)
+            : undefined
         }
       />
 
@@ -609,12 +631,13 @@ function LLParkDayCardReadOnly({
                   <span className="ll-section__check-main">
                     &#10003; {attraction.attractionLabel}
                   </span>
-                  {(priceEstimate != null || attraction.heightRestriction != null) && (
+                  {(priceEstimate != null ||
+                    (heightRestrictionsMatter && attraction.heightRestriction != null)) && (
                     <span className="ll-section__check-meta">
                       {priceEstimate && (
                         <span className="ll-badge--price">{formatPriceBadge(priceEstimate)}</span>
                       )}
-                      {attraction.heightRestriction && (
+                      {heightRestrictionsMatter && attraction.heightRestriction && (
                         <span className="ll-badge--height">{attraction.heightRestriction}</span>
                       )}
                     </span>
@@ -637,7 +660,7 @@ function LLParkDayCardReadOnly({
                 <span className="ll-section__check-main">
                   &#10003; {attraction.attractionLabel}
                 </span>
-                {attraction.heightRestriction && (
+                {heightRestrictionsMatter && attraction.heightRestriction && (
                   <span className="ll-section__check-meta">
                     <span className="ll-badge--height">{attraction.heightRestriction}</span>
                   </span>

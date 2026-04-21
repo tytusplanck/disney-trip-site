@@ -16,6 +16,7 @@ import {
   toggleSelection,
 } from './ll-planner';
 import { casschwlanck2026TripData } from '../../data/trips/casschwlanck-2026/index';
+import { declanBigSummerTripData } from '../../data/trips/declan-big-summer-trip';
 
 const tripModule = casschwlanck2026TripData;
 const inventory = tripModule.llInventory ?? {};
@@ -83,6 +84,45 @@ describe('buildLLPlannerData', () => {
       'EPCOT',
       'Magic Kingdom',
     ]);
+  });
+
+  it("builds Declan's LL planner days from the July park schedule", () => {
+    const plannerData = buildLLPlannerData(declanBigSummerTripData);
+
+    expect(plannerData.parkDays.map((day) => day.parkDate)).toEqual([
+      '2026-07-07',
+      '2026-07-08',
+      '2026-07-09',
+      '2026-07-10',
+    ]);
+    expect(plannerData.parkDays.map((day) => day.parkLabel)).toEqual([
+      "Disney's Animal Kingdom",
+      'Magic Kingdom',
+      "Disney's Hollywood Studios",
+      'EPCOT',
+    ]);
+    expect(Object.keys(plannerData.defaultPlan.parkDays)).toEqual([
+      '2026-07-07',
+      '2026-07-08',
+      '2026-07-09',
+      '2026-07-10',
+    ]);
+    expect(plannerData.heightRestrictionsMatter).toBe(false);
+    expect(
+      plannerData.inventory['magic-kingdom'].attractions.find(
+        (attraction) => attraction.id === 'mk-big-thunder-mountain-railroad',
+      )?.closedDuringTrip,
+    ).toBe(false);
+    expect(
+      plannerData.inventory['magic-kingdom'].attractions.find(
+        (attraction) => attraction.id === 'mk-buzz-lightyears-space-ranger-spin',
+      )?.closedDuringTrip,
+    ).toBe(false);
+    expect(
+      plannerData.inventory['hollywood-studios'].attractions.find(
+        (attraction) => attraction.id === 'dhs-rock-n-roller-coaster-starring-the-muppets',
+      )?.closedDuringTrip,
+    ).toBe(false);
   });
 });
 
@@ -319,6 +359,33 @@ describe('pricing helpers', () => {
     expect(restricted).toHaveLength(1);
     expect(restricted[0]?.id).toBe('mk-tron-lightcycle-run');
     expect(restricted[0]?.heightRestriction).toBe('48in+');
+  });
+
+  it('suppresses child-specific pricing when height restrictions do not matter', () => {
+    const selections: LLParkDaySelections = {
+      illSelections: ['mk-seven-dwarfs-mine-train', 'mk-tron-lightcycle-run'],
+      tier1Selection: null,
+      tier2Selections: [],
+      multiPassSelections: [],
+    };
+
+    const childEstimate = getChildSinglePassPriceEstimate(selections, mkInventory, false);
+    const childTotal = getChildParkDayPriceEstimate(selections, mkInventory, false);
+
+    expect(childEstimate).toBeNull();
+    expect(childTotal).toBeNull();
+    expect(getHeightRestrictedSelections(selections, mkInventory, false)).toEqual([]);
+  });
+
+  it('allows selecting trip-overridden reopened attractions', () => {
+    const declanInventory = buildLLPlannerData(declanBigSummerTripData).inventory['magic-kingdom'];
+
+    let sel = emptySelections();
+    sel = toggleSelection(sel, 'mk-big-thunder-mountain-railroad', declanInventory);
+    expect(sel.tier1Selection).toBe('mk-big-thunder-mountain-railroad');
+
+    sel = toggleSelection(sel, 'mk-buzz-lightyears-space-ranger-spin', declanInventory);
+    expect(sel.tier2Selections).toContain('mk-buzz-lightyears-space-ranger-spin');
   });
 });
 

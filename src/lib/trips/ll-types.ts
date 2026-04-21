@@ -13,6 +13,10 @@ export interface LLProjectedPrice {
   estimatedRangeUsd?: LLPriceRange;
 }
 
+export interface LLPolicy {
+  heightRestrictionsMatter: boolean;
+}
+
 export interface LLAttraction {
   id: string;
   shortCode: string;
@@ -67,5 +71,6 @@ export interface LLPlannerData {
   inventory: Record<LLParkId, LLParkInventory>;
   defaultPlan: LLMemberPlan;
   ownerMemberId: string;
+  heightRestrictionsMatter: boolean;
   hasChildren?: boolean | undefined;
 }

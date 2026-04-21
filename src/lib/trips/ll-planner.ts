@@ -80,6 +80,7 @@ export function buildLLPlannerData(module: TripDataModule): LLPlannerData {
     inventory: inventory as Record<LLParkId, LLParkInventory>,
     defaultPlan,
     ownerMemberId: defaultPlan.memberId,
+    heightRestrictionsMatter: module.llPolicy?.heightRestrictionsMatter ?? true,
     hasChildren,
   };
 }
@@ -226,7 +227,12 @@ export function getSelectedSinglePassPriceEstimate(
 export function getChildSinglePassPriceEstimate(
   selections: LLParkDaySelections,
   inventory: LLParkInventory,
+  heightRestrictionsMatter = true,
 ): LLProjectedPrice | null {
+  if (!heightRestrictionsMatter) {
+    return null;
+  }
+
   const pricedSelections = selections.illSelections
     .map((id) => inventory.attractions.find((attraction) => attraction.id === id))
     .filter((attraction): attraction is LLAttraction => attraction != null)
@@ -240,9 +246,18 @@ export function getChildSinglePassPriceEstimate(
 export function getChildParkDayPriceEstimate(
   selections: LLParkDaySelections,
   inventory: LLParkInventory,
+  heightRestrictionsMatter = true,
 ): LLProjectedPrice | null {
+  if (!heightRestrictionsMatter) {
+    return null;
+  }
+
   const estimates: LLProjectedPrice[] = [];
-  const childSinglePassEstimate = getChildSinglePassPriceEstimate(selections, inventory);
+  const childSinglePassEstimate = getChildSinglePassPriceEstimate(
+    selections,
+    inventory,
+    heightRestrictionsMatter,
+  );
 
   if (getMultiPassCount(selections, inventory) > 0) {
     estimates.push(getMultiPassPriceEstimate(inventory));
@@ -258,7 +273,12 @@ export function getChildParkDayPriceEstimate(
 export function getHeightRestrictedSelections(
   selections: LLParkDaySelections,
   inventory: LLParkInventory,
+  heightRestrictionsMatter = true,
 ): LLAttraction[] {
+  if (!heightRestrictionsMatter) {
+    return [];
+  }
+
   return selections.illSelections
     .map((id) => inventory.attractions.find((attraction) => attraction.id === id))
     .filter((attraction): attraction is LLAttraction => attraction?.heightRestriction != null);
