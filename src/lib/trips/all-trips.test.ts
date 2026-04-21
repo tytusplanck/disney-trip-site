@@ -24,12 +24,13 @@ describe('all trips helpers', () => {
       })),
     ).toEqual([
       { status: 'planning', count: 1 },
-      { status: 'upcoming', count: 0 },
+      { status: 'upcoming', count: 1 },
       { status: 'completed', count: 1 },
     ]);
 
-    expect(sections[0]?.trips[0]?.title).toBe('Planck Mega Disney trip');
-    expect(sections[1]?.countLabel).toBe('0 trips');
+    expect(sections[0]?.trips[0]?.title).toBe("Declan's Big Summer Trip");
+    expect(sections[1]?.trips[0]?.title).toBe('Planck Mega Disney trip');
+    expect(sections[1]?.countLabel).toBe('1 trip');
     expect(sections[2]?.trips[0]?.title).toBe('Casschwlanck 2026');
     expect(sections[2]?.countLabel).toBe('1 trip');
   });
@@ -55,17 +56,35 @@ describe('all trips helpers', () => {
   it('finds trip modules and derives route context', () => {
     const planningTrip = findTripSummary(allTripsData.trips, 'planck-mega-disney-trip');
     const planningModule = findTripDataModule(allTripsData.modules, 'planck-mega-disney-trip');
+    const declanTrip = findTripSummary(allTripsData.trips, 'declan-big-summer-trip');
+    const declanModule = findTripDataModule(allTripsData.modules, 'declan-big-summer-trip');
     const routeContext = getTripRouteContext(
       allTripsData.trips,
       allTripsData.modules,
       'planck-mega-disney-trip',
     );
+    const declanRouteContext = getTripRouteContext(
+      allTripsData.trips,
+      allTripsData.modules,
+      'declan-big-summer-trip',
+    );
 
     expect(planningModule?.summary.slug).toBe('planck-mega-disney-trip');
+    expect(declanTrip?.title).toBe("Declan's Big Summer Trip");
+    expect(declanModule?.summary.slug).toBe('declan-big-summer-trip');
+    expect(getTripLandingPath(declanTrip ?? { slug: 'declan-big-summer-trip' }, declanModule)).toBe(
+      '/declan-big-summer-trip/guide',
+    );
     expect(findTripDataModule(allTripsData.modules, 'missing-trip')).toBeUndefined();
     expect(routeContext?.trip.slug).toBe('planck-mega-disney-trip');
     expect(routeContext?.tripModule.summary.slug).toBe('planck-mega-disney-trip');
     expect(routeContext?.sectionConfig).toBeDefined();
+    expect(declanRouteContext?.sectionConfig.map((tab) => tab.section)).toEqual([
+      'guide',
+      'schedule',
+      'travelers',
+      'll',
+    ]);
 
     if (!planningTrip) {
       throw new Error('Expected seeded planning trip to exist.');
