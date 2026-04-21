@@ -10,6 +10,7 @@ import {
   getChildSinglePassPriceEstimate,
   getHeightRestrictedSelections,
   getMultiPassCount,
+  getMultiPassPriceEstimate,
   getProjectedParkDayPriceEstimate,
   getSelectedSinglePassPriceEstimate,
   serializePlan,
@@ -387,12 +388,59 @@ describe('pricing helpers', () => {
     sel = toggleSelection(sel, 'mk-buzz-lightyears-space-ranger-spin', declanInventory);
     expect(sel.tier2Selections).toContain('mk-buzz-lightyears-space-ranger-spin');
   });
+
+  it("uses Declan's July Thrill-Data price estimates in the default plan", () => {
+    const plannerData = buildLLPlannerData(declanBigSummerTripData);
+    const dayTotals = plannerData.parkDays.map((day) => {
+      const inventory = plannerData.inventory[day.parkId];
+      const selections = plannerData.defaultPlan.parkDays[day.parkDate] ?? emptySelections();
+
+      return {
+        parkDate: day.parkDate,
+        multiPass: getMultiPassPriceEstimate(inventory).estimatedPriceUsd,
+        singlePass:
+          getSelectedSinglePassPriceEstimate(selections, inventory)?.estimatedPriceUsd ?? 0,
+        total: getProjectedParkDayPriceEstimate(selections, inventory)?.estimatedPriceUsd ?? 0,
+      };
+    });
+
+    expect(dayTotals).toEqual([
+      {
+        parkDate: '2026-07-07',
+        multiPass: 16,
+        singlePass: 15,
+        total: 31,
+      },
+      {
+        parkDate: '2026-07-08',
+        multiPass: 25,
+        singlePass: 30,
+        total: 55,
+      },
+      {
+        parkDate: '2026-07-09',
+        multiPass: 24,
+        singlePass: 20,
+        total: 44,
+      },
+      {
+        parkDate: '2026-07-10',
+        multiPass: 20,
+        singlePass: 16,
+        total: 36,
+      },
+    ]);
+    expect(dayTotals.reduce((sum, day) => sum + day.total, 0)).toBe(166);
+  });
 });
 
 describe('URL serialization round-trip', () => {
   const plannerData = buildLLPlannerData(tripModule);
   const plannerInventory = plannerData.inventory;
   const parkDays = plannerData.parkDays;
+  const declanPlannerData = buildLLPlannerData(declanBigSummerTripData);
+  const declanPlannerInventory = declanPlannerData.inventory;
+  const declanParkDays = declanPlannerData.parkDays;
 
   it('serializes and deserializes a plan correctly', () => {
     const plan: LLMemberPlan = {
@@ -457,5 +505,13 @@ describe('URL serialization round-trip', () => {
       parkDays: Object.fromEntries(parkDays.map((d) => [d.parkDate, emptySelections()])),
     };
     expect(serializePlan(plan, plannerInventory, parkDays)).toBe('');
+  });
+
+  it("serializes Declan's default plan to the current shared hash", () => {
+    expect(
+      serializePlan(declanPlannerData.defaultPlan, declanPlannerInventory, declanParkDays),
+    ).toBe(
+      'll=tytus-planck:0707=i.afp.m.ee.nrj.ks,0708=i.sdmt.tron.t1.btmr.t2.hm.blsrs,0709=i.rotr.t1.sdd.t2.tsm.tzt,0710=i.gotr.t1.tt.t2.sal.lwl',
+    );
   });
 });

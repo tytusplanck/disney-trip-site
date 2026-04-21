@@ -15,8 +15,8 @@ export const declanBigSummerTripLLDefaultPlan: LLMemberPlan = {
     },
     '2026-07-08': {
       illSelections: ['mk-seven-dwarfs-mine-train', 'mk-tron-lightcycle-run'],
-      tier1Selection: 'mk-tianas-bayou-adventure',
-      tier2Selections: ['mk-haunted-mansion', 'mk-the-many-adventures-of-winnie-the-pooh'],
+      tier1Selection: 'mk-big-thunder-mountain-railroad',
+      tier2Selections: ['mk-haunted-mansion', 'mk-buzz-lightyears-space-ranger-spin'],
       multiPassSelections: [],
     },
     '2026-07-09': {
@@ -27,7 +27,7 @@ export const declanBigSummerTripLLDefaultPlan: LLMemberPlan = {
     },
     '2026-07-10': {
       illSelections: ['epcot-guardians-of-the-galaxy-cosmic-rewind'],
-      tier1Selection: 'epcot-frozen-ever-after',
+      tier1Selection: 'epcot-test-track',
       tier2Selections: ['epcot-soarin-around-the-world', 'epcot-living-with-the-land'],
       multiPassSelections: [],
     },

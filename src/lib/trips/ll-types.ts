@@ -74,3 +74,18 @@ export interface LLPlannerData {
   heightRestrictionsMatter: boolean;
   hasChildren?: boolean | undefined;
 }
+
+export interface LLTripClosure {
+  closed: true;
+  note: string | null;
+}
+
+export interface LLTripPricing {
+  attractions: Record<string, LLProjectedPrice>;
+  multiPass: Record<LLParkId, LLProjectedPrice>;
+}
+
+export interface LLTripOverlay {
+  pricing: LLTripPricing;
+  closures?: Record<string, LLTripClosure>;
+}
