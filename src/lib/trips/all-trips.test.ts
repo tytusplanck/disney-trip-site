@@ -78,7 +78,14 @@ describe('all trips helpers', () => {
     expect(findTripDataModule(allTripsData.modules, 'missing-trip')).toBeUndefined();
     expect(routeContext?.trip.slug).toBe('planck-mega-disney-trip');
     expect(routeContext?.tripModule.summary.slug).toBe('planck-mega-disney-trip');
-    expect(routeContext?.sectionConfig).toBeDefined();
+    expect(routeContext?.sectionConfig.map((tab) => tab.label)).toEqual(['Rides', 'Plan', 'LL']);
+    expect(routeContext?.sectionConfig.map((tab) => tab.section)).toEqual([
+      'guide',
+      'schedule',
+      'll',
+    ]);
+    expect(planningModule?.travelerProfiles).toBeUndefined();
+    expect(planningModule?.logistics).toBeUndefined();
     expect(declanRouteContext?.sectionConfig.map((tab) => tab.label)).toEqual(['Plan', 'LL']);
     expect(declanRouteContext?.sectionConfig.map((tab) => tab.section)).toEqual(['schedule', 'll']);
 

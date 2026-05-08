@@ -1,11 +1,11 @@
 import type { TripDataModule } from '../../../lib/trips/types';
 import { planckMegaDisneyTripAttractions } from './attractions';
 import { planckMegaDisneyTripGuide } from './guide';
-import { planckMegaDisneyTripLogistics } from './logistics';
+import { planckMegaDisneyTripLLInventory } from './ll-inventory';
+import { planckMegaDisneyTripLLDefaultPlan } from './ll-selections';
 import { planckMegaDisneyTripParty } from './party';
 import { planckMegaDisneyTripSchedule } from './schedule';
 import { planckMegaDisneyTripSummary } from './summary';
-import { planckMegaDisneyTripTravelerProfiles } from './traveler-profiles';
 
 export const planckMegaDisneyTripData: TripDataModule = {
   summary: planckMegaDisneyTripSummary,
@@ -15,11 +15,12 @@ export const planckMegaDisneyTripData: TripDataModule = {
   sectionConfig: [
     { label: 'Rides', section: 'guide' },
     { label: 'Plan', section: 'schedule' },
-    { label: 'Party', section: 'travelers' },
     { label: 'LL', section: 'll' },
-    { label: 'Info', section: 'logistics' },
   ],
+  llInventory: planckMegaDisneyTripLLInventory,
+  llDefaultPlan: planckMegaDisneyTripLLDefaultPlan,
+  llPolicy: {
+    heightRestrictionsMatter: false,
+  },
   guide: planckMegaDisneyTripGuide,
-  travelerProfiles: planckMegaDisneyTripTravelerProfiles,
-  logistics: planckMegaDisneyTripLogistics,
 };

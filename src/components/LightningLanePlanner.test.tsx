@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import LightningLanePlanner from './LightningLanePlanner';
 import { casschwlanck2026TripData } from '../data/trips/casschwlanck-2026';
 import { declanBigSummerTripData } from '../data/trips/declan-big-summer-trip';
+import { planckMegaDisneyTripData } from '../data/trips/planck-mega-disney-trip';
 import { buildLLPlannerData } from '../lib/trips/ll-planner';
 
 function renderPlanner() {
@@ -15,6 +16,12 @@ function renderDeclanPlanner() {
   window.location.hash = '';
 
   return render(<LightningLanePlanner data={buildLLPlannerData(declanBigSummerTripData)} />);
+}
+
+function renderPlanckPlanner() {
+  window.location.hash = '';
+
+  return render(<LightningLanePlanner data={buildLLPlannerData(planckMegaDisneyTripData)} />);
 }
 
 describe('LightningLanePlanner pricing', () => {
@@ -92,5 +99,24 @@ describe('LightningLanePlanner pricing', () => {
       screen.getByRole('radio', { name: /Rock 'n' Roller Coaster Starring The Muppets/i }),
     ).toBeEnabled();
     expect(screen.queryByText('CLOSED')).not.toBeInTheDocument();
+  });
+
+  it("hides height-specific UI for Planck's trip and shows the November estimates", () => {
+    renderPlanckPlanner();
+
+    expect(screen.queryByText('Child total')).not.toBeInTheDocument();
+    expect(screen.queryByText('Not available for children')).not.toBeInTheDocument();
+    expect(screen.queryByText('48in+')).not.toBeInTheDocument();
+
+    const animalKingdomHeading = screen.getByRole('heading', {
+      name: "Disney's Animal Kingdom",
+    });
+    const animalKingdomCard = animalKingdomHeading.closest('.ll-card');
+    if (!animalKingdomCard) {
+      throw new Error('Expected Animal Kingdom LL card to render');
+    }
+
+    expect(within(animalKingdomCard as HTMLElement).getAllByText('$39')).not.toHaveLength(0);
+    expect(within(animalKingdomCard as HTMLElement).getAllByText('$17')).not.toHaveLength(0);
   });
 });

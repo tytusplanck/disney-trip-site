@@ -18,6 +18,7 @@ import {
 } from './ll-planner';
 import { casschwlanck2026TripData } from '../../data/trips/casschwlanck-2026/index';
 import { declanBigSummerTripData } from '../../data/trips/declan-big-summer-trip';
+import { planckMegaDisneyTripData } from '../../data/trips/planck-mega-disney-trip';
 
 const tripModule = casschwlanck2026TripData;
 const inventory = tripModule.llInventory ?? {};
@@ -124,6 +125,30 @@ describe('buildLLPlannerData', () => {
         (attraction) => attraction.id === 'dhs-rock-n-roller-coaster-starring-the-muppets',
       )?.closedDuringTrip,
     ).toBe(false);
+  });
+
+  it("builds the Planck family's LL planner days from the November park schedule", () => {
+    const plannerData = buildLLPlannerData(planckMegaDisneyTripData);
+
+    expect(plannerData.parkDays.map((day) => day.parkDate)).toEqual([
+      '2026-11-08',
+      '2026-11-10',
+      '2026-11-12',
+      '2026-11-14',
+    ]);
+    expect(plannerData.parkDays.map((day) => day.parkLabel)).toEqual([
+      "Disney's Animal Kingdom",
+      'EPCOT',
+      'Magic Kingdom',
+      "Disney's Hollywood Studios",
+    ]);
+    expect(Object.keys(plannerData.defaultPlan.parkDays)).toEqual([
+      '2026-11-08',
+      '2026-11-10',
+      '2026-11-12',
+      '2026-11-14',
+    ]);
+    expect(plannerData.heightRestrictionsMatter).toBe(false);
   });
 });
 
@@ -432,6 +457,50 @@ describe('pricing helpers', () => {
     ]);
     expect(dayTotals.reduce((sum, day) => sum + day.total, 0)).toBe(166);
   });
+
+  it("uses Planck's November Thrill-Data price estimates in the default plan", () => {
+    const plannerData = buildLLPlannerData(planckMegaDisneyTripData);
+    const dayTotals = plannerData.parkDays.map((day) => {
+      const inventory = plannerData.inventory[day.parkId];
+      const selections = plannerData.defaultPlan.parkDays[day.parkDate] ?? emptySelections();
+
+      return {
+        parkDate: day.parkDate,
+        multiPass: getMultiPassPriceEstimate(inventory).estimatedPriceUsd,
+        singlePass:
+          getSelectedSinglePassPriceEstimate(selections, inventory)?.estimatedPriceUsd ?? 0,
+        total: getProjectedParkDayPriceEstimate(selections, inventory)?.estimatedPriceUsd ?? 0,
+      };
+    });
+
+    expect(dayTotals).toEqual([
+      {
+        parkDate: '2026-11-08',
+        multiPass: 22,
+        singlePass: 17,
+        total: 39,
+      },
+      {
+        parkDate: '2026-11-10',
+        multiPass: 24,
+        singlePass: 18,
+        total: 42,
+      },
+      {
+        parkDate: '2026-11-12',
+        multiPass: 32,
+        singlePass: 34,
+        total: 66,
+      },
+      {
+        parkDate: '2026-11-14',
+        multiPass: 29,
+        singlePass: 25,
+        total: 54,
+      },
+    ]);
+    expect(dayTotals.reduce((sum, day) => sum + day.total, 0)).toBe(201);
+  });
 });
 
 describe('URL serialization round-trip', () => {
@@ -441,6 +510,9 @@ describe('URL serialization round-trip', () => {
   const declanPlannerData = buildLLPlannerData(declanBigSummerTripData);
   const declanPlannerInventory = declanPlannerData.inventory;
   const declanParkDays = declanPlannerData.parkDays;
+  const planckPlannerData = buildLLPlannerData(planckMegaDisneyTripData);
+  const planckPlannerInventory = planckPlannerData.inventory;
+  const planckParkDays = planckPlannerData.parkDays;
 
   it('serializes and deserializes a plan correctly', () => {
     const plan: LLMemberPlan = {
@@ -512,6 +584,14 @@ describe('URL serialization round-trip', () => {
       serializePlan(declanPlannerData.defaultPlan, declanPlannerInventory, declanParkDays),
     ).toBe(
       'll=tytus-planck:0707=i.afp.m.ee.nrj.ks,0708=i.sdmt.tron.t1.btmr.t2.hm.blsrs,0709=i.rotr.t1.sdd.t2.tsm.tzt,0710=i.gotr.t1.tt.t2.sal.lwl',
+    );
+  });
+
+  it("serializes Planck's default plan to the current shared hash", () => {
+    expect(
+      serializePlan(planckPlannerData.defaultPlan, planckPlannerInventory, planckParkDays),
+    ).toBe(
+      'll=tytus-planck:1108=i.afp.m.ee.nrj.ks,1110=i.gotr.t1.tt.t2.sal.lwl,1112=i.sdmt.tron.t1.btmr.t2.hm.blsrs,1114=i.rotr.t1.sdd.t2.tsm.tzt',
     );
   });
 });
