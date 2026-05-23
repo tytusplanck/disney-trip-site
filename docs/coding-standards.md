@@ -24,6 +24,17 @@ This repository is a private Disney trip site built to be maintained primarily b
 - Shared trip registries may live in `/src/data` when multiple routes and components need the same trip summary records
 - Keep route-owned editorial copy separate from shared trip records so layout components stay presentation-only
 
+## Maintainability Guardrails
+
+- Treat 1000 lines as a hard review threshold for source files. Do not push a file from below 1000 lines to above 1000 lines without decomposing first or documenting the structural reason in the change.
+- Do not add new feature blocks to already-sprawling files. `src/styles/trip-pages.css` is past the threshold; new route or component styling should move toward focused stylesheet modules instead of making that file larger.
+- `src/lib/trips/party-analytics.ts` is near the threshold and mixes persona scoring, affinity pair math, clustering, cohort contrast, and analysis DTO construction. New party-analysis behavior should first extract the relevant ownership slice into a focused module rather than adding another branch to that file.
+- Keep React islands as orchestration shells plus small view components. If a component starts combining URL state, editing flows, read-only summaries, price math display, and row rendering, split the view pieces before adding another mode.
+- Prefer deleting concepts over centralizing them when behavior allows it. New booleans, nullable modes, or repeated special-case checks should be treated as a missing model until proven otherwise.
+- Do not hide data invariants behind casts. If a helper needs a full park inventory, exact trip section, or validated route section, make the type boundary explicit instead of casting at the call site.
+- Source-inspection tests are allowed only for narrow guardrails such as security, CSS token contracts, and route shell contracts. Prefer behavioral tests for application behavior so future structural simplifications are not blocked by implementation-string assertions.
+- When a strict no-behavior-change cleanup is needed, keep the focused tests green before and after, then run the full verification gate. Do not combine structural refactors with content or visual behavior changes.
+
 ## Astro and React Policy
 
 - Default to Astro components and server rendering
