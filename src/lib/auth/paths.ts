@@ -35,6 +35,11 @@ export function sanitizeRedirectTarget(candidate: FormDataEntryValue | null | un
     }
 
     const normalizedPathname = normalizePathname(url.pathname);
+    const { isPublic } = getPublicPathDecision(normalizedPathname);
+
+    if (isPublic || normalizedPathname.startsWith('/api/')) {
+      return '/';
+    }
 
     return `${normalizedPathname}${url.search}${url.hash}`;
   } catch {

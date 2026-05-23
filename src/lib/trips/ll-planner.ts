@@ -500,7 +500,7 @@ export function deserializePlan(
 
 function parseDaySelections(
   encoded: string,
-  _parkInventory: LLParkInventory,
+  parkInventory: LLParkInventory,
   codeToId: Map<string, string>,
 ): LLParkDaySelections {
   const result = emptySelections();
@@ -528,19 +528,46 @@ function parseDaySelections(
 
     const attractionId = codeToId.get(token);
     if (!attractionId) continue;
+    const attraction = parkInventory.attractions.find((candidate) => candidate.id === attractionId);
+    if (!attraction || attraction.closedDuringTrip) continue;
 
     switch (mode) {
       case 'i':
-        result.illSelections.push(attractionId);
+        if (attraction.passType === 'individual' && !result.illSelections.includes(attractionId)) {
+          result.illSelections.push(attractionId);
+        }
         break;
       case 't1':
-        result.tier1Selection = attractionId;
+        if (
+          parkInventory.hasTiers &&
+          attraction.passType === 'multipass' &&
+          attraction.tier === 'tier1' &&
+          result.tier1Selection == null
+        ) {
+          result.tier1Selection = attractionId;
+        }
         break;
       case 't2':
-        result.tier2Selections.push(attractionId);
+        if (
+          parkInventory.hasTiers &&
+          attraction.passType === 'multipass' &&
+          attraction.tier === 'tier2' &&
+          result.tier2Selections.length < parkInventory.maxTier2 &&
+          !result.tier2Selections.includes(attractionId)
+        ) {
+          result.tier2Selections.push(attractionId);
+        }
         break;
       case 'm':
-        result.multiPassSelections.push(attractionId);
+        if (
+          !parkInventory.hasTiers &&
+          attraction.passType === 'multipass' &&
+          attraction.tier === 'notier' &&
+          result.multiPassSelections.length < parkInventory.maxMultiPass &&
+          !result.multiPassSelections.includes(attractionId)
+        ) {
+          result.multiPassSelections.push(attractionId);
+        }
         break;
     }
   }

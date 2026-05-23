@@ -24,4 +24,10 @@ describe('sanitizeRedirectTarget', () => {
     expect(sanitizeRedirectTarget('https://example.com')).toBe('/');
     expect(sanitizeRedirectTarget('//example.com')).toBe('/');
   });
+
+  it('falls back to the homepage for public and API route targets', () => {
+    expect(sanitizeRedirectTarget('/login')).toBe('/');
+    expect(sanitizeRedirectTarget('/_astro/app.js')).toBe('/');
+    expect(sanitizeRedirectTarget('/api/auth/logout')).toBe('/');
+  });
 });

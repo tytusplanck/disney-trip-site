@@ -601,6 +601,27 @@ describe('URL serialization round-trip', () => {
     expect(deserializePlan('#ll=', plannerInventory, parkDays)).toBeNull();
   });
 
+  it('sanitizes malformed shared links against park inventory rules', () => {
+    const result = deserializePlan(
+      '#ll=kelsey:0331=t1.rnrc,0404=i.sdmt.sdmt.t2.hm.poc.dum.tzt.t1.jc.ppf',
+      plannerInventory,
+      parkDays,
+    );
+
+    expect(result).not.toBeNull();
+
+    const hollywoodStudiosSelections = result?.plan.parkDays['2026-03-31'];
+    expect(hollywoodStudiosSelections?.tier1Selection).toBeNull();
+
+    const magicKingdomSelections = result?.plan.parkDays['2026-04-04'];
+    expect(magicKingdomSelections?.illSelections).toEqual(['mk-seven-dwarfs-mine-train']);
+    expect(magicKingdomSelections?.tier1Selection).toBe('mk-jungle-cruise');
+    expect(magicKingdomSelections?.tier2Selections).toEqual([
+      'mk-haunted-mansion',
+      'mk-pirates-of-the-caribbean',
+    ]);
+  });
+
   it('returns empty string for empty plan', () => {
     const plan: LLMemberPlan = {
       memberId: 'tytus',
