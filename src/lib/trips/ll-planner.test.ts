@@ -47,8 +47,8 @@ describe('buildLLPlannerData', () => {
   });
 
   it('throws if llInventory is missing', () => {
-    const { llInventory: _, ...noLL } = tripModule;
-    expect(() => buildLLPlannerData(noLL as typeof tripModule)).toThrow('LL data is required');
+    const { llInventory: _llInventory, ...noLL } = tripModule;
+    expect(() => buildLLPlannerData(noLL)).toThrow('LL data is required');
   });
 
   it('sets hasChildren when party grouping has a kids cohort', () => {
@@ -86,6 +86,36 @@ describe('buildLLPlannerData', () => {
       'EPCOT',
       'Magic Kingdom',
     ]);
+  });
+
+  it('rejects park schedule labels that are not mapped to LL park inventory', () => {
+    const unmappedParkTripModule = {
+      ...tripModule,
+      schedule: tripModule.schedule.map((entry, index) =>
+        index === 1
+          ? {
+              ...entry,
+              parkLabel: 'Universal Studios',
+            }
+          : entry,
+      ),
+    };
+
+    expect(() => buildLLPlannerData(unmappedParkTripModule)).toThrow(
+      'Unknown LL park label: Universal Studios',
+    );
+  });
+
+  it('rejects LL inventory that is missing a scheduled park day', () => {
+    const { 'animal-kingdom': _, ...incompleteInventory } = tripModule.llInventory ?? {};
+    const incompleteInventoryTripModule = {
+      ...tripModule,
+      llInventory: incompleteInventory,
+    };
+
+    expect(() => buildLLPlannerData(incompleteInventoryTripModule)).toThrow(
+      'Missing LL inventory for park: animal-kingdom',
+    );
   });
 
   it("builds Declan's LL planner days from the July park schedule", () => {

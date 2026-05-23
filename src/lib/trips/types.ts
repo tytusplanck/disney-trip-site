@@ -1,4 +1,4 @@
-import type { LLMemberPlan, LLPolicy, LLParkInventory } from './ll-types';
+import type { LLMemberPlan, LLParkId, LLPolicy, LLParkInventory } from './ll-types';
 
 export type TripStatus = 'planning' | 'upcoming' | 'completed';
 
@@ -117,7 +117,7 @@ export interface TripDataModule {
   schedule: TripScheduleEntry[];
   attractions: TripAttractionPreference[];
   partyGrouping?: TripPartyGroupingConfig;
-  llInventory?: Record<string, LLParkInventory>;
+  llInventory?: Partial<Record<LLParkId, LLParkInventory>>;
   llDefaultPlan?: LLMemberPlan;
   llPolicy?: LLPolicy;
   sectionConfig?: TripSectionTab[];

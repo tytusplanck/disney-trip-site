@@ -27,19 +27,53 @@ const MONTHS = [
   'Dec',
 ] as const;
 
-const PARK_LABEL_TO_ID: Record<string, LLParkId> = {
+const PARK_LABEL_TO_ID: Readonly<Record<string, LLParkId | undefined>> = {
   'Magic Kingdom': 'magic-kingdom',
   EPCOT: 'epcot',
   "Disney's Hollywood Studios": 'hollywood-studios',
   "Disney's Animal Kingdom": 'animal-kingdom',
 };
 
+function getParkIdForLabel(parkLabel: string): LLParkId {
+  const parkId = PARK_LABEL_TO_ID[parkLabel];
+
+  if (!parkId) {
+    throw new Error(`Unknown LL park label: ${parkLabel}`);
+  }
+
+  return parkId;
+}
+
+function getRequiredParkInventory(
+  inventory: Partial<Record<LLParkId, LLParkInventory>>,
+  parkId: LLParkId,
+): LLParkInventory {
+  const parkInventory = inventory[parkId];
+
+  if (!parkInventory) {
+    throw new Error(`Missing LL inventory for park: ${parkId}`);
+  }
+
+  return parkInventory;
+}
+
+function getRequiredLLInventory(
+  inventory: Partial<Record<LLParkId, LLParkInventory>>,
+): Record<LLParkId, LLParkInventory> {
+  return {
+    'magic-kingdom': getRequiredParkInventory(inventory, 'magic-kingdom'),
+    epcot: getRequiredParkInventory(inventory, 'epcot'),
+    'hollywood-studios': getRequiredParkInventory(inventory, 'hollywood-studios'),
+    'animal-kingdom': getRequiredParkInventory(inventory, 'animal-kingdom'),
+  };
+}
+
 export function buildLLPlannerData(module: TripDataModule): LLPlannerData {
   if (!module.llInventory || !module.llDefaultPlan) {
     throw new Error('LL data is required to build planner data');
   }
 
-  const inventory = module.llInventory;
+  const inventory = getRequiredLLInventory(module.llInventory);
   const defaultPlan = module.llDefaultPlan;
   const firstEntry = module.schedule[0];
   if (!firstEntry) throw new Error('Schedule is empty');
@@ -53,7 +87,7 @@ export function buildLLPlannerData(module: TripDataModule): LLPlannerData {
     .map((entry) => {
       const d = new Date(entry.date + 'T12:00:00');
       const dayNumber = Math.round((d.getTime() - tripStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-      const parkId = PARK_LABEL_TO_ID[entry.parkLabel] ?? 'magic-kingdom';
+      const parkId = getParkIdForLabel(entry.parkLabel);
       const monthLabel = MONTHS[d.getMonth()] ?? '';
       const weekdayLabel = WEEKDAYS[d.getDay()] ?? '';
 
@@ -77,7 +111,7 @@ export function buildLLPlannerData(module: TripDataModule): LLPlannerData {
   return {
     party: module.party,
     parkDays,
-    inventory: inventory as Record<LLParkId, LLParkInventory>,
+    inventory,
     defaultPlan,
     ownerMemberId: defaultPlan.memberId,
     heightRestrictionsMatter: module.llPolicy?.heightRestrictionsMatter ?? true,

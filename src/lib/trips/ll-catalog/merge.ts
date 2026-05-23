@@ -47,11 +47,12 @@ export function mergeLLInventory(
     }
   }
 
-  const result = {} as Record<LLParkId, LLParkInventory>;
-  for (const parkId of PARK_IDS) {
-    result[parkId] = mergePark(catalog[parkId], overlay);
-  }
-  return result;
+  return {
+    'magic-kingdom': mergePark(catalog['magic-kingdom'], overlay),
+    epcot: mergePark(catalog.epcot, overlay),
+    'hollywood-studios': mergePark(catalog['hollywood-studios'], overlay),
+    'animal-kingdom': mergePark(catalog['animal-kingdom'], overlay),
+  };
 }
 
 function mergePark(park: LLCatalogPark, overlay: LLTripOverlay): LLParkInventory {

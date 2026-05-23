@@ -13,6 +13,7 @@
 - Use [`/src/lib/trips/readiness.ts`](../src/lib/trips/readiness.ts) to decide when each protected section can leave placeholder mode; attractions, schedule, and party routes each unlock when their own arrays are populated.
 - When one planner route needs richer interactive filtering, add a dedicated view-model helper under [`/src/lib/trips`](../src/lib/trips) for that surface instead of forcing unrelated logic into `details.ts`.
 - Keep analytics and renderer DTOs separate when a planning surface needs both. Analytics helpers may expose richer testable results, but the object passed into a component should contain only the fields that component actually renders.
+- Lightning Lane planner data treats scheduled park labels as a strict boundary. Park-day schedule labels must map to the canonical Disney park ids, and LL inventory must include every canonical park before planner data is built; do not silently fall back to another park.
 
 ## Route-Owned Copy
 

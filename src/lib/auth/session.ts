@@ -30,13 +30,13 @@ function decodePayload(encodedPayload: string): SessionPayload | null {
 }
 
 function isSessionPayload(value: unknown): value is SessionPayload {
-  if (typeof value !== 'object' || value === null) {
-    return false;
-  }
+  if (!isRecord(value)) return false;
 
-  const candidate = value as Record<string, unknown>;
+  return value['scope'] === SESSION_SCOPE && typeof value['issuedAt'] === 'string';
+}
 
-  return candidate['scope'] === SESSION_SCOPE && typeof candidate['issuedAt'] === 'string';
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
 }
 
 function createSignature(payload: string, secret: string): string {
