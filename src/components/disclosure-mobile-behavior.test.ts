@@ -32,6 +32,7 @@ describe('disclosure mobile behavior wiring', () => {
     expect(
       islandDisclosureSource.includes("data-desktop-default-open={defaultOpen ? 'true' : 'false'}"),
     ).toBe(true);
+    expect(islandDisclosureSource.includes('suppressHydrationWarning')).toBe(true);
   });
 
   it('syncs disclosure open state from data-mobile-behavior in the shared layout script', () => {

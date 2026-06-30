@@ -79,8 +79,8 @@ describe('attractions explorer helpers', () => {
       })),
     ).toEqual([
       { dayNumber: 1, parkLabel: "Disney's Animal Kingdom" },
-      { dayNumber: 2, parkLabel: 'Magic Kingdom' },
-      { dayNumber: 3, parkLabel: "Disney's Hollywood Studios" },
+      { dayNumber: 2, parkLabel: "Disney's Hollywood Studios" },
+      { dayNumber: 3, parkLabel: 'Magic Kingdom' },
       { dayNumber: 4, parkLabel: 'EPCOT' },
     ]);
   });

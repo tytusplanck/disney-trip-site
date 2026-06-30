@@ -129,8 +129,8 @@ describe('buildLLPlannerData', () => {
     ]);
     expect(plannerData.parkDays.map((day) => day.parkLabel)).toEqual([
       "Disney's Animal Kingdom",
-      'Magic Kingdom',
       "Disney's Hollywood Studios",
+      'Magic Kingdom',
       'EPCOT',
     ]);
     expect(Object.keys(plannerData.defaultPlan.parkDays)).toEqual([
@@ -139,6 +139,12 @@ describe('buildLLPlannerData', () => {
       '2026-07-09',
       '2026-07-10',
     ]);
+    expect(plannerData.defaultPlan.parkDays['2026-07-08']?.returnWindows).toMatchObject({
+      'dhs-star-tours-the-adventures-continue': '9:20 AM - 10:20 AM',
+      'dhs-star-wars-rise-of-the-resistance': '12:45 PM - 1:45 PM',
+      'dhs-toy-story-mania': '4:10 PM - 5:10 PM',
+      'dhs-slinky-dog-dash': '5:30 PM - 6:30 PM',
+    });
     expect(plannerData.heightRestrictionsMatter).toBe(false);
     expect(
       plannerData.inventory['magic-kingdom'].attractions.find(
@@ -155,6 +161,21 @@ describe('buildLLPlannerData', () => {
         (attraction) => attraction.id === 'dhs-rock-n-roller-coaster-starring-the-muppets',
       )?.closedDuringTrip,
     ).toBe(false);
+    expect(
+      plannerData.inventory['hollywood-studios'].attractions.find(
+        (attraction) => attraction.id === 'dhs-disney-jr-mickey-mouse-clubhouse-live',
+      ),
+    ).toMatchObject({
+      attractionLabel: 'Disney Jr. Mickey Mouse Clubhouse Live!',
+      passType: 'multipass',
+      tier: 'tier2',
+      closedDuringTrip: false,
+    });
+    expect(
+      plannerData.inventory.epcot.attractions.find(
+        (attraction) => attraction.id === 'epcot-soarin-around-the-world',
+      )?.attractionLabel,
+    ).toBe("Soarin' Across America");
   });
 
   it("builds the Planck family's LL planner days from the November park schedule", () => {
@@ -468,15 +489,15 @@ describe('pricing helpers', () => {
       },
       {
         parkDate: '2026-07-08',
-        multiPass: 25,
-        singlePass: 30,
-        total: 55,
-      },
-      {
-        parkDate: '2026-07-09',
         multiPass: 24,
         singlePass: 20,
         total: 44,
+      },
+      {
+        parkDate: '2026-07-09',
+        multiPass: 25,
+        singlePass: 30,
+        total: 55,
       },
       {
         parkDate: '2026-07-10',
@@ -631,11 +652,21 @@ describe('URL serialization round-trip', () => {
   });
 
   it("serializes Declan's default plan to the current shared hash", () => {
-    expect(
-      serializePlan(declanPlannerData.defaultPlan, declanPlannerInventory, declanParkDays),
-    ).toBe(
-      'll=tytus-planck:0707=i.afp.m.ee.nrj.ks,0708=i.sdmt.tron.t1.btmr.t2.hm.blsrs,0709=i.rotr.t1.sdd.t2.tsm.tzt,0710=i.gotr.t1.tt.t2.sal.lwl',
+    const hash = serializePlan(
+      declanPlannerData.defaultPlan,
+      declanPlannerInventory,
+      declanParkDays,
     );
+
+    expect(hash).toContain('0708=i.rotr.t1.sdd.t2.st.tsm.w.');
+    expect(hash).toContain('rotr~12%3A45%20PM%20-%201%3A45%20PM');
+    expect(hash).toContain('0710=i.gotr.t1.tt.t2.lwl.sal.w.');
+
+    const result = deserializePlan(`#${hash}`, declanPlannerInventory, declanParkDays);
+    expect(result?.plan.parkDays['2026-07-08']?.returnWindows).toMatchObject({
+      'dhs-star-wars-rise-of-the-resistance': '12:45 PM - 1:45 PM',
+      'dhs-star-tours-the-adventures-continue': '9:20 AM - 10:20 AM',
+    });
   });
 
   it("serializes Planck's default plan to the current shared hash", () => {

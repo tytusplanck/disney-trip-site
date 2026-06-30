@@ -25,6 +25,7 @@ export default function DisclosurePanel({
       data-desktop-default-open={defaultOpen ? 'true' : 'false'}
       data-mobile-behavior={mobileBehavior}
       open={defaultOpen}
+      suppressHydrationWarning
     >
       <summary className="disclosure-panel__summary">
         <span className="disclosure-panel__summary-copy">

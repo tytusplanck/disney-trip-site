@@ -421,6 +421,17 @@ function serializeDaySelections(
     }
   }
 
+  const returnWindowParts = getSelectedAttractionIds(selections, parkInventory).flatMap((id) => {
+    const returnWindow = selections.returnWindows?.[id];
+    const code = idToCode.get(id);
+
+    return returnWindow && code ? [`${code}~${encodeURIComponent(returnWindow)}`] : [];
+  });
+
+  if (returnWindowParts.length > 0) {
+    parts.push('w.' + returnWindowParts.join('.'));
+  }
+
   return parts.join('.');
 }
 
@@ -506,7 +517,7 @@ function parseDaySelections(
   const result = emptySelections();
   const tokens = encoded.split('.');
 
-  let mode: 'none' | 'i' | 't1' | 't2' | 'm' = 'none';
+  let mode: 'none' | 'i' | 't1' | 't2' | 'm' | 'w' = 'none';
 
   for (const token of tokens) {
     if (token === 'i') {
@@ -523,6 +534,29 @@ function parseDaySelections(
     }
     if (token === 'm') {
       mode = 'm';
+      continue;
+    }
+    if (token === 'w') {
+      mode = 'w';
+      continue;
+    }
+
+    if (mode === 'w') {
+      const separatorIndex = token.indexOf('~');
+      if (separatorIndex < 1) continue;
+
+      const attractionCode = token.slice(0, separatorIndex);
+      const encodedReturnWindow = token.slice(separatorIndex + 1);
+      const attractionId = codeToId.get(attractionCode);
+      if (!attractionId || !isSelectedAttractionId(result, parkInventory, attractionId)) continue;
+
+      const returnWindow = decodeReturnWindow(encodedReturnWindow);
+      if (!returnWindow) continue;
+
+      result.returnWindows = {
+        ...result.returnWindows,
+        [attractionId]: returnWindow,
+      };
       continue;
     }
 
@@ -573,4 +607,36 @@ function parseDaySelections(
   }
 
   return result;
+}
+
+function getSelectedAttractionIds(
+  selections: LLParkDaySelections,
+  parkInventory: LLParkInventory,
+): string[] {
+  if (parkInventory.hasTiers) {
+    return [
+      ...selections.illSelections,
+      ...(selections.tier1Selection ? [selections.tier1Selection] : []),
+      ...selections.tier2Selections,
+    ];
+  }
+
+  return [...selections.illSelections, ...selections.multiPassSelections];
+}
+
+function isSelectedAttractionId(
+  selections: LLParkDaySelections,
+  parkInventory: LLParkInventory,
+  attractionId: string,
+): boolean {
+  return getSelectedAttractionIds(selections, parkInventory).includes(attractionId);
+}
+
+function decodeReturnWindow(encodedReturnWindow: string): string | null {
+  try {
+    const returnWindow = decodeURIComponent(encodedReturnWindow);
+    return returnWindow.trim() === '' ? null : returnWindow;
+  } catch {
+    return null;
+  }
 }

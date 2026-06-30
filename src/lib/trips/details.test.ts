@@ -244,14 +244,16 @@ describe('trip detail helpers', () => {
       scheduledNotes: 4,
       parkLineup: [
         "Disney's Animal Kingdom",
-        'Magic Kingdom',
         "Disney's Hollywood Studios",
+        'Magic Kingdom',
         'EPCOT',
       ],
     });
-    expect(days[0]?.entry.label).toBe("Disney's Animal Kingdom / Epcot");
+    expect(days[0]?.entry.label).toBe("Disney's Animal Kingdom");
     expect(days[0]?.entry.kinds).toEqual(['travel', 'park']);
-    expect(days[3]?.entry.label).toBe('EPCOT / Clean-up');
+    expect(days[1]?.entry.label).toBe("Disney's Hollywood Studios");
+    expect(days[2]?.entry.label).toBe('Magic Kingdom');
+    expect(days[3]?.entry.label).toBe('EPCOT');
     expect(days[3]?.entry.kinds).toEqual(['travel', 'park']);
   });
 

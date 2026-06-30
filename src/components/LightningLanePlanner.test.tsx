@@ -83,9 +83,11 @@ describe('LightningLanePlanner pricing', () => {
     expect(screen.queryByText('Child total')).not.toBeInTheDocument();
     expect(screen.queryByText('Not available for children')).not.toBeInTheDocument();
     expect(screen.queryByText('48in+')).not.toBeInTheDocument();
+    expect(screen.getByText('9:20 AM - 10:20 AM')).toBeInTheDocument();
+    expect(screen.getByText('12:20 PM - 1:20 PM')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Customize picks' }));
-    fireEvent.click(screen.getByRole('button', { name: 'MK · Jul 8' }));
+    fireEvent.click(screen.getByRole('button', { name: 'MK · Jul 9' }));
 
     expect(screen.getByRole('radio', { name: /Big Thunder Mountain Railroad/i })).toBeEnabled();
     fireEvent.click(screen.getByRole('checkbox', { name: /Haunted Mansion/i }));
@@ -93,7 +95,7 @@ describe('LightningLanePlanner pricing', () => {
       screen.getByRole('checkbox', { name: /Buzz Lightyear's Space Ranger Spin/i }),
     ).toBeEnabled();
 
-    fireEvent.click(screen.getByRole('button', { name: 'DHS · Jul 9' }));
+    fireEvent.click(screen.getByRole('button', { name: 'DHS · Jul 8' }));
 
     expect(
       screen.getByRole('radio', { name: /Rock 'n' Roller Coaster Starring The Muppets/i }),

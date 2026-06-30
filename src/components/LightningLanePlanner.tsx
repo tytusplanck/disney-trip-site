@@ -625,15 +625,18 @@ function LLParkDayCardReadOnly({
           <ul className="ll-section__check-list">
             {individualAttractions.map((attraction) => {
               const priceEstimate = getAttractionPriceEstimate(attraction);
+              const returnWindow = selections.returnWindows?.[attraction.id];
 
               return (
                 <li key={attraction.id} className="ll-section__check-item">
                   <span className="ll-section__check-main">
                     &#10003; {attraction.attractionLabel}
                   </span>
-                  {(priceEstimate != null ||
+                  {(returnWindow != null ||
+                    priceEstimate != null ||
                     (heightRestrictionsMatter && attraction.heightRestriction != null)) && (
                     <span className="ll-section__check-meta">
+                      {returnWindow && <span className="ll-badge--time">{returnWindow}</span>}
                       {priceEstimate && (
                         <span className="ll-badge--price">{formatPriceBadge(priceEstimate)}</span>
                       )}
@@ -655,18 +658,26 @@ function LLParkDayCardReadOnly({
             Multi Pass ({multiPassCount} of {multiPassMax})
           </p>
           <ul className="ll-section__check-list">
-            {multiPassAttractions.map((attraction) => (
-              <li key={attraction.id} className="ll-section__check-item">
-                <span className="ll-section__check-main">
-                  &#10003; {attraction.attractionLabel}
-                </span>
-                {heightRestrictionsMatter && attraction.heightRestriction && (
-                  <span className="ll-section__check-meta">
-                    <span className="ll-badge--height">{attraction.heightRestriction}</span>
+            {multiPassAttractions.map((attraction) => {
+              const returnWindow = selections.returnWindows?.[attraction.id];
+
+              return (
+                <li key={attraction.id} className="ll-section__check-item">
+                  <span className="ll-section__check-main">
+                    &#10003; {attraction.attractionLabel}
                   </span>
-                )}
-              </li>
-            ))}
+                  {(returnWindow != null ||
+                    (heightRestrictionsMatter && attraction.heightRestriction != null)) && (
+                    <span className="ll-section__check-meta">
+                      {returnWindow && <span className="ll-badge--time">{returnWindow}</span>}
+                      {heightRestrictionsMatter && attraction.heightRestriction && (
+                        <span className="ll-badge--height">{attraction.heightRestriction}</span>
+                      )}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

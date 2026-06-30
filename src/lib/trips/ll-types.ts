@@ -58,6 +58,7 @@ export interface LLParkDaySelections {
   tier1Selection: string | null;
   tier2Selections: string[];
   multiPassSelections: string[];
+  returnWindows?: Record<string, string>;
 }
 
 export interface LLMemberPlan {
