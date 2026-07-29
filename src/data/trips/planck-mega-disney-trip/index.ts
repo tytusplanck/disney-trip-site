@@ -13,9 +13,9 @@ export const planckMegaDisneyTripData: TripDataModule = {
   schedule: planckMegaDisneyTripSchedule,
   attractions: planckMegaDisneyTripAttractions,
   sectionConfig: [
-    { label: 'Rides', section: 'guide' },
     { label: 'Plan', section: 'schedule' },
     { label: 'LL', section: 'll' },
+    { label: 'Rides', section: 'guide' },
   ],
   llInventory: planckMegaDisneyTripLLInventory,
   llDefaultPlan: planckMegaDisneyTripLLDefaultPlan,

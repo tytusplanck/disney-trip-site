@@ -10,7 +10,7 @@ export const declanBigSummerTripSummary: TripSummary = {
   partySize: declanBigSummerTripParty.length,
   dayCount: declanBigSummerTripSchedule.length,
   attractionCount: null,
-  status: 'planning',
+  status: 'completed',
   topPick: null,
   themeId: 'secondary',
 };

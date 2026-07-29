@@ -11,7 +11,7 @@ export const planckMegaDisneyTripSummary: TripSummary = {
   partySize: planckMegaDisneyTripParty.length,
   dayCount: planckMegaDisneyTripSchedule.length,
   attractionCount: null,
-  status: 'upcoming',
+  status: 'planning',
   topPick: null,
   themeId: 'secondary',
 };

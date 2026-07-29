@@ -24,15 +24,19 @@ describe('all trips helpers', () => {
       })),
     ).toEqual([
       { status: 'planning', count: 1 },
-      { status: 'upcoming', count: 1 },
-      { status: 'completed', count: 1 },
+      { status: 'upcoming', count: 0 },
+      { status: 'completed', count: 2 },
     ]);
 
-    expect(sections[0]?.trips[0]?.title).toBe("Declan's Big Summer Trip");
-    expect(sections[1]?.trips[0]?.title).toBe('Planck Mega Disney trip');
-    expect(sections[1]?.countLabel).toBe('1 trip');
-    expect(sections[2]?.trips[0]?.title).toBe('Casschwlanck 2026');
-    expect(sections[2]?.countLabel).toBe('1 trip');
+    expect(sections[0]?.trips[0]?.title).toBe('Planck Mega Disney trip');
+    expect(sections[0]?.countLabel).toBe('1 trip');
+    expect(sections[1]?.trips).toEqual([]);
+    expect(sections[1]?.countLabel).toBe('0 trips');
+    expect(sections[2]?.trips.map((trip) => trip.title)).toEqual([
+      'Casschwlanck 2026',
+      "Declan's Big Summer Trip",
+    ]);
+    expect(sections[2]?.countLabel).toBe('2 trips');
   });
 
   it('routes trips to canonical single-slug planner sections', () => {
@@ -49,7 +53,9 @@ describe('all trips helpers', () => {
     }
 
     expect(getTripLandingPath(archivedTrip, archivedModule)).toBe('/casschwlanck-2026/attractions');
-    expect(getTripLandingPath(planningTrip, planningModule)).toBe('/planck-mega-disney-trip/guide');
+    expect(getTripLandingPath(planningTrip, planningModule)).toBe(
+      '/planck-mega-disney-trip/schedule',
+    );
     expect(getTripSectionPath(archivedTrip, 'schedule')).toBe('/casschwlanck-2026/schedule');
   });
 
@@ -78,11 +84,11 @@ describe('all trips helpers', () => {
     expect(findTripDataModule(allTripsData.modules, 'missing-trip')).toBeUndefined();
     expect(routeContext?.trip.slug).toBe('planck-mega-disney-trip');
     expect(routeContext?.tripModule.summary.slug).toBe('planck-mega-disney-trip');
-    expect(routeContext?.sectionConfig.map((tab) => tab.label)).toEqual(['Rides', 'Plan', 'LL']);
+    expect(routeContext?.sectionConfig.map((tab) => tab.label)).toEqual(['Plan', 'LL', 'Rides']);
     expect(routeContext?.sectionConfig.map((tab) => tab.section)).toEqual([
-      'guide',
       'schedule',
       'll',
+      'guide',
     ]);
     expect(planningModule?.travelerProfiles).toBeUndefined();
     expect(planningModule?.logistics).toBeUndefined();

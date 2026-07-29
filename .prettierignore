@@ -1,5 +1,6 @@
 .astro/
 .agents/
+.codex-artifacts/
 coverage/
 dist/
 node_modules/
