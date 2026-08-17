@@ -1,5 +1,8 @@
 import type { TripDataModule } from '../../../lib/trips/types';
-import { osborneFallFamilyTripLLInventory } from './ll-inventory';
+import {
+  osborneFallFamilyTripLLInventory,
+  osborneFallFamilyTripLLInventoryByParkDate,
+} from './ll-inventory';
 import { osborneFallFamilyTripLLDefaultPlan } from './ll-selections';
 import { osborneFallFamilyTripParty } from './party';
 import { osborneFallFamilyTripSchedule } from './schedule';
@@ -12,6 +15,7 @@ export const osborneFallFamilyTripData: TripDataModule = {
   attractions: [],
   sectionConfig: [{ label: 'LL', section: 'll' }],
   llInventory: osborneFallFamilyTripLLInventory,
+  llInventoryByParkDate: osborneFallFamilyTripLLInventoryByParkDate,
   llDefaultPlan: osborneFallFamilyTripLLDefaultPlan,
   llPolicy: {
     heightRestrictionsMatter: false,

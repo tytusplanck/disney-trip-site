@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import LightningLanePlanner from './LightningLanePlanner';
 import { casschwlanck2026TripData } from '../data/trips/casschwlanck-2026';
 import { declanBigSummerTripData } from '../data/trips/declan-big-summer-trip';
+import { osborneFallFamilyTripData } from '../data/trips/osborne-fall-family-trip';
 import { planckMegaDisneyTripData } from '../data/trips/planck-mega-disney-trip';
 import { buildLLPlannerData } from '../lib/trips/ll-planner';
 
@@ -22,6 +23,12 @@ function renderPlanckPlanner() {
   window.location.hash = '';
 
   return render(<LightningLanePlanner data={buildLLPlannerData(planckMegaDisneyTripData)} />);
+}
+
+function renderOsbornePlanner() {
+  window.location.hash = '';
+
+  return render(<LightningLanePlanner data={buildLLPlannerData(osborneFallFamilyTripData)} />);
 }
 
 describe('LightningLanePlanner pricing', () => {
@@ -120,5 +127,18 @@ describe('LightningLanePlanner pricing', () => {
 
     expect(within(animalKingdomCard as HTMLElement).getAllByText('$40')).not.toHaveLength(0);
     expect(within(animalKingdomCard as HTMLElement).getAllByText('$18')).not.toHaveLength(0);
+  });
+
+  it("shows different date-specific prices for Osborne's two Magic Kingdom days", () => {
+    renderOsbornePlanner();
+
+    const september22Card = screen.getByText('Day 3 · Tue Sep 22').closest('.ll-card');
+    const september24Card = screen.getByText('Day 5 · Thu Sep 24').closest('.ll-card');
+    if (!september22Card || !september24Card) {
+      throw new Error('Expected both Osborne Magic Kingdom cards to render');
+    }
+
+    expect(within(september22Card as HTMLElement).getAllByText('$59')).not.toHaveLength(0);
+    expect(within(september24Card as HTMLElement).getAllByText('$61')).not.toHaveLength(0);
   });
 });

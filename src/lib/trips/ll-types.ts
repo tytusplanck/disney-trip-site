@@ -70,6 +70,7 @@ export interface LLPlannerData {
   party: TripPartyMember[];
   parkDays: LLParkDay[];
   inventory: Record<LLParkId, LLParkInventory>;
+  inventoryByParkDate: Record<string, LLParkInventory>;
   defaultPlan: LLMemberPlan;
   ownerMemberId: string;
   heightRestrictionsMatter: boolean;

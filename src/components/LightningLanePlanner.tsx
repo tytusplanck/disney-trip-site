@@ -19,6 +19,7 @@ import {
   getHeightRestrictedSelections,
   getMultiPassCount,
   getMultiPassPriceEstimate,
+  getParkDayInventory,
   getProjectedParkDayPriceEstimate,
   getSelectedSinglePassPriceEstimate,
   serializePlan,
@@ -70,7 +71,7 @@ export default function LightningLanePlanner({ data }: Props) {
   const activeParkDay =
     data.parkDays.find((day) => day.parkDate === activeParkDate) ?? firstParkDay;
   const activeDaySelections = currentPlan.parkDays[activeParkDate] ?? emptySelections();
-  const activeInventory = activeParkDay ? data.inventory[activeParkDay.parkId] : undefined;
+  const activeInventory = activeParkDay ? getParkDayInventory(data, activeParkDay) : undefined;
 
   const handleToggle = useCallback(
     (attractionId: string) => {
@@ -142,7 +143,7 @@ export default function LightningLanePlanner({ data }: Props) {
             <LLParkDayCardReadOnly
               key={day.parkDate}
               day={day}
-              inventory={data.inventory[day.parkId]}
+              inventory={getParkDayInventory(data, day)}
               selections={currentPlan.parkDays[day.parkDate] ?? emptySelections()}
               hasChildren={data.hasChildren}
               heightRestrictionsMatter={data.heightRestrictionsMatter}

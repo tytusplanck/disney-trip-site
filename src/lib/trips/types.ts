@@ -118,6 +118,7 @@ export interface TripDataModule {
   attractions: TripAttractionPreference[];
   partyGrouping?: TripPartyGroupingConfig;
   llInventory?: Partial<Record<LLParkId, LLParkInventory>>;
+  llInventoryByParkDate?: Record<string, LLParkInventory>;
   llDefaultPlan?: LLMemberPlan;
   llPolicy?: LLPolicy;
   sectionConfig?: TripSectionTab[];

@@ -25,6 +25,12 @@ export const osborneFallFamilyTripLLDefaultPlan: LLMemberPlan = {
       tier2Selections: ['epcot-soarin-around-the-world', 'epcot-living-with-the-land'],
       multiPassSelections: [],
     },
+    '2026-09-24': {
+      illSelections: ['mk-seven-dwarfs-mine-train', 'mk-tron-lightcycle-run'],
+      tier1Selection: 'mk-big-thunder-mountain-railroad',
+      tier2Selections: ['mk-haunted-mansion', 'mk-buzz-lightyears-space-ranger-spin'],
+      multiPassSelections: [],
+    },
     '2026-09-25': {
       illSelections: ['dhs-star-wars-rise-of-the-resistance'],
       tier1Selection: 'dhs-slinky-dog-dash',

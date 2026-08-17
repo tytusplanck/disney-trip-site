@@ -118,6 +118,44 @@ describe('buildLLPlannerData', () => {
     );
   });
 
+  it('uses park-date inventory overrides without changing the canonical park inventory', () => {
+    const animalKingdomInventory = inventory['animal-kingdom'];
+    if (!animalKingdomInventory) {
+      throw new Error('Test setup: Animal Kingdom inventory is required');
+    }
+
+    const overrideTripModule = {
+      ...tripModule,
+      llInventoryByParkDate: {
+        '2026-03-29': {
+          ...animalKingdomInventory,
+          multiPassEstimatedPriceUsd: 99,
+        },
+      },
+    };
+    const plannerData = buildLLPlannerData(overrideTripModule);
+
+    expect(plannerData.inventoryByParkDate['2026-03-29']?.multiPassEstimatedPriceUsd).toBe(99);
+    expect(plannerData.inventory['animal-kingdom'].multiPassEstimatedPriceUsd).not.toBe(99);
+  });
+
+  it('rejects a park-date inventory override for the wrong park', () => {
+    if (!mkInventory) {
+      throw new Error('Test setup: Magic Kingdom inventory is required');
+    }
+
+    const mismatchedOverrideTripModule = {
+      ...tripModule,
+      llInventoryByParkDate: {
+        '2026-03-29': mkInventory,
+      },
+    };
+
+    expect(() => buildLLPlannerData(mismatchedOverrideTripModule)).toThrow(
+      'LL inventory override for 2026-03-29 targets magic-kingdom, expected animal-kingdom',
+    );
+  });
+
   it("builds Declan's LL planner days from the July park schedule", () => {
     const plannerData = buildLLPlannerData(declanBigSummerTripData);
 

@@ -31,9 +31,9 @@ export const osborneFallFamilyTripSchedule: TripScheduleEntry[] = [
   },
   {
     date: '2026-09-24',
-    kind: 'resort',
-    label: 'Resort day',
-    parkLabel: null,
+    kind: 'park',
+    label: 'Magic Kingdom',
+    parkLabel: 'Magic Kingdom',
     notes: null,
   },
   {

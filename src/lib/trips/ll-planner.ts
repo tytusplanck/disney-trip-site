@@ -68,6 +68,27 @@ function getRequiredLLInventory(
   };
 }
 
+function buildInventoryByParkDate(
+  parkDays: LLParkDay[],
+  inventory: Record<LLParkId, LLParkInventory>,
+  overrides: Record<string, LLParkInventory> | undefined,
+): Record<string, LLParkInventory> {
+  const inventoryByParkDate: Record<string, LLParkInventory> = {};
+
+  for (const day of parkDays) {
+    const override = overrides?.[day.parkDate];
+    if (override && override.parkId !== day.parkId) {
+      throw new Error(
+        `LL inventory override for ${day.parkDate} targets ${override.parkId}, expected ${day.parkId}`,
+      );
+    }
+
+    inventoryByParkDate[day.parkDate] = override ?? inventory[day.parkId];
+  }
+
+  return inventoryByParkDate;
+}
+
 export function buildLLPlannerData(module: TripDataModule): LLPlannerData {
   if (!module.llInventory || !module.llDefaultPlan) {
     throw new Error('LL data is required to build planner data');
@@ -107,16 +128,35 @@ export function buildLLPlannerData(module: TripDataModule): LLPlannerData {
     module.partyGrouping.cohorts.some(
       (cohort) => cohort.id === 'kids' && cohort.memberIds.length > 0,
     );
+  const inventoryByParkDate = buildInventoryByParkDate(
+    parkDays,
+    inventory,
+    module.llInventoryByParkDate,
+  );
 
   return {
     party: module.party,
     parkDays,
     inventory,
+    inventoryByParkDate,
     defaultPlan,
     ownerMemberId: defaultPlan.memberId,
     heightRestrictionsMatter: module.llPolicy?.heightRestrictionsMatter ?? true,
     hasChildren,
   };
+}
+
+export function getParkDayInventory(
+  data: Pick<LLPlannerData, 'inventoryByParkDate'>,
+  day: LLParkDay,
+): LLParkInventory {
+  const inventory = data.inventoryByParkDate[day.parkDate];
+
+  if (!inventory) {
+    throw new Error(`Missing LL inventory for park date: ${day.parkDate}`);
+  }
+
+  return inventory;
 }
 
 export function emptySelections(): LLParkDaySelections {

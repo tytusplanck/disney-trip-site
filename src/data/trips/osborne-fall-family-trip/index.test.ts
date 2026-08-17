@@ -5,6 +5,7 @@ import {
   buildLLPlannerData,
   emptySelections,
   getMultiPassPriceEstimate,
+  getParkDayInventory,
   getProjectedParkDayPriceEstimate,
   getSelectedSinglePassPriceEstimate,
 } from '../../../lib/trips/ll-planner';
@@ -36,6 +37,7 @@ describe('Osborne Fall Family Trip data', () => {
       ['2026-09-21', "Disney's Animal Kingdom"],
       ['2026-09-22', 'Magic Kingdom'],
       ['2026-09-23', 'EPCOT'],
+      ['2026-09-24', 'Magic Kingdom'],
       ['2026-09-25', "Disney's Hollywood Studios"],
     ]);
   });
@@ -69,6 +71,12 @@ describe('Osborne Fall Family Trip data', () => {
           tier2Selections: ['epcot-soarin-around-the-world', 'epcot-living-with-the-land'],
           multiPassSelections: [],
         },
+        '2026-09-24': {
+          illSelections: ['mk-seven-dwarfs-mine-train', 'mk-tron-lightcycle-run'],
+          tier1Selection: 'mk-big-thunder-mountain-railroad',
+          tier2Selections: ['mk-haunted-mansion', 'mk-buzz-lightyears-space-ranger-spin'],
+          multiPassSelections: [],
+        },
         '2026-09-25': {
           illSelections: ['dhs-star-wars-rise-of-the-resistance'],
           tier1Selection: 'dhs-slinky-dog-dash',
@@ -82,7 +90,7 @@ describe('Osborne Fall Family Trip data', () => {
   it('uses same-date September price proxies for the default plan', () => {
     const plannerData = buildLLPlannerData(osborneFallFamilyTripData);
     const dayTotals = plannerData.parkDays.map((day) => {
-      const inventory = plannerData.inventory[day.parkId];
+      const inventory = getParkDayInventory(plannerData, day);
       const selections = plannerData.defaultPlan.parkDays[day.parkDate] ?? emptySelections();
 
       return {
@@ -98,9 +106,10 @@ describe('Osborne Fall Family Trip data', () => {
       { parkDate: '2026-09-21', multiPass: 16, singlePass: 16, total: 32 },
       { parkDate: '2026-09-22', multiPass: 27, singlePass: 32, total: 59 },
       { parkDate: '2026-09-23', multiPass: 21, singlePass: 18, total: 39 },
+      { parkDate: '2026-09-24', multiPass: 29, singlePass: 32, total: 61 },
       { parkDate: '2026-09-25', multiPass: 27, singlePass: 24, total: 51 },
     ]);
-    expect(dayTotals.reduce((sum, day) => sum + day.total, 0)).toBe(181);
+    expect(dayTotals.reduce((sum, day) => sum + day.total, 0)).toBe(242);
   });
 
   it('is registered in the all-trips data source', () => {
