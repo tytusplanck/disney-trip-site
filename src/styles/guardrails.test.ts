@@ -133,7 +133,7 @@ describe('style guardrails', () => {
     );
   });
 
-  it('supports five-section trip tabs on desktop and universal mobile scrolling', () => {
+  it('supports five-section trip tabs on desktop and multi-section mobile scrolling', () => {
     const componentsSource = readFileSync(join(stylesDirectory, 'components.css'), 'utf8');
     const tripTabsSource = readFileSync(
       join(process.cwd(), 'src/components/TripTabs.astro'),

@@ -1,4 +1,6 @@
-import { planckMegaDisneyTripLLInventory } from '../planck-mega-disney-trip/ll-inventory';
+import { llCatalog, mergeLLInventory } from '../../../lib/trips/ll-catalog';
+import { osborneFallFamilyTripLLPricing } from './ll-pricing';
 
-// Keep the new trip on the same canonical park inventory until its own pricing or closure data is known.
-export const osborneFallFamilyTripLLInventory = planckMegaDisneyTripLLInventory;
+export const osborneFallFamilyTripLLInventory = mergeLLInventory(llCatalog, {
+  pricing: osborneFallFamilyTripLLPricing,
+});

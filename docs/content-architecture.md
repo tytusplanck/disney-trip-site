@@ -31,7 +31,7 @@
 - Legacy family/trip URLs redirect to their canonical single-slug trip route instead of rendering duplicate pages.
 - Planning trip tabs render inside the shared content shell so attractions, schedule, and party pages all open with the same content-width embedded tab strip.
 - The embedded planner tabs are label-only. Supporting detail belongs in the shell-owned page summary, not inside each tab.
-- On narrow screens, the embedded planner tabs switch to a horizontally scrollable rail instead of shrinking until labels clip.
+- On narrow screens, embedded planner tabs with multiple sections switch to a horizontally scrollable rail instead of shrinking until labels clip. A single-section trip keeps its only tab full-width and disables horizontal scrolling at every viewport size.
 - Desktop trip pages use a lean shared header for brand and breadcrumb context only.
 - Trip shells use a compact mobile header pattern: breadcrumbs collapse to a back link and trip title, with no extra facts disclosure.
 - [`/src/components/shells/TripPageShell.astro`](../src/components/shells/TripPageShell.astro) owns the visible route heading block. Routes pass `pageTitle` and `pageSummary` and should not render their own intro sections above the main tool surface.

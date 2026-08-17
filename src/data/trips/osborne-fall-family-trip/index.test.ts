@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { allTripsData } from '../../all-trips';
 import { getTripLandingPath } from '../../../lib/trips/all-trips';
+import {
+  buildLLPlannerData,
+  emptySelections,
+  getMultiPassPriceEstimate,
+  getProjectedParkDayPriceEstimate,
+  getSelectedSinglePassPriceEstimate,
+} from '../../../lib/trips/ll-planner';
 import { osborneFallFamilyTripData } from '.';
 
 describe('Osborne Fall Family Trip data', () => {
@@ -70,6 +77,30 @@ describe('Osborne Fall Family Trip data', () => {
         },
       },
     });
+  });
+
+  it('uses same-date September price proxies for the default plan', () => {
+    const plannerData = buildLLPlannerData(osborneFallFamilyTripData);
+    const dayTotals = plannerData.parkDays.map((day) => {
+      const inventory = plannerData.inventory[day.parkId];
+      const selections = plannerData.defaultPlan.parkDays[day.parkDate] ?? emptySelections();
+
+      return {
+        parkDate: day.parkDate,
+        multiPass: getMultiPassPriceEstimate(inventory).estimatedPriceUsd,
+        singlePass:
+          getSelectedSinglePassPriceEstimate(selections, inventory)?.estimatedPriceUsd ?? 0,
+        total: getProjectedParkDayPriceEstimate(selections, inventory)?.estimatedPriceUsd ?? 0,
+      };
+    });
+
+    expect(dayTotals).toEqual([
+      { parkDate: '2026-09-21', multiPass: 16, singlePass: 16, total: 32 },
+      { parkDate: '2026-09-22', multiPass: 27, singlePass: 32, total: 59 },
+      { parkDate: '2026-09-23', multiPass: 21, singlePass: 18, total: 39 },
+      { parkDate: '2026-09-25', multiPass: 27, singlePass: 24, total: 51 },
+    ]);
+    expect(dayTotals.reduce((sum, day) => sum + day.total, 0)).toBe(181);
   });
 
   it('is registered in the all-trips data source', () => {
