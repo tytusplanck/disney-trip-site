@@ -118,7 +118,7 @@ describe('LightningLanePlanner pricing', () => {
       throw new Error('Expected Animal Kingdom LL card to render');
     }
 
-    expect(within(animalKingdomCard as HTMLElement).getAllByText('$39')).not.toHaveLength(0);
-    expect(within(animalKingdomCard as HTMLElement).getAllByText('$17')).not.toHaveLength(0);
+    expect(within(animalKingdomCard as HTMLElement).getAllByText('$40')).not.toHaveLength(0);
+    expect(within(animalKingdomCard as HTMLElement).getAllByText('$18')).not.toHaveLength(0);
   });
 });

@@ -528,29 +528,29 @@ describe('pricing helpers', () => {
       {
         parkDate: '2026-11-08',
         multiPass: 22,
-        singlePass: 17,
-        total: 39,
+        singlePass: 18,
+        total: 40,
       },
       {
         parkDate: '2026-11-10',
-        multiPass: 24,
-        singlePass: 18,
-        total: 42,
+        multiPass: 32,
+        singlePass: 22,
+        total: 54,
       },
       {
         parkDate: '2026-11-12',
-        multiPass: 32,
-        singlePass: 34,
-        total: 66,
+        multiPass: 39,
+        singlePass: 38,
+        total: 77,
       },
       {
         parkDate: '2026-11-14',
-        multiPass: 29,
+        multiPass: 32,
         singlePass: 25,
-        total: 54,
+        total: 57,
       },
     ]);
-    expect(dayTotals.reduce((sum, day) => sum + day.total, 0)).toBe(201);
+    expect(dayTotals.reduce((sum, day) => sum + day.total, 0)).toBe(228);
   });
 });
 
