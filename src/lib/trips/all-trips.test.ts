@@ -23,13 +23,16 @@ describe('all trips helpers', () => {
         count: section.tripCount,
       })),
     ).toEqual([
-      { status: 'planning', count: 1 },
+      { status: 'planning', count: 2 },
       { status: 'upcoming', count: 0 },
       { status: 'completed', count: 2 },
     ]);
 
-    expect(sections[0]?.trips[0]?.title).toBe('Planck Mega Disney trip');
-    expect(sections[0]?.countLabel).toBe('1 trip');
+    expect(sections[0]?.trips.map((trip) => trip.title)).toEqual([
+      'Osborne Fall Family Trip',
+      'Planck Mega Disney trip',
+    ]);
+    expect(sections[0]?.countLabel).toBe('2 trips');
     expect(sections[1]?.trips).toEqual([]);
     expect(sections[1]?.countLabel).toBe('0 trips');
     expect(sections[2]?.trips.map((trip) => trip.title)).toEqual([

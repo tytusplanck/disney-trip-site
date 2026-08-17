@@ -153,6 +153,17 @@ describe('style guardrails', () => {
     );
   });
 
+  it('lets a single trip tab use the full rail at every viewport width', () => {
+    const componentsSource = readFileSync(join(stylesDirectory, 'components.css'), 'utf8');
+
+    expect(componentsSource).toContain(
+      ".trip-tabs__rail[data-tab-count='1'] {\n  grid-template-columns: minmax(0, 1fr);\n}",
+    );
+    expect(componentsSource).toMatch(
+      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail\[data-tab-count='1'\] \{[\s\S]*?grid-template-columns: minmax\(0, 1fr\);[\s\S]*?grid-auto-flow: row;[\s\S]*?grid-auto-columns: auto;/,
+    );
+  });
+
   it('rejects the old parchment canvas palette in active stylesheets', () => {
     const stylesheetSources = getStylesheetPaths().map((filePath) =>
       readFileSync(filePath, 'utf8'),
