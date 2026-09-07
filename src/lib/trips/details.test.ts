@@ -220,7 +220,7 @@ describe('trip detail helpers', () => {
       parkDays: 4,
       resortDays: 3,
       travelDays: 2,
-      scheduledNotes: 4,
+      scheduledNotes: 7,
       parkLineup: [
         "Disney's Animal Kingdom",
         'EPCOT',
@@ -230,7 +230,26 @@ describe('trip detail helpers', () => {
     });
     expect(days[0]?.weekdayLabel).toBe('Sat');
     expect(days[0]?.dateLabel).toBe('Nov 7');
-    expect(days[4]?.entry.notes).toBeNull();
+    expect(days.map((day) => [day.entry.date, day.entry.notes])).toEqual([
+      ['2026-11-07', 'Penciled in: Hoop-Dee-Doo Musical Revue (11 people).'],
+      ['2026-11-08', null],
+      ['2026-11-09', "David / Lee / Grammy Arrive. Penciled in: Narcoossee's (14 people)."],
+      ['2026-11-10', 'Food & Wine'],
+      [
+        '2026-11-11',
+        "Penciled in: Chef Mickey's (14 people). Dinner penciled in: Quick service at Polynesian, Riviera, or Disney Springs — flexible, everyone can choose.",
+      ],
+      ['2026-11-12', 'Penciled in: Liberty Tree Tavern (14 people).'],
+      [
+        '2026-11-13',
+        'David / Lee / Grammy Leave. Dinner penciled in: Wailulu Bar & Grill at Island Tower.',
+      ],
+      [
+        '2026-11-14',
+        "Fantasmic. Penciled in: Roundup Rodeo BBQ (11 people) and Oga's Cantina (11 people).",
+      ],
+      ['2026-11-15', null],
+    ]);
   });
 
   it('counts mixed travel and park itinerary days in both categories', () => {
