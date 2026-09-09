@@ -226,10 +226,10 @@ describe('buildLLPlannerData', () => {
       '2026-11-14',
     ]);
     expect(plannerData.parkDays.map((day) => day.parkLabel)).toEqual([
-      "Disney's Animal Kingdom",
-      'EPCOT',
-      'Magic Kingdom',
       "Disney's Hollywood Studios",
+      'Magic Kingdom',
+      'EPCOT',
+      "Disney's Animal Kingdom",
     ]);
     expect(Object.keys(plannerData.defaultPlan.parkDays)).toEqual([
       '2026-11-08',
@@ -565,27 +565,27 @@ describe('pricing helpers', () => {
     expect(dayTotals).toEqual([
       {
         parkDate: '2026-11-08',
-        multiPass: 22,
-        singlePass: 18,
-        total: 40,
+        multiPass: 32,
+        singlePass: 25,
+        total: 57,
       },
       {
         parkDate: '2026-11-10',
-        multiPass: 32,
-        singlePass: 22,
-        total: 54,
-      },
-      {
-        parkDate: '2026-11-12',
         multiPass: 39,
         singlePass: 38,
         total: 77,
       },
       {
-        parkDate: '2026-11-14',
+        parkDate: '2026-11-12',
         multiPass: 32,
-        singlePass: 25,
-        total: 57,
+        singlePass: 22,
+        total: 54,
+      },
+      {
+        parkDate: '2026-11-14',
+        multiPass: 22,
+        singlePass: 18,
+        total: 40,
       },
     ]);
     expect(dayTotals.reduce((sum, day) => sum + day.total, 0)).toBe(228);
@@ -711,7 +711,7 @@ describe('URL serialization round-trip', () => {
     expect(
       serializePlan(planckPlannerData.defaultPlan, planckPlannerInventory, planckParkDays),
     ).toBe(
-      'll=tytus-planck:1108=i.afp.m.ee.nrj.ks,1110=i.gotr.t1.tt.t2.sal.lwl,1112=i.sdmt.tron.t1.btmr.t2.hm.blsrs,1114=i.rotr.t1.sdd.t2.tsm.tzt',
+      'll=tytus-planck:1108=i.rotr.t1.sdd.t2.tsm.tzt,1110=i.sdmt.tron.t1.btmr.t2.hm.blsrs,1112=i.gotr.t1.tt.t2.sal.lwl,1114=i.afp.m.ee.nrj.ks',
     );
   });
 });

@@ -10,6 +10,7 @@
 - Trip-specific grouping rules such as named party cohorts belong in the trip data module itself so reusable analytics stay free of hardcoded trip ids, member ids, or family-specific presets.
 - Use helpers in [`/src/lib/trips/all-trips.ts`](../src/lib/trips/all-trips.ts) to derive grouped sections, compact card facts, and route paths instead of hard-coding those rules in Astro templates.
 - Use [`/src/lib/trips/details.ts`](../src/lib/trips/details.ts) to derive page-level view models such as rankings, party summaries, and schedule day cards from the typed trip modules.
+- Schedule days may carry optional `moments` (`ScheduleMoment[]`, 24-hour `HH:MM` times, kinds `depart | rope-drop | dining | show | arrival`, optional `detail` and `booked | penciled` status). Helpers in [`/src/lib/trips/schedule.ts`](../src/lib/trips/schedule.ts) validate and format times and sort moments; `notes` stays for non-time-bound context and must not duplicate a moment.
 - Use [`/src/lib/trips/readiness.ts`](../src/lib/trips/readiness.ts) to decide when each protected section can leave placeholder mode; attractions, schedule, and party routes each unlock when their own arrays are populated.
 - When one planner route needs richer interactive filtering, add a dedicated view-model helper under [`/src/lib/trips`](../src/lib/trips) for that surface instead of forcing unrelated logic into `details.ts`.
 - Keep analytics and renderer DTOs separate when a planning surface needs both. Analytics helpers may expose richer testable results, but the object passed into a component should contain only the fields that component actually renders.
@@ -44,6 +45,7 @@
 - The attractions scoring guide defaults to `collapsed` on mobile to keep the first screen focused.
 - Party now renders its traveler preference cards inline below the split summary instead of hiding them behind a disclosure.
 - Schedule now renders directly as an always-visible timeline with no disclosure wrapper.
+- Days with moments render a compact ordered time list between the day title and the note; days without moments render unchanged. Moment styles live in `src/styles/schedule.css`, not `trip-pages.css`.
 - This split keeps route layouts flexible without duplicating document scaffolding.
 
 ## Attractions Filter IA

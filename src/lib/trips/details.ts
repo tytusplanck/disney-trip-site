@@ -6,7 +6,12 @@ import type {
   TripScheduleEntry,
 } from './types';
 import { getPartyPersonaProfile, getPartyPreferenceCounts } from './party-analytics';
-import { getScheduleEntryBadges, hasScheduleEntryKind } from './schedule';
+import {
+  getScheduleEntryBadges,
+  getScheduleMomentViews,
+  hasScheduleEntryKind,
+  type ScheduleMomentView,
+} from './schedule';
 
 export interface PreferenceMeta {
   tier: PreferenceTier;
@@ -62,6 +67,7 @@ export interface ScheduleDaySummary {
   dateLabel: string;
   entry: TripScheduleEntry;
   badges: ReturnType<typeof getScheduleEntryBadges>;
+  moments: ScheduleMomentView[];
 }
 
 const PREFERENCE_META_BY_TIER: Record<PreferenceTier, PreferenceMeta> = {
@@ -248,6 +254,7 @@ export function getScheduleDaySummaries(schedule: TripScheduleEntry[]): Schedule
       dateLabel: DATE_FORMATTER.format(date),
       entry,
       badges: getScheduleEntryBadges(entry),
+      moments: getScheduleMomentViews(entry),
     };
   });
 }

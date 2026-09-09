@@ -22,6 +22,19 @@ export type PreferenceTier = 1 | 2 | 3 | 4 | 5;
 
 export type ScheduleEntryKind = 'travel' | 'park' | 'resort';
 
+export type ScheduleMomentKind = 'depart' | 'rope-drop' | 'dining' | 'show' | 'arrival';
+
+export type ScheduleMomentStatus = 'booked' | 'penciled';
+
+export interface ScheduleMoment {
+  /** 24-hour clock, zero-padded, e.g. '07:15' or '18:30'. Formatted for display by helpers. */
+  time: string;
+  kind: ScheduleMomentKind;
+  label: string;
+  detail?: string;
+  status?: ScheduleMomentStatus;
+}
+
 export interface TripLegacyRoute {
   familySlug: string;
   tripSlug: string;
@@ -75,6 +88,7 @@ export interface TripScheduleEntry {
   label: string;
   parkLabel: string | null;
   notes: string | null;
+  moments?: ScheduleMoment[];
 }
 
 export interface TripAttractionPreference {

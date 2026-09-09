@@ -7,7 +7,7 @@ export const planckMegaDisneyTripSummary: TripSummary = {
   legacyRoutes: [{ familySlug: 'casschwlanck', tripSlug: 'future-trip' }],
   title: 'Planck Mega Disney trip',
   dateLabel: 'Nov 7 - Nov 15, 2026',
-  parkLabels: ["Disney's Animal Kingdom", 'EPCOT', 'Magic Kingdom', "Disney's Hollywood Studios"],
+  parkLabels: ["Disney's Hollywood Studios", 'Magic Kingdom', 'EPCOT', "Disney's Animal Kingdom"],
   partySize: planckMegaDisneyTripParty.length,
   dayCount: planckMegaDisneyTripSchedule.length,
   attractionCount: null,

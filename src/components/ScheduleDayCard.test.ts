@@ -13,4 +13,26 @@ describe('ScheduleDayCard', () => {
   it('suppresses the park sub-label when a mixed day already names the park in the title', () => {
     expect(source.includes('day.badges.length === 1')).toBe(true);
   });
+
+  it('renders the moment list only when a day has moments, between the title block and the note', () => {
+    expect(source.includes('day.moments.length > 0 && (')).toBe(true);
+    expect(source.includes('<ol class="schedule-moments">')).toBe(true);
+    expect(source.includes('<time class="schedule-moment__time" datetime={moment.datetime}>')).toBe(
+      true,
+    );
+    expect(source.indexOf('schedule-moments')).toBeLessThan(source.indexOf('schedule-card__note'));
+    expect(source.indexOf('schedule-card__park')).toBeLessThan(source.indexOf('schedule-moments'));
+  });
+
+  it('renders optional moment detail and status without empty separators', () => {
+    expect(
+      source.includes(
+        '{moment.detail && <span class="schedule-moment__detail">{moment.detail}</span>}',
+      ),
+    ).toBe(true);
+    expect(source.includes('{moment.statusLabel && (')).toBe(true);
+    expect(
+      source.includes('<span class="schedule-moment__status">{moment.statusLabel}</span>'),
+    ).toBe(true);
+  });
 });

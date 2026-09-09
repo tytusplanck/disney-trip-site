@@ -27,7 +27,7 @@ This repository is a private Disney trip site built to be maintained primarily b
 ## Maintainability Guardrails
 
 - Treat 1000 lines as a hard review threshold for source files. Do not push a file from below 1000 lines to above 1000 lines without decomposing first or documenting the structural reason in the change.
-- Do not add new feature blocks to already-sprawling files. `src/styles/trip-pages.css` is past the threshold; new route or component styling should move toward focused stylesheet modules instead of making that file larger.
+- Do not add new feature blocks to already-sprawling files. `src/styles/trip-pages.css` is past the threshold; new route or component styling should move toward focused stylesheet modules instead of making that file larger. Schedule moment styling is the first such module (`src/styles/schedule.css`).
 - `src/lib/trips/party-analytics.ts` is near the threshold and mixes persona scoring, affinity pair math, clustering, cohort contrast, and analysis DTO construction. New party-analysis behavior should first extract the relevant ownership slice into a focused module rather than adding another branch to that file.
 - Keep React islands as orchestration shells plus small view components. If a component starts combining URL state, editing flows, read-only summaries, price math display, and row rendering, split the view pieces before adding another mode.
 - Prefer deleting concepts over centralizing them when behavior allows it. New booleans, nullable modes, or repeated special-case checks should be treated as a missing model until proven otherwise.

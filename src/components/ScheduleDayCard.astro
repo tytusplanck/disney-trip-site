@@ -35,6 +35,27 @@ const { day, isToday = false } = Astro.props;
         <p class="schedule-card__park">{day.entry.parkLabel}</p>
       )
     }
+    {
+      day.moments.length > 0 && (
+        <ol class="schedule-moments">
+          {day.moments.map((moment) => (
+            <li class="schedule-moment" data-kind={moment.kind}>
+              <time class="schedule-moment__time" datetime={moment.datetime}>
+                {moment.timeLabel}
+              </time>
+              <span class="schedule-moment__kind">{moment.kindLabel}</span>
+              <span class="schedule-moment__body">
+                <span class="schedule-moment__label">{moment.label}</span>
+                {moment.detail && <span class="schedule-moment__detail">{moment.detail}</span>}
+                {moment.statusLabel && (
+                  <span class="schedule-moment__status">{moment.statusLabel}</span>
+                )}
+              </span>
+            </li>
+          ))}
+        </ol>
+      )
+    }
     {day.entry.notes && <p class="schedule-card__note">{day.entry.notes}</p>}
   </div>
 </article>

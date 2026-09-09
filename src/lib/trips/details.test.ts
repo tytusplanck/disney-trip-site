@@ -2,6 +2,7 @@ import type { TripDataModule } from './types';
 import { describe, expect, it } from 'vitest';
 import { casschwlanck2026TripData } from '../../data/trips/casschwlanck-2026';
 import { declanBigSummerTripData } from '../../data/trips/declan-big-summer-trip';
+import { osborneFallFamilyTripData } from '../../data/trips/osborne-fall-family-trip';
 import { planckMegaDisneyTripData } from '../../data/trips/planck-mega-disney-trip';
 import {
   getAttractionMustDoVoteCount,
@@ -220,34 +221,25 @@ describe('trip detail helpers', () => {
       parkDays: 4,
       resortDays: 3,
       travelDays: 2,
-      scheduledNotes: 7,
+      scheduledNotes: 4,
       parkLineup: [
-        "Disney's Animal Kingdom",
-        'EPCOT',
-        'Magic Kingdom',
         "Disney's Hollywood Studios",
+        'Magic Kingdom',
+        'EPCOT',
+        "Disney's Animal Kingdom",
       ],
     });
     expect(days[0]?.weekdayLabel).toBe('Sat');
     expect(days[0]?.dateLabel).toBe('Nov 7');
     expect(days.map((day) => [day.entry.date, day.entry.notes])).toEqual([
-      ['2026-11-07', 'Penciled in: Hoop-Dee-Doo Musical Revue (11 people).'],
-      ['2026-11-08', null],
-      ['2026-11-09', "David / Lee / Grammy Arrive. Penciled in: Narcoossee's (14 people)."],
-      ['2026-11-10', 'Food & Wine'],
-      [
-        '2026-11-11',
-        "Penciled in: Chef Mickey's (14 people). Dinner penciled in: Quick service at Polynesian, Riviera, or Disney Springs — flexible, everyone can choose.",
-      ],
-      ['2026-11-12', 'Penciled in: Liberty Tree Tavern (14 people).'],
-      [
-        '2026-11-13',
-        'David / Lee / Grammy Leave. Dinner penciled in: Wailulu Bar & Grill at Island Tower.',
-      ],
-      [
-        '2026-11-14',
-        "Fantasmic. Penciled in: Roundup Rodeo BBQ (11 people) and Oga's Cantina (11 people).",
-      ],
+      ['2026-11-07', null],
+      ['2026-11-08', 'Fantasmic.'],
+      ['2026-11-09', 'David / Lee / Grammy arrive.'],
+      ['2026-11-10', null],
+      ['2026-11-11', null],
+      ['2026-11-12', 'Food & Wine'],
+      ['2026-11-13', 'David / Lee / Grammy leave.'],
+      ['2026-11-14', null],
       ['2026-11-15', null],
     ]);
   });
@@ -356,5 +348,73 @@ describe('trip detail helpers', () => {
     const uniqueStyles = new Set(summaries.map((summary) => summary.styleLabel));
 
     expect(uniqueStyles.size).toBeGreaterThanOrEqual(4);
+  });
+
+  it('attaches sorted moment views to each schedule day and leaves sparse days empty', () => {
+    const planckDays = getScheduleDaySummaries(planckMegaDisneyTripData.schedule);
+    const hollywoodStudios = planckDays.find((day) => day.entry.date === '2026-11-08');
+    const magicKingdom = planckDays.find((day) => day.entry.date === '2026-11-10');
+    const epcot = planckDays.find((day) => day.entry.date === '2026-11-12');
+    const animalKingdom = planckDays.find((day) => day.entry.date === '2026-11-14');
+    const ohanaDay = planckDays.find((day) => day.entry.date === '2026-11-09');
+    const chefMickeyDay = planckDays.find((day) => day.entry.date === '2026-11-11');
+    const narcoosseeDay = planckDays.find((day) => day.entry.date === '2026-11-13');
+
+    expect(hollywoodStudios?.entry.parkLabel).toBe("Disney's Hollywood Studios");
+    expect(
+      hollywoodStudios?.moments.map((moment) => [moment.timeLabel, moment.kindLabel, moment.label]),
+    ).toEqual([
+      ['7:10 AM', 'Leave', 'Leave the resort'],
+      ['8:30 AM', 'Rope drop', 'Rope drop'],
+      ['10:45 AM', 'Dining', 'Roundup Rodeo BBQ'],
+      ['4:10 PM', 'Dining', "Oga's Cantina"],
+    ]);
+    expect(
+      magicKingdom?.moments.map((moment) => [moment.timeLabel, moment.kindLabel, moment.label]),
+    ).toEqual([
+      ['7:10 AM', 'Leave', 'Leave the resort'],
+      ['8:30 AM', 'Rope drop', 'Rope drop'],
+      ['1:55 PM', 'Dining', 'Liberty Tree Tavern'],
+    ]);
+    expect(epcot?.entry.parkLabel).toBe('EPCOT');
+    expect(
+      epcot?.moments.map((moment) => [moment.timeLabel, moment.kindLabel, moment.label]),
+    ).toEqual([
+      ['7:10 AM', 'Leave', 'Leave the resort'],
+      ['8:30 AM', 'Rope drop', 'Rope drop'],
+    ]);
+    expect(animalKingdom?.entry.parkLabel).toBe("Disney's Animal Kingdom");
+    expect(
+      animalKingdom?.moments.map((moment) => [moment.timeLabel, moment.kindLabel, moment.label]),
+    ).toEqual([
+      ['6:10 AM', 'Leave', 'Leave the resort'],
+      ['7:30 AM', 'Rope drop', 'Rope drop'],
+    ]);
+    expect(
+      ohanaDay?.moments.map((moment) => [moment.timeLabel, moment.kindLabel, moment.label]),
+    ).toEqual([
+      ['3:50 PM', 'Leave', 'Leave the resort'],
+      ['5:00 PM', 'Dining', "'Ohana"],
+    ]);
+    expect(
+      chefMickeyDay?.moments.map((moment) => [moment.timeLabel, moment.kindLabel, moment.label]),
+    ).toEqual([
+      ['6:45 AM', 'Leave', 'Leave the resort'],
+      ['7:35 AM', 'Dining', "Chef Mickey's"],
+      ['4:40 PM', 'Leave', 'Leave the resort'],
+      ['5:50 PM', 'Dining', 'Wailulu Bar & Grill'],
+    ]);
+    expect(
+      narcoosseeDay?.moments.map((moment) => [moment.timeLabel, moment.kindLabel, moment.label]),
+    ).toEqual([
+      ['4:20 PM', 'Leave', 'Leave the resort'],
+      ['5:30 PM', 'Dining', "Narcoossee's"],
+    ]);
+    expect(
+      planckDays.flatMap((day) => day.moments).every((moment) => moment.statusLabel === null),
+    ).toBe(true);
+
+    const osborneDays = getScheduleDaySummaries(osborneFallFamilyTripData.schedule);
+    expect(osborneDays.every((day) => day.moments.length === 0)).toBe(true);
   });
 });
