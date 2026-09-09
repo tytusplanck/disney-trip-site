@@ -35,4 +35,18 @@ describe('ScheduleDayCard', () => {
       source.includes('<span class="schedule-moment__status">{moment.statusLabel}</span>'),
     ).toBe(true);
   });
+
+  it('links the dining label to its menu in a new tab with an accessible hint, or renders plain text', () => {
+    expect(source.includes('moment.menuUrl ? (')).toBe(true);
+    expect(source.includes('class="schedule-moment__label schedule-moment__link"')).toBe(true);
+    expect(source.includes('href={moment.menuUrl}')).toBe(true);
+    expect(source.includes('target="_blank"')).toBe(true);
+    expect(source.includes('rel="noopener noreferrer"')).toBe(true);
+    expect(
+      source.includes('<span class="visually-hidden">, menu (opens in a new tab)</span>'),
+    ).toBe(true);
+    expect(source.includes('<span class="schedule-moment__label">{moment.label}</span>')).toBe(
+      true,
+    );
+  });
 });

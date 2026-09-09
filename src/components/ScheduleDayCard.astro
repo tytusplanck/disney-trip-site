@@ -45,7 +45,19 @@ const { day, isToday = false } = Astro.props;
               </time>
               <span class="schedule-moment__kind">{moment.kindLabel}</span>
               <span class="schedule-moment__body">
-                <span class="schedule-moment__label">{moment.label}</span>
+                {moment.menuUrl ? (
+                  <a
+                    class="schedule-moment__label schedule-moment__link"
+                    href={moment.menuUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {moment.label}
+                    <span class="visually-hidden">, menu (opens in a new tab)</span>
+                  </a>
+                ) : (
+                  <span class="schedule-moment__label">{moment.label}</span>
+                )}
                 {moment.detail && <span class="schedule-moment__detail">{moment.detail}</span>}
                 {moment.statusLabel && (
                   <span class="schedule-moment__status">{moment.statusLabel}</span>

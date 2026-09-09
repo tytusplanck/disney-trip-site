@@ -41,6 +41,7 @@ export interface ScheduleMomentView {
   label: string;
   detail: string | null;
   statusLabel: string | null;
+  menuUrl: string | null;
 }
 
 export const scheduleMomentKindLabelByValue: Record<ScheduleMomentKind, string> = {
@@ -57,6 +58,7 @@ const scheduleMomentStatusLabelByValue: Record<ScheduleMomentStatus, string> = {
 };
 
 const MOMENT_TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
+const MENU_URL_HOST = 'disneyworld.disney.go.com';
 
 export function formatScheduleMomentTime(time: string): string {
   const match = MOMENT_TIME_PATTERN.exec(time);
@@ -74,6 +76,32 @@ export function formatScheduleMomentTime(time: string): string {
   return `${String(hours12)}:${minutes} ${period}`;
 }
 
+function getValidatedMenuUrl(moment: ScheduleMoment): string | null {
+  if (moment.menuUrl === undefined) {
+    return null;
+  }
+
+  if (moment.kind !== 'dining') {
+    throw new Error(`Moment "${moment.label}" has a menuUrl but is not a dining moment.`);
+  }
+
+  let parsed: URL;
+
+  try {
+    parsed = new URL(moment.menuUrl);
+  } catch {
+    throw new Error(`Moment "${moment.label}" has an unparseable menuUrl "${moment.menuUrl}".`);
+  }
+
+  if (parsed.protocol !== 'https:' || parsed.hostname !== MENU_URL_HOST) {
+    throw new Error(
+      `Moment "${moment.label}" menuUrl must be an https link on ${MENU_URL_HOST}; got "${moment.menuUrl}".`,
+    );
+  }
+
+  return parsed.toString();
+}
+
 function toScheduleMomentView(moment: ScheduleMoment): ScheduleMomentView {
   return {
     datetime: moment.time,
@@ -83,6 +111,7 @@ function toScheduleMomentView(moment: ScheduleMoment): ScheduleMomentView {
     label: moment.label,
     detail: moment.detail ?? null,
     statusLabel: moment.status ? scheduleMomentStatusLabelByValue[moment.status] : null,
+    menuUrl: getValidatedMenuUrl(moment),
   };
 }
 

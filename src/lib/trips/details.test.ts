@@ -417,4 +417,42 @@ describe('trip detail helpers', () => {
     const osborneDays = getScheduleDaySummaries(osborneFallFamilyTripData.schedule);
     expect(osborneDays.every((day) => day.moments.length === 0)).toBe(true);
   });
+
+  it('links every Planck dining moment to a Disney menu', () => {
+    const dining = getScheduleDaySummaries(planckMegaDisneyTripData.schedule)
+      .flatMap((day) => day.moments)
+      .filter((moment) => moment.kind === 'dining');
+
+    expect(dining.map((moment) => [moment.label, moment.menuUrl])).toEqual([
+      [
+        'Hoop-Dee-Doo Musical Revue',
+        'https://disneyworld.disney.go.com/dining/campsites-at-fort-wilderness-resort/pioneer-hall/menus/',
+      ],
+      [
+        'Roundup Rodeo BBQ',
+        'https://disneyworld.disney.go.com/dining/hollywood-studios/roundup-rodeo-bbq/menus/',
+      ],
+      [
+        "Oga's Cantina",
+        'https://disneyworld.disney.go.com/dining/hollywood-studios/ogas-cantina/menus/',
+      ],
+      ["'Ohana", 'https://disneyworld.disney.go.com/dining/polynesian-resort/ohana/menus/'],
+      [
+        'Liberty Tree Tavern',
+        'https://disneyworld.disney.go.com/dining/magic-kingdom/liberty-tree-tavern/menus/',
+      ],
+      [
+        "Chef Mickey's",
+        'https://disneyworld.disney.go.com/dining/contemporary-resort/chef-mickeys/menus/',
+      ],
+      [
+        'Wailulu Bar & Grill',
+        'https://disneyworld.disney.go.com/dining/polynesian-resort/wailulu-bar-grill/menus/',
+      ],
+      [
+        "Narcoossee's",
+        'https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/narcoossees/menus/',
+      ],
+    ]);
+  });
 });

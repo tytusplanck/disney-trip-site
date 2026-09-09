@@ -61,6 +61,18 @@
   font-style: italic;
 }
 
+.schedule-moment__link {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-color: var(--color-line-contrast);
+}
+
+.schedule-moment__link:hover,
+.schedule-moment__link:focus-visible {
+  color: var(--color-brand);
+  text-decoration-color: currentColor;
+}
+
 @media (max-width: 720px) {
   .schedule-moment {
     grid-template-columns: 4.5rem minmax(0, 1fr);

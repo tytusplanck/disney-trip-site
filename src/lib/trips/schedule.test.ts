@@ -72,6 +72,7 @@ describe('schedule moment helpers', () => {
         label: 'Leave the resort',
         detail: 'Meet in the lobby',
         statusLabel: null,
+        menuUrl: null,
       },
       {
         datetime: '08:00',
@@ -81,6 +82,7 @@ describe('schedule moment helpers', () => {
         label: 'Rope drop',
         detail: null,
         statusLabel: null,
+        menuUrl: null,
       },
       {
         datetime: '12:30',
@@ -90,6 +92,7 @@ describe('schedule moment helpers', () => {
         label: 'Liberty Tree Tavern',
         detail: '14 people',
         statusLabel: 'Penciled',
+        menuUrl: null,
       },
     ]);
   });
@@ -110,5 +113,56 @@ describe('schedule moment helpers', () => {
       moments: [{ time: '18:00', kind: 'dining', label: 'X', status: 'booked' }],
     });
     expect(view?.statusLabel).toBe('Booked');
+  });
+
+  it('passes a validated menu url through to the view and leaves it null otherwise', () => {
+    const [linked, plain] = getScheduleMomentViews({
+      ...baseEntry,
+      moments: [
+        {
+          time: '12:30',
+          kind: 'dining',
+          label: 'Liberty Tree Tavern',
+          menuUrl:
+            'https://disneyworld.disney.go.com/dining/magic-kingdom/liberty-tree-tavern/menus/',
+        },
+        { time: '18:00', kind: 'dining', label: 'Somewhere else' },
+      ],
+    });
+
+    expect(linked?.menuUrl).toBe(
+      'https://disneyworld.disney.go.com/dining/magic-kingdom/liberty-tree-tavern/menus/',
+    );
+    expect(plain?.menuUrl).toBeNull();
+  });
+
+  it('rejects menu urls that are not https disneyworld links', () => {
+    const build = (menuUrl: string) =>
+      getScheduleMomentViews({
+        ...baseEntry,
+        moments: [{ time: '12:30', kind: 'dining', label: 'X', menuUrl }],
+      });
+
+    expect(() => build('http://disneyworld.disney.go.com/dining/x/y/menus/')).toThrow();
+    expect(() => build('https://example.com/menus/')).toThrow();
+    expect(() => build('javascript:alert(1)')).toThrow();
+    expect(() => build('/dining/magic-kingdom/liberty-tree-tavern/menus/')).toThrow();
+  });
+
+  it('rejects menu urls on non-dining moments', () => {
+    expect(() =>
+      getScheduleMomentViews({
+        ...baseEntry,
+        moments: [
+          {
+            time: '08:00',
+            kind: 'rope-drop',
+            label: 'Rope drop',
+            menuUrl:
+              'https://disneyworld.disney.go.com/dining/magic-kingdom/liberty-tree-tavern/menus/',
+          },
+        ],
+      }),
+    ).toThrow();
   });
 });

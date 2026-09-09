@@ -14,6 +14,8 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
         kind: 'dining',
         label: 'Hoop-Dee-Doo Musical Revue',
         detail: '11 people',
+        menuUrl:
+          'https://disneyworld.disney.go.com/dining/campsites-at-fort-wilderness-resort/pioneer-hall/menus/',
       },
     ],
   },
@@ -31,12 +33,15 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
         kind: 'dining',
         label: 'Roundup Rodeo BBQ',
         detail: '11 people',
+        menuUrl:
+          'https://disneyworld.disney.go.com/dining/hollywood-studios/roundup-rodeo-bbq/menus/',
       },
       {
         time: '16:10',
         kind: 'dining',
         label: "Oga's Cantina",
         detail: '11 people',
+        menuUrl: 'https://disneyworld.disney.go.com/dining/hollywood-studios/ogas-cantina/menus/',
       },
     ],
   },
@@ -53,6 +58,7 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
         kind: 'dining',
         label: "'Ohana",
         detail: '14 people',
+        menuUrl: 'https://disneyworld.disney.go.com/dining/polynesian-resort/ohana/menus/',
       },
     ],
   },
@@ -70,6 +76,8 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
         kind: 'dining',
         label: 'Liberty Tree Tavern',
         detail: '14 people',
+        menuUrl:
+          'https://disneyworld.disney.go.com/dining/magic-kingdom/liberty-tree-tavern/menus/',
       },
     ],
   },
@@ -86,6 +94,7 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
         kind: 'dining',
         label: "Chef Mickey's",
         detail: '14 people',
+        menuUrl: 'https://disneyworld.disney.go.com/dining/contemporary-resort/chef-mickeys/menus/',
       },
       { time: '16:40', kind: 'depart', label: 'Leave the resort' },
       {
@@ -93,6 +102,8 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
         kind: 'dining',
         label: 'Wailulu Bar & Grill',
         detail: '14 people',
+        menuUrl:
+          'https://disneyworld.disney.go.com/dining/polynesian-resort/wailulu-bar-grill/menus/',
       },
     ],
   },
@@ -120,6 +131,8 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
         kind: 'dining',
         label: "Narcoossee's",
         detail: '11 people',
+        menuUrl:
+          'https://disneyworld.disney.go.com/dining/grand-floridian-resort-and-spa/narcoossees/menus/',
       },
     ],
   },

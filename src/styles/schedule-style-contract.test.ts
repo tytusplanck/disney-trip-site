@@ -30,4 +30,16 @@ describe('schedule moment style contract', () => {
     expect(scheduleStyles).not.toMatch(/#[0-9a-f]{3,8}\b/i);
     expect(scheduleStyles).not.toMatch(/box-shadow|linear-gradient/);
   });
+
+  it('styles menu links as underlined inline text with brand hover and no layout change', () => {
+    expect(scheduleStyles).toMatch(
+      /\.schedule-moment__link \{[\s\S]*?color: inherit;[\s\S]*?text-decoration-color: var\(--color-line-contrast\);/,
+    );
+    expect(scheduleStyles).toMatch(
+      /\.schedule-moment__link:hover,\s*\.schedule-moment__link:focus-visible \{[\s\S]*?color: var\(--color-brand\);[\s\S]*?text-decoration-color: currentColor;/,
+    );
+    expect(scheduleStyles).not.toMatch(
+      /\.schedule-moment__link[\s\S]*?(padding|margin|border|background|display)/,
+    );
+  });
 });

@@ -33,6 +33,8 @@ export interface ScheduleMoment {
   label: string;
   detail?: string;
   status?: ScheduleMomentStatus;
+  /** Absolute https URL for the restaurant's menu page. Dining moments only. */
+  menuUrl?: string;
 }
 
 export interface TripLegacyRoute {
