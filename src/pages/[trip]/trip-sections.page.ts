@@ -26,6 +26,10 @@ export const tripSectionCopy: Record<TripSection, { title: string; summary: stri
     title: 'Traveler notes',
     summary: "Quick notes on each traveler's priorities and what to know for the trip.",
   },
+  packing: {
+    title: 'Packing lists',
+    summary: "Tytus' recommendations for your trip, tuned to the weather and the group's schedule.",
+  },
   logistics: {
     title: 'Logistics',
     summary: 'Resort details, transportation plans, and everything the family needs.',

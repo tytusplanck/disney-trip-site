@@ -9,7 +9,8 @@ export type TripSection =
   | 'll'
   | 'guide'
   | 'travelers'
-  | 'logistics';
+  | 'logistics'
+  | 'packing';
 
 export interface TripSectionTab {
   label: string;
@@ -127,6 +128,26 @@ export interface LogisticsEntry {
   notes: string;
 }
 
+export type PackingArchetype = 'adults' | 'kids';
+export type PackingPriority = 'must' | 'rec' | 'nice';
+
+export interface PackingItem {
+  name: string;
+  priority: PackingPriority;
+  note: string;
+}
+
+export interface PackingCategory {
+  category: string;
+  archetypes: PackingArchetype[];
+  kidsOnly?: boolean;
+  items: PackingItem[];
+}
+
+export interface TripPackingData {
+  categories: PackingCategory[];
+}
+
 export interface TripDataModule {
   summary: TripSummary;
   party: TripPartyMember[];
@@ -138,6 +159,7 @@ export interface TripDataModule {
   llDefaultPlan?: LLMemberPlan;
   llPolicy?: LLPolicy;
   sectionConfig?: TripSectionTab[];
+  packing?: TripPackingData;
   guide?: GuideAttraction[];
   travelerProfiles?: TravelerProfile[];
   logistics?: LogisticsEntry[];

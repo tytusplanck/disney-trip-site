@@ -18,6 +18,15 @@
 - Repeated visits to the same park may provide `llInventoryByParkDate` overrides for date-specific pricing or availability. The planner validates that each override matches the scheduled park and otherwise uses the canonical park inventory for that date.
 - Firm Lightning Lane bookings can add optional `returnWindows` on each park-day selection map, keyed by attraction id. Shared-link serialization preserves return windows for selected attractions so copied LL plans do not lose confirmed times.
 
+## Optional Packing Lists
+
+- Add `packing: TripPackingData` to a trip module and append `{ label: 'Packing', section: 'packing' }` to its `sectionConfig` to enable `/:tripSlug/packing`. Trips without populated packing data or without the tab redirect to their normal landing route.
+- Keep editable categories, priorities (`must | rec | nice`), and trip-specific notes in `src/data/trips/<slug>/packing.ts`. The Planck mega trip is the first enabled trip. The archetype cards use Tabler `user` and `friends` outline icons. These two decorative SVGs live in `PackingIcon.tsx`, with attribution in `docs/licenses/tabler-icons.md`; item row icons remain omitted.
+- Categories use `archetypes: ['adults']`, `['kids']`, or both. Families inherit all adult categories. Mark child-specific categories `kidsOnly: true` to show the pill and sort them first; these do not appear in the adult view.
+- `PackingLists.tsx` server-renders the default adult list and hydrates only the archetype and priority controls. Counts derive from unfiltered data; filters hide empty categories. Items sort within each category by `must`, `rec`, then `nice`, preserving editorial order within a priority and leaving source data unchanged. Radio cards use roving focus and arrow/Home/End navigation. Selection is ephemeral; there are no checkboxes, saved packing state, or extra login requirements. The existing site key gate still applies.
+- Packing passes `showHeadingOnMobile` to the shared shell so its title and lede remain visible on small screens; other routes retain their existing heading behavior.
+- Packing styles live in `src/styles/packing.css` and reuse app tokens. Archetype cards stack at 640px and narrower, and item priority pills move below notes on those widths.
+
 ## Route-Owned Copy
 
 - Keep page-specific labels, metadata, and supporting copy in route-adjacent `.page.ts` modules.
@@ -33,7 +42,7 @@
 - Legacy family/trip URLs redirect to their canonical single-slug trip route instead of rendering duplicate pages.
 - Planning trip tabs render inside the shared content shell so attractions, schedule, and party pages all open with the same content-width embedded tab strip.
 - The embedded planner tabs are label-only. Supporting detail belongs in the shell-owned page summary, not inside each tab.
-- On narrow screens, embedded planner tabs with multiple sections switch to a horizontally scrollable rail instead of shrinking until labels clip. A single-section trip keeps its only tab full-width and disables horizontal scrolling at every viewport size.
+- On narrow screens, embedded planner tabs with multiple sections use equal-width columns that fill the rail while preserving a 6.5rem minimum; the rail scrolls horizontally when those columns cannot fit. A single-section trip keeps its only tab full-width and disables horizontal scrolling at every viewport size.
 - Desktop trip pages use a lean shared header for brand and breadcrumb context only.
 - Trip shells use a compact mobile header pattern: breadcrumbs collapse to a back link and trip title, with no extra facts disclosure.
 - [`/src/components/shells/TripPageShell.astro`](../src/components/shells/TripPageShell.astro) owns the visible route heading block. Routes pass `pageTitle` and `pageSummary` and should not render their own intro sections above the main tool surface.

@@ -102,7 +102,7 @@ describe('style guardrails', () => {
     const tripPagesSource = readFileSync(join(stylesDirectory, 'trip-pages.css'), 'utf8');
 
     expect(componentsSource).toMatch(
-      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?grid-template-columns: none;[\s\S]*?grid-auto-flow: column;[\s\S]*?grid-auto-columns: minmax\(6\.5rem, max-content\);[\s\S]*?overflow-x: auto;/,
+      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?grid-template-columns: none;[\s\S]*?grid-auto-flow: column;[\s\S]*?grid-auto-columns: minmax\(6\.5rem, 1fr\);[\s\S]*?overflow-x: auto;/,
     );
     expect(componentsSource).toContain('.trip-tabs__rail::-webkit-scrollbar {');
     expect(componentsSource).not.toMatch(

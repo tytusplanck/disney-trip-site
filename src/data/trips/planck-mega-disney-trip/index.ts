@@ -3,6 +3,7 @@ import { planckMegaDisneyTripAttractions } from './attractions';
 import { planckMegaDisneyTripGuide } from './guide';
 import { planckMegaDisneyTripLLInventory } from './ll-inventory';
 import { planckMegaDisneyTripLLDefaultPlan } from './ll-selections';
+import { planckMegaDisneyTripPacking } from './packing';
 import { planckMegaDisneyTripParty } from './party';
 import { planckMegaDisneyTripSchedule } from './schedule';
 import { planckMegaDisneyTripSummary } from './summary';
@@ -14,6 +15,7 @@ export const planckMegaDisneyTripData: TripDataModule = {
   attractions: planckMegaDisneyTripAttractions,
   sectionConfig: [
     { label: 'Plan', section: 'schedule' },
+    { label: 'Packing', section: 'packing' },
     { label: 'LL', section: 'll' },
     { label: 'Rides', section: 'guide' },
   ],
@@ -23,4 +25,5 @@ export const planckMegaDisneyTripData: TripDataModule = {
     heightRestrictionsMatter: false,
   },
   guide: planckMegaDisneyTripGuide,
+  packing: planckMegaDisneyTripPacking,
 };

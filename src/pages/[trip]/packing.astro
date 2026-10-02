@@ -1,0 +1,39 @@
+---
+import PackingLists from '../../components/PackingLists';
+import TripPageShell from '../../components/shells/TripPageShell.astro';
+import { allTripsData } from '../../data/all-trips';
+import { getTripLandingPath, getTripRouteContext } from '../../lib/trips/all-trips';
+import { hasTripSectionContent } from '../../lib/trips/readiness';
+import '../../styles/packing.css';
+import { tripSectionCopy } from './trip-sections.page';
+
+const context = getTripRouteContext(
+  allTripsData.trips,
+  allTripsData.modules,
+  Astro.params['trip'] ?? '',
+);
+if (!context) return Astro.redirect('/');
+const { trip, tripModule, sectionConfig } = context;
+const packing = tripModule.packing;
+if (
+  !packing ||
+  !hasTripSectionContent(tripModule, 'packing') ||
+  !sectionConfig.some((tab) => tab.section === 'packing')
+) {
+  return Astro.redirect(getTripLandingPath(trip, tripModule));
+}
+const pageCopy = tripSectionCopy.packing;
+---
+
+<TripPageShell
+  title={`${trip.title} | Packing`}
+  description={`Packing recommendations for ${trip.title}.`}
+  trip={trip}
+  activeSection="packing"
+  showHeadingOnMobile
+  sectionConfig={sectionConfig}
+  pageTitle={pageCopy.title}
+  pageSummary={pageCopy.summary}
+>
+  <PackingLists data={packing} client:load />
+</TripPageShell>

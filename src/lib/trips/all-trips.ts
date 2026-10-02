@@ -16,6 +16,7 @@ const TRIP_SECTIONS = [
   'guide',
   'travelers',
   'logistics',
+  'packing',
 ] as const satisfies readonly TripSection[];
 
 const VALID_TRIP_SECTIONS = new Set<string>(TRIP_SECTIONS);

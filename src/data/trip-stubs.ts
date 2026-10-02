@@ -47,6 +47,12 @@ export const tripStubPages: Record<TripSection, TripStubPage> = {
     calloutBody: 'The route is ready for per-person notes and priorities once those are written.',
     checklist: ['Per-person priority list', 'Written notes', 'Group awareness summary'],
   },
+  packing: {
+    title: 'Packing lists',
+    calloutTitle: 'Packing recommendations are queued',
+    calloutBody: 'Packing lists will appear once recommendations are added for this trip.',
+    checklist: ['Adult essentials', 'Kids extras', 'Trip-specific notes'],
+  },
   logistics: {
     title: 'Trip logistics',
     calloutTitle: 'Logistics view is queued',

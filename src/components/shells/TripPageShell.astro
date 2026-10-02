@@ -10,13 +10,22 @@ interface Props {
   description: string;
   trip: TripSummary;
   activeSection: TripSection;
+  showHeadingOnMobile?: boolean;
   pageTitle: string;
   pageSummary?: string | undefined;
   sectionConfig?: TripSectionTab[] | undefined;
 }
 
-const { title, description, trip, activeSection, pageTitle, pageSummary, sectionConfig } =
-  Astro.props;
+const {
+  title,
+  description,
+  trip,
+  activeSection,
+  pageTitle,
+  pageSummary,
+  sectionConfig,
+  showHeadingOnMobile = false,
+} = Astro.props;
 
 const tripLabel = `${trip.title} / ${trip.dateLabel}`;
 ---
@@ -33,7 +42,11 @@ const tripLabel = `${trip.title} / ${trip.dateLabel}`;
       <Breadcrumbs slot="context" tripLabel={tripLabel} />
     </SiteHeader>
 
-    <main class="trip-shell__main trip-page-shell__main" id="main-content">
+    <main
+      class="trip-shell__main trip-page-shell__main"
+      id="main-content"
+      data-show-heading-on-mobile={showHeadingOnMobile}
+    >
       <TripTabs trip={trip} activeSection={activeSection} sectionConfig={sectionConfig} />
       <section class="trip-page-heading">
         <h1 class="page-title trip-page-heading__title">{pageTitle}</h1>
