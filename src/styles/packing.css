@@ -147,3 +147,26 @@
   grid-row: 1 / 3;
   align-self: center;
 }
+
+.packing__item--details {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-2) var(--space-3);
+}
+.packing__item--details .packing__item-body {
+  display: contents;
+}
+.packing__item-details {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin: 0;
+  padding-left: var(--space-5);
+  color: var(--color-ink-muted);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+  list-style: disc;
+}
+.packing__item-details li + li {
+  margin-top: var(--space-1);
+}

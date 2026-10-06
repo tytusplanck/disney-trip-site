@@ -25,7 +25,7 @@
 - Categories use `archetypes: ['adults']`, `['kids']`, or both. Families inherit all adult categories. Mark child-specific categories `kidsOnly: true` to show the pill and sort them first; these do not appear in the adult view.
 - `PackingLists.tsx` server-renders the default adult list and hydrates only the archetype and priority controls. Counts derive from unfiltered data; filters hide empty categories. Items sort within each category by `must`, `rec`, then `nice`, preserving editorial order within a priority and leaving source data unchanged. Radio cards use roving focus and arrow/Home/End navigation. Selection is ephemeral; there are no checkboxes, saved packing state, or extra login requirements. The existing site key gate still applies.
 - Packing passes `showHeadingOnMobile` to the shared shell so its title and lede remain visible on small screens; other routes retain their existing heading behavior.
-- Packing styles live in `src/styles/packing.css` and reuse app tokens. Archetype cards stack at 640px and narrower, while compact item rows show regular-weight 15px names and priority pills. Packing items have no descriptions.
+- Packing styles live in `src/styles/packing.css` and reuse app tokens. Archetype cards stack at 640px and narrower, while compact item rows show regular-weight 15px names and priority pills. Packing items have no general descriptions. An optional `details: string[]` renders an editorial bullet list beneath the item name, used for park and dining outfit themes.
 
 ## Route-Owned Copy
 

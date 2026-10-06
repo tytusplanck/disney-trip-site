@@ -3,7 +3,7 @@ import type { TripPackingData } from '../../../lib/trips/types';
 export const planckMegaDisneyTripPacking: TripPackingData = {
   categories: [
     {
-      category: 'For the kids',
+      category: 'Kid diaper bag / stroller',
       archetypes: ['kids'],
       kidsOnly: true,
       items: [
@@ -24,7 +24,7 @@ export const planckMegaDisneyTripPacking: TripPackingData = {
           priority: 'must',
         },
         {
-          name: 'Themometer of your choice',
+          name: 'Themometer',
           priority: 'rec',
         },
         {
@@ -32,7 +32,7 @@ export const planckMegaDisneyTripPacking: TripPackingData = {
           priority: 'rec',
         },
         {
-          name: 'Ear protection',
+          name: 'Child ear protective headphones',
           priority: 'rec',
         },
         {
@@ -78,7 +78,7 @@ export const planckMegaDisneyTripPacking: TripPackingData = {
       ],
     },
     {
-      category: 'Baby travel and sleep',
+      category: 'Kid packing list',
       archetypes: ['kids'],
       kidsOnly: true,
       items: [
@@ -88,7 +88,7 @@ export const planckMegaDisneyTripPacking: TripPackingData = {
         },
         {
           name: 'SlumberPod',
-          priority: 'nice',
+          priority: 'must',
         },
         {
           name: 'Sleep sack',
@@ -104,28 +104,32 @@ export const planckMegaDisneyTripPacking: TripPackingData = {
         },
         {
           name: 'Nursing cover',
-          priority: 'nice',
+          priority: 'must',
         },
         {
           name: 'Pump and bottle supplies',
-          priority: 'rec',
+          priority: 'nice',
         },
         {
           name: 'Vitamin drops',
           priority: 'rec',
         },
         {
-          name: 'Baby body wash and detergent',
+          name: 'Baby body wash',
           priority: 'rec',
         },
         {
           name: 'Swim diapers',
           priority: 'rec',
         },
+        {
+          name: 'Stain remover',
+          priority: 'rec',
+        },
       ],
     },
     {
-      category: 'Park day bag',
+      category: 'Park day essientials',
       archetypes: ['adults', 'kids'],
       items: [
         {
@@ -152,6 +156,8 @@ export const planckMegaDisneyTripPacking: TripPackingData = {
           name: 'Small crossbody bag',
           priority: 'rec',
         },
+        { name: 'Hat', priority: 'rec' },
+        { name: 'Sunglasses', priority: 'must' },
         {
           name: 'Rain poncho',
           priority: 'nice',
@@ -163,11 +169,34 @@ export const planckMegaDisneyTripPacking: TripPackingData = {
       archetypes: ['adults', 'kids'],
       items: [
         {
+          name: 'Four park day outfits',
+          priority: 'must',
+          details: [
+            'Epcot: Travel themed, Ratatouille, Nemo, Frozen',
+            'Hollywood Studios: Toy Story or Star Wars',
+            'Animal Kingdom: Animals lol, Lion King, cheetah print',
+            'Magic Kingdom: Mickey and the gang, Princesses',
+          ],
+        },
+        {
+          name: 'Special dining outfits',
+          priority: 'must',
+          details: [
+            'Hoop-Dee-Doo Revue: Denim',
+            "'Ohana: Hawaiian Shits",
+            '1–2 additional smart casual outfits for Narcoossee’s and other dining.',
+          ],
+        },
+        {
+          name: 'Additional resort day outfits (refer to Plan tab)',
+          priority: 'must',
+        },
+        {
           name: 'Broken-in walking shoes',
           priority: 'must',
         },
         {
-          name: 'Light layer for evenings',
+          name: 'Sweatshirt / Jacket',
           priority: 'must',
         },
         {
@@ -179,20 +208,12 @@ export const planckMegaDisneyTripPacking: TripPackingData = {
           priority: 'rec',
         },
         {
-          name: 'Ears or matching outfits',
+          name: 'Ears or matching accessories',
           priority: 'nice',
         },
         {
-          name: 'Park and non-park outfits',
+          name: 'Underwear, bras, and socks',
           priority: 'must',
-        },
-        {
-          name: 'Underwear and bras',
-          priority: 'must',
-        },
-        {
-          name: 'Hat and sunglasses',
-          priority: 'rec',
         },
         {
           name: 'Swimsuit and coverup',

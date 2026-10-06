@@ -16,6 +16,29 @@ const kidsLabel = `Adults with kids ${String(familyItems.length)} items, ${Strin
 const renderLists = () => render(<PackingLists data={planckMegaDisneyTripPacking} />);
 
 describe('Packing lists', () => {
+  it('renders outfit themes as bullet lists beneath their item titles', () => {
+    renderLists();
+    const parkOutfits = screen.getByText('Four park day outfits').closest('li');
+    const diningOutfits = screen.getByText('Dining outfits').closest('li');
+    expect(parkOutfits).not.toBeNull();
+    expect(diningOutfits).not.toBeNull();
+    if (!parkOutfits || !diningOutfits) throw new Error('Expected outfit rows');
+    expect(within(parkOutfits).getAllByRole('listitem')).toHaveLength(4);
+    expect(
+      within(parkOutfits).getByText('Epcot: Travel themed, Ratatouille, Nemo, Frozen'),
+    ).toBeInTheDocument();
+    expect(within(diningOutfits).getAllByRole('listitem')).toHaveLength(3);
+    expect(
+      within(diningOutfits).getByText('Hoop-Dee-Doo Revue: Pioneer / Cowboy'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Hat and sunglasses')).not.toBeInTheDocument();
+    const parkBag = screen.getByRole('region', { name: 'Park day bag' });
+    const sunglasses = within(parkBag).getByText('Sunglasses').closest('li');
+    const hat = within(parkBag).getByText('Hat').closest('li');
+    expect(sunglasses).toHaveTextContent('Must pack');
+    expect(hat).toHaveTextContent('Recommended');
+  });
+
   it('shows item names and priorities without descriptions', () => {
     const { container } = renderLists();
     expect(screen.getByText('Portable battery and cable')).toBeInTheDocument();
@@ -64,10 +87,12 @@ describe('Packing lists', () => {
       'true',
     );
     expect(screen.getByRole('radio', { name: kidsLabel })).toHaveAttribute('aria-checked', 'false');
-    expect(screen.queryByRole('heading', { name: 'For the kids' })).not.toBeInTheDocument();
-    expect(screen.getAllByRole('listitem')).toHaveLength(adultItems.length);
+    expect(
+      screen.queryByRole('heading', { name: 'Kid diaper bag / stroller' }),
+    ).not.toBeInTheDocument();
+    expect(document.querySelectorAll('.packing__item')).toHaveLength(adultItems.length);
     fireEvent.click(screen.getByRole('button', { name: 'Must pack' }));
-    expect(screen.getAllByRole('listitem')).toHaveLength(
+    expect(document.querySelectorAll('.packing__item')).toHaveLength(
       adultItems.filter((item) => item.priority === 'must').length,
     );
     expect(screen.getByRole('radio', { name: adultsLabel })).toBeInTheDocument();
@@ -78,16 +103,21 @@ describe('Packing lists', () => {
     renderLists();
     fireEvent.click(screen.getByRole('button', { name: 'Recommended' }));
     fireEvent.click(screen.getByRole('radio', { name: /Adults with kids/ }));
-    expect(screen.getAllByRole('heading', { level: 2 })[0]).toHaveTextContent('For the kids');
+    expect(screen.getAllByRole('heading', { level: 2 })[0]).toHaveTextContent(
+      'Kid diaper bag / stroller',
+    );
+    expect(screen.getByRole('heading', { name: 'Kid packing list' })).toBeInTheDocument();
     expect(
-      within(screen.getByRole('region', { name: 'For the kids' })).getByText('Kids only'),
+      within(screen.getByRole('region', { name: 'Kid diaper bag / stroller' })).getByText(
+        'Kids only',
+      ),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole('listitem')).toHaveLength(
+    expect(document.querySelectorAll('.packing__item')).toHaveLength(
       familyItems.filter((item) => item.priority === 'rec').length,
     );
     expect(screen.queryByText('Portable battery and cable')).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'All' }));
-    expect(screen.getAllByRole('listitem')).toHaveLength(familyItems.length);
+    expect(document.querySelectorAll('.packing__item')).toHaveLength(familyItems.length);
   });
 
   it('supports arrow keys, Home and End with roving focus and resets on remount', () => {
@@ -142,7 +172,7 @@ describe('Packing lists', () => {
       />,
     );
     fireEvent.click(screen.getByRole('radio', { name: /Adults with kids/ }));
-    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+    expect(document.querySelectorAll('.packing__item')).toHaveLength(3);
     fireEvent.click(screen.getByRole('button', { name: 'Must pack' }));
     expect(screen.queryByRole('heading', { name: 'Extras' })).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Kids extras' })).not.toBeInTheDocument();

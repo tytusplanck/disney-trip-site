@@ -119,9 +119,21 @@ export default function PackingLists({ data }: Props) {
           </div>
           <ul className="packing__items">
             {category.items.map((item) => (
-              <li className="packing__item" key={item.name}>
+              <li
+                className={
+                  item.details?.length ? 'packing__item packing__item--details' : 'packing__item'
+                }
+                key={item.name}
+              >
                 <div className="packing__item-body">
                   <p className="packing__item-name">{item.name}</p>
+                  {item.details && item.details.length > 0 && (
+                    <ul className="packing__item-details">
+                      {item.details.map((detail) => (
+                        <li key={detail}>{detail}</li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
                 <span className="packing__pill" data-priority={item.priority}>
                   {PACKING_PRIORITY_LABELS[item.priority]}
