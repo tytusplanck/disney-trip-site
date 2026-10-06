@@ -23,23 +23,41 @@ describe('all trips helpers', () => {
         count: section.tripCount,
       })),
     ).toEqual([
-      { status: 'planning', count: 2 },
-      { status: 'upcoming', count: 0 },
-      { status: 'completed', count: 2 },
+      { status: 'planning', count: 1 },
+      { status: 'upcoming', count: 1 },
+      { status: 'completed', count: 3 },
     ]);
 
-    expect(sections[0]?.trips.map((trip) => trip.title)).toEqual([
-      'Osborne Fall Family Trip',
-      'Planck Mega Disney trip',
+    expect(sections[0]?.trips.map((trip) => trip.title)).toEqual(['Planck Mega Disney trip']);
+    expect(sections[0]?.countLabel).toBe('1 trip');
+    expect(sections[1]?.trips.map((trip) => trip.title)).toEqual([
+      'Secret Planck / Osborne Janurary Trip',
     ]);
-    expect(sections[0]?.countLabel).toBe('2 trips');
-    expect(sections[1]?.trips).toEqual([]);
-    expect(sections[1]?.countLabel).toBe('0 trips');
+    expect(sections[1]?.countLabel).toBe('1 trip');
     expect(sections[2]?.trips.map((trip) => trip.title)).toEqual([
+      'Osborne Fall Family Trip',
       'Casschwlanck 2026',
       "Declan's Big Summer Trip",
     ]);
-    expect(sections[2]?.countLabel).toBe('2 trips');
+    expect(sections[2]?.countLabel).toBe('3 trips');
+  });
+
+  it('registers the secret January trip with a working placeholder landing route', () => {
+    const trip = findTripSummary(allTripsData.trips, 'secret-planck-osborne-january-trip');
+    const module = findTripDataModule(allTripsData.modules, 'secret-planck-osborne-january-trip');
+
+    expect(trip).toMatchObject({
+      title: 'Secret Planck / Osborne Janurary Trip',
+      status: 'upcoming',
+      dateLabel: 'January • Dates TBD',
+      partySize: null,
+      dayCount: null,
+      parkLabels: [],
+    });
+    expect(module).toBeDefined();
+    if (!trip || !module) throw new Error('Expected the secret January trip to be registered.');
+    expect(getTripLandingPath(trip, module)).toBe('/secret-planck-osborne-january-trip/schedule');
+    expect(module.schedule).toEqual([]);
   });
 
   it('routes trips to canonical single-slug planner sections', () => {

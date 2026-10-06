@@ -9,7 +9,7 @@ export const osborneFallFamilyTripSummary: TripSummary = {
   partySize: null,
   dayCount: osborneFallFamilyTripSchedule.length,
   attractionCount: null,
-  status: 'planning',
+  status: 'completed',
   topPick: null,
   themeId: 'primary',
 };

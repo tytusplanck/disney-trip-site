@@ -12,12 +12,12 @@ import {
 import { osborneFallFamilyTripData } from '.';
 
 describe('Osborne Fall Family Trip data', () => {
-  it('is an active LL-only trip with the requested park schedule', () => {
+  it('is a completed LL-only trip with the requested park schedule', () => {
     expect(osborneFallFamilyTripData.summary).toMatchObject({
       slug: 'osborne-fall-family-trip',
       title: 'Osborne Fall Family Trip',
       dateLabel: 'Sep 20 - Sep 26, 2026',
-      status: 'planning',
+      status: 'completed',
     });
     expect(osborneFallFamilyTripData.sectionConfig).toEqual([{ label: 'LL', section: 'll' }]);
     expect(osborneFallFamilyTripData.schedule.map((entry) => entry.date)).toEqual([

@@ -3,10 +3,12 @@ import { casschwlanck2026TripData } from './casschwlanck-2026';
 import { declanBigSummerTripData } from './declan-big-summer-trip';
 import { osborneFallFamilyTripData } from './osborne-fall-family-trip';
 import { planckMegaDisneyTripData } from './planck-mega-disney-trip';
+import { secretPlanckOsborneJanuaryTripData } from './secret-planck-osborne-january-trip';
 
 export const tripDataModules: TripDataModule[] = [
   osborneFallFamilyTripData,
   casschwlanck2026TripData,
   planckMegaDisneyTripData,
   declanBigSummerTripData,
+  secretPlanckOsborneJanuaryTripData,
 ];
