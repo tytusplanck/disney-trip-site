@@ -20,8 +20,33 @@ it('keeps editable packing categories and items complete and unique within each 
     expect(new Set(category.items.map((item) => item.name)).size).toBe(category.items.length);
     for (const item of category.items) {
       expect(item.name.trim()).not.toBe('');
-      expect(item.note.trim()).not.toBe('');
       expect(['must', 'rec', 'nice']).toContain(item.priority);
     }
   }
+});
+
+it('includes Aquaphor / Vaseline only in the kids list', () => {
+  const categories = planckMegaDisneyTripData.packing?.categories ?? [];
+  expect(
+    categories
+      .filter((category) => category.kidsOnly)
+      .flatMap((category) => category.items.map((item) => item.name)),
+  ).toContain('Aquaphor / Vaseline');
+  expect(
+    categories
+      .filter((category) => category.archetypes.includes('adults'))
+      .flatMap((category) => category.items.map((item) => item.name)),
+  ).not.toContain('Aquaphor / Vaseline');
+});
+
+it('includes adult comfort supplies and keeps the sleep sack without travel crib sheets', () => {
+  const categories = planckMegaDisneyTripData.packing?.categories ?? [];
+  const adultNames = categories
+    .filter((category) => category.archetypes.includes('adults'))
+    .flatMap((category) => category.items.map((item) => item.name));
+  expect(adultNames).toContain('Body Glide / anti-chafe');
+  expect(adultNames).toContain('Gold Bond / powder');
+  const allNames = categories.flatMap((category) => category.items.map((item) => item.name));
+  expect(allNames).toContain('Sleep sack');
+  expect(allNames.some((name) => /travel crib sheets/i.test(name))).toBe(false);
 });

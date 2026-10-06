@@ -16,6 +16,15 @@ const kidsLabel = `Adults with kids ${String(familyItems.length)} items, ${Strin
 const renderLists = () => render(<PackingLists data={planckMegaDisneyTripPacking} />);
 
 describe('Packing lists', () => {
+  it('shows item names and priorities without descriptions', () => {
+    const { container } = renderLists();
+    expect(screen.getByText('Portable battery and cable')).toBeInTheDocument();
+    expect(
+      screen.queryByText('Heavy app use drains a phone by mid-afternoon.'),
+    ).not.toBeInTheDocument();
+    expect(container.querySelector('.packing__item-note')).not.toBeInTheDocument();
+  });
+
   it('keeps both archetype icons and omits the weather context strip', () => {
     const { container } = renderLists();
     const adults = screen.getByRole('radio', { name: adultsLabel });
@@ -115,18 +124,18 @@ describe('Packing lists', () => {
             {
               category: 'Adults essentials',
               archetypes: ['adults'],
-              items: [{ name: 'Shoes', priority: 'must', note: 'Walking.' }],
+              items: [{ name: 'Shoes', priority: 'must' }],
             },
             {
               category: 'Extras',
               archetypes: ['adults'],
-              items: [{ name: 'Camera', priority: 'nice', note: 'Photos.' }],
+              items: [{ name: 'Camera', priority: 'nice' }],
             },
             {
               category: 'Kids extras',
               archetypes: ['kids'],
               kidsOnly: true,
-              items: [{ name: 'Toy', priority: 'nice', note: 'Waiting.' }],
+              items: [{ name: 'Toy', priority: 'nice' }],
             },
           ],
         }}

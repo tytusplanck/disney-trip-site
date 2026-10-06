@@ -122,7 +122,6 @@ export default function PackingLists({ data }: Props) {
               <li className="packing__item" key={item.name}>
                 <div className="packing__item-body">
                   <p className="packing__item-name">{item.name}</p>
-                  <p className="packing__item-note">{item.note}</p>
                 </div>
                 <span className="packing__pill" data-priority={item.priority}>
                   {PACKING_PRIORITY_LABELS[item.priority]}

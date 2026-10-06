@@ -134,7 +134,6 @@ export type PackingPriority = 'must' | 'rec' | 'nice';
 export interface PackingItem {
   name: string;
   priority: PackingPriority;
-  note: string;
 }
 
 export interface PackingCategory {

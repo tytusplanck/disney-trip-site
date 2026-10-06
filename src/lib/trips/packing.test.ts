@@ -8,11 +8,11 @@ it('orders each category by priority, preserving ties and the editable source da
       category: 'Essentials',
       archetypes: ['adults'],
       items: [
-        { name: 'Optional', priority: 'nice', note: 'Optional note.' },
-        { name: 'Recommended first', priority: 'rec', note: 'First note.' },
-        { name: 'Must first', priority: 'must', note: 'Must note.' },
-        { name: 'Recommended second', priority: 'rec', note: 'Second note.' },
-        { name: 'Must second', priority: 'must', note: 'Another must.' },
+        { name: 'Optional', priority: 'nice' },
+        { name: 'Recommended first', priority: 'rec' },
+        { name: 'Must first', priority: 'must' },
+        { name: 'Recommended second', priority: 'rec' },
+        { name: 'Must second', priority: 'must' },
       ],
     },
   ];

@@ -21,11 +21,11 @@
 ## Optional Packing Lists
 
 - Add `packing: TripPackingData` to a trip module and append `{ label: 'Packing', section: 'packing' }` to its `sectionConfig` to enable `/:tripSlug/packing`. Trips without populated packing data or without the tab redirect to their normal landing route.
-- Keep editable categories, priorities (`must | rec | nice`), and trip-specific notes in `src/data/trips/<slug>/packing.ts`. The Planck mega trip is the first enabled trip. The archetype cards use Tabler `user` and `friends` outline icons. These two decorative SVGs live in `PackingIcon.tsx`, with attribution in `docs/licenses/tabler-icons.md`; item row icons remain omitted.
+- Keep editable categories, item names, and priorities (`must | rec | nice`) in `src/data/trips/<slug>/packing.ts`. The Planck mega trip is the first enabled trip. The archetype cards use Tabler `user` and `friends` outline icons. These two decorative SVGs live in `PackingIcon.tsx`, with attribution in `docs/licenses/tabler-icons.md`; item row icons remain omitted.
 - Categories use `archetypes: ['adults']`, `['kids']`, or both. Families inherit all adult categories. Mark child-specific categories `kidsOnly: true` to show the pill and sort them first; these do not appear in the adult view.
 - `PackingLists.tsx` server-renders the default adult list and hydrates only the archetype and priority controls. Counts derive from unfiltered data; filters hide empty categories. Items sort within each category by `must`, `rec`, then `nice`, preserving editorial order within a priority and leaving source data unchanged. Radio cards use roving focus and arrow/Home/End navigation. Selection is ephemeral; there are no checkboxes, saved packing state, or extra login requirements. The existing site key gate still applies.
 - Packing passes `showHeadingOnMobile` to the shared shell so its title and lede remain visible on small screens; other routes retain their existing heading behavior.
-- Packing styles live in `src/styles/packing.css` and reuse app tokens. Archetype cards stack at 640px and narrower, and item priority pills move below notes on those widths.
+- Packing styles live in `src/styles/packing.css` and reuse app tokens. Archetype cards stack at 640px and narrower, while compact item rows show regular-weight 15px names and priority pills. Packing items have no descriptions.
 
 ## Route-Owned Copy
 
