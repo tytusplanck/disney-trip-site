@@ -24,6 +24,15 @@ describe('ScheduleDayCard', () => {
     expect(source.indexOf('schedule-card__park')).toBeLessThan(source.indexOf('schedule-moments'));
   });
 
+  it('places optional outfit copy after the note in the full-width card body', () => {
+    expect(source).toContain('day.entry.outfit && (');
+    expect(source).toContain('<p class="schedule-card__outfit">');
+    expect(source).toContain('<span class="schedule-card__outfit-label">Outfit</span>');
+    expect(source.indexOf('schedule-card__outfit')).toBeGreaterThan(
+      source.indexOf('schedule-card__note'),
+    );
+  });
+
   it('renders optional moment detail and status without empty separators', () => {
     expect(
       source.includes(

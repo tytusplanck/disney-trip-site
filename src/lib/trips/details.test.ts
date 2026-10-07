@@ -244,6 +244,30 @@ describe('trip detail helpers', () => {
     ]);
   });
 
+  it('preserves the outfit recommendation for each Planck day in schedule summaries', () => {
+    const days = getScheduleDaySummaries(planckMegaDisneyTripData.schedule);
+
+    expect(days.map((day) => [day.entry.date, day.entry.outfit])).toEqual([
+      ['2026-11-07', 'Denim for Hoop-Dee-Doo.'],
+      ['2026-11-08', 'Toy Story or Star Wars. Bring a hoodie for Fantasmic.'],
+      ['2026-11-09', "Pool day, then Hawaiian shirts for 'Ohana."],
+      ['2026-11-10', 'Mickey and the gang, or Princesses. Ears encouraged.'],
+      ['2026-11-11', "Mickey and friends for Chef Mickey's, then casual resort wear."],
+      [
+        '2026-11-12',
+        'Ratatouille, Nemo, Frozen, or travel themed. Stretchy pants for Food & Wine.',
+      ],
+      ['2026-11-13', "Smart casual for Narcoossee's. Skip the park tees and hats."],
+      ['2026-11-14', 'Animals, Lion King, or cheetah print. Warm layer for the 6:10 AM start.'],
+      ['2026-11-15', 'Comfy clothes for the trip home.'],
+    ]);
+    expect(
+      getScheduleDaySummaries(osborneFallFamilyTripData.schedule).every(
+        (day) => day.entry.outfit === undefined,
+      ),
+    ).toBe(true);
+  });
+
   it('counts mixed travel and park itinerary days in both categories', () => {
     const overview = getScheduleOverview(declanBigSummerTripData.schedule);
     const days = getScheduleDaySummaries(declanBigSummerTripData.schedule);

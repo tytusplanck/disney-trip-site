@@ -91,6 +91,8 @@ export interface TripScheduleEntry {
   label: string;
   parkLabel: string | null;
   notes: string | null;
+  /** One or two short sentences of outfit guidance for the day. */
+  outfit?: string;
   moments?: ScheduleMoment[];
 }
 

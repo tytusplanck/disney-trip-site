@@ -24,7 +24,7 @@ export const planckMegaDisneyTripPacking: TripPackingData = {
           priority: 'must',
         },
         {
-          name: 'Themometer',
+          name: 'Thermometer',
           priority: 'rec',
         },
         {
@@ -129,7 +129,7 @@ export const planckMegaDisneyTripPacking: TripPackingData = {
       ],
     },
     {
-      category: 'Park day essientials',
+      category: 'Park day essentials',
       archetypes: ['adults', 'kids'],
       items: [
         {
@@ -183,7 +183,7 @@ export const planckMegaDisneyTripPacking: TripPackingData = {
           priority: 'must',
           details: [
             'Hoop-Dee-Doo Revue: Denim',
-            "'Ohana: Hawaiian Shits",
+            "'Ohana: Hawaiian Shirts",
             '1–2 additional smart casual outfits for Narcoossee’s and other dining.',
           ],
         },

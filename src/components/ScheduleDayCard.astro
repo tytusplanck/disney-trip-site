@@ -69,5 +69,13 @@ const { day, isToday = false } = Astro.props;
       )
     }
     {day.entry.notes && <p class="schedule-card__note">{day.entry.notes}</p>}
+    {
+      day.entry.outfit && (
+        <p class="schedule-card__outfit">
+          <span class="schedule-card__outfit-label">Outfit</span>
+          {day.entry.outfit}
+        </p>
+      )
+    }
   </div>
 </article>

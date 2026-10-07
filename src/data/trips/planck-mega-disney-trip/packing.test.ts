@@ -50,3 +50,11 @@ it('includes adult comfort supplies and keeps the sleep sack without travel crib
   expect(allNames).toContain('Sleep sack');
   expect(allNames.some((name) => /travel crib sheets/i.test(name))).toBe(false);
 });
+
+it('uses corrected spelling in park essentials, medical supplies, and dining outfits', () => {
+  const categories = planckMegaDisneyTripData.packing?.categories ?? [];
+  expect(categories.map((category) => category.category)).toContain('Park day essentials');
+  const items = categories.flatMap((category) => category.items);
+  expect(items.map((item) => item.name)).toContain('Thermometer');
+  expect(items.flatMap((item) => item.details ?? [])).toContain("'Ohana: Hawaiian Shirts");
+});

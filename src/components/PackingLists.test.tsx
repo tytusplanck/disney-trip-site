@@ -19,7 +19,7 @@ describe('Packing lists', () => {
   it('renders outfit themes as bullet lists beneath their item titles', () => {
     renderLists();
     const parkOutfits = screen.getByText('Four park day outfits').closest('li');
-    const diningOutfits = screen.getByText('Dining outfits').closest('li');
+    const diningOutfits = screen.getByText('Special dining outfits').closest('li');
     expect(parkOutfits).not.toBeNull();
     expect(diningOutfits).not.toBeNull();
     if (!parkOutfits || !diningOutfits) throw new Error('Expected outfit rows');
@@ -28,11 +28,10 @@ describe('Packing lists', () => {
       within(parkOutfits).getByText('Epcot: Travel themed, Ratatouille, Nemo, Frozen'),
     ).toBeInTheDocument();
     expect(within(diningOutfits).getAllByRole('listitem')).toHaveLength(3);
-    expect(
-      within(diningOutfits).getByText('Hoop-Dee-Doo Revue: Pioneer / Cowboy'),
-    ).toBeInTheDocument();
+    expect(within(diningOutfits).getByText('Hoop-Dee-Doo Revue: Denim')).toBeInTheDocument();
+    expect(within(diningOutfits).getByText("'Ohana: Hawaiian Shirts")).toBeInTheDocument();
     expect(screen.queryByText('Hat and sunglasses')).not.toBeInTheDocument();
-    const parkBag = screen.getByRole('region', { name: 'Park day bag' });
+    const parkBag = screen.getByRole('region', { name: 'Park day essentials' });
     const sunglasses = within(parkBag).getByText('Sunglasses').closest('li');
     const hat = within(parkBag).getByText('Hat').closest('li');
     expect(sunglasses).toHaveTextContent('Must pack');

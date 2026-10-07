@@ -1,4 +1,20 @@
-/* Schedule moments: time-ordered rows inside a schedule day card. */
+/* Schedule moments and outfit guidance inside a schedule day card. */
+
+.schedule-card__outfit {
+  margin: var(--space-3) 0 0;
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+  color: var(--color-ink);
+}
+
+.schedule-card__outfit-label {
+  margin-right: var(--space-2);
+  font-size: var(--text-meta);
+  font-weight: 600;
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: var(--color-teal-700);
+}
 
 .schedule-moments {
   display: grid;

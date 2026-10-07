@@ -7,6 +7,7 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
     label: 'Travel day',
     parkLabel: null,
     notes: null,
+    outfit: 'Travel clothes. Some denim for Hoop-Dee-Doo.',
     moments: [
       { time: '14:50', kind: 'depart', label: 'Leave the resort' },
       {
@@ -25,6 +26,7 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
     label: "Disney's Hollywood Studios",
     parkLabel: "Disney's Hollywood Studios",
     notes: 'Fantasmic.',
+    outfit: 'Toy Story or Star Wars.',
     moments: [
       { time: '07:10', kind: 'depart', label: 'Leave the resort', detail: 'Meet in the lobby' },
       { time: '08:30', kind: 'rope-drop', label: 'Rope drop' },
@@ -51,6 +53,7 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
     label: 'Resort day',
     parkLabel: null,
     notes: 'David / Lee / Grammy arrive.',
+    outfit: "Lounge resort wear then Hawaiian shirts for 'Ohana.",
     moments: [
       { time: '15:50', kind: 'depart', label: 'Leave the resort' },
       {
@@ -68,6 +71,7 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
     label: 'Magic Kingdom',
     parkLabel: 'Magic Kingdom',
     notes: null,
+    outfit: 'Mickey and the gang, or Princesses.',
     moments: [
       { time: '07:10', kind: 'depart', label: 'Leave the resort', detail: 'Meet in the lobby' },
       { time: '08:30', kind: 'rope-drop', label: 'Rope drop' },
@@ -87,6 +91,7 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
     label: 'Resort day',
     parkLabel: null,
     notes: null,
+    outfit: "Mickey and friends for Chef Mickey's, then lounge resort wear. Wailulu is smart casual.",
     moments: [
       { time: '06:45', kind: 'depart', label: 'Leave the resort' },
       {
@@ -113,6 +118,7 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
     label: 'EPCOT',
     parkLabel: 'EPCOT',
     notes: 'Food & Wine',
+    outfit: 'Ratatouille, Nemo, Frozen, or travel themed.',
     moments: [
       { time: '07:10', kind: 'depart', label: 'Leave the resort', detail: 'Meet in the lobby' },
       { time: '08:30', kind: 'rope-drop', label: 'Rope drop' },
@@ -124,6 +130,7 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
     label: 'Resort day',
     parkLabel: null,
     notes: 'David / Lee / Grammy leave.',
+    outfit: "Lounge resort wear and smart casual for Narcoossee's.",
     moments: [
       { time: '16:20', kind: 'depart', label: 'Leave the resort' },
       {
@@ -142,6 +149,7 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
     label: "Disney's Animal Kingdom",
     parkLabel: "Disney's Animal Kingdom",
     notes: null,
+    outfit: 'Animals, Lion King, or cheetah print.',
     moments: [
       { time: '06:10', kind: 'depart', label: 'Leave the resort', detail: 'Meet in the lobby' },
       { time: '07:30', kind: 'rope-drop', label: 'Rope drop' },
@@ -153,5 +161,6 @@ export const planckMegaDisneyTripSchedule: TripScheduleEntry[] = [
     label: 'Travel day',
     parkLabel: null,
     notes: null,
+    outfit: 'Travel clothes.',
   },
 ];
