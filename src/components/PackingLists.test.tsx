@@ -23,13 +23,27 @@ describe('Packing lists', () => {
     expect(parkOutfits).not.toBeNull();
     expect(diningOutfits).not.toBeNull();
     if (!parkOutfits || !diningOutfits) throw new Error('Expected outfit rows');
-    expect(within(parkOutfits).getAllByRole('listitem')).toHaveLength(4);
     expect(
-      within(parkOutfits).getByText('Epcot: Travel themed, Ratatouille, Nemo, Frozen'),
-    ).toBeInTheDocument();
-    expect(within(diningOutfits).getAllByRole('listitem')).toHaveLength(3);
-    expect(within(diningOutfits).getByText('Hoop-Dee-Doo Revue: Denim')).toBeInTheDocument();
-    expect(within(diningOutfits).getByText("'Ohana: Hawaiian Shirts")).toBeInTheDocument();
+      within(parkOutfits)
+        .getAllByRole('listitem')
+        .map((item) => item.textContent),
+    ).toEqual([
+      'Hollywood Studios: Toy Story or Star Wars',
+      'Magic Kingdom: Anything Disney theme plus Christmas',
+      'EPCOT: Ratatouille, Nemo, Frozen, or travel themed',
+      'Animal Kingdom: Up, Wilderness Explorer, Lion King, or animal print',
+    ]);
+    expect(
+      within(diningOutfits)
+        .getAllByRole('listitem')
+        .map((item) => item.textContent),
+    ).toEqual([
+      'Hoop-Dee-Doo Revue: Denim Night',
+      "'Ohana: Hawaiian Shirts",
+      "Chef Mickey's: Mickey and friends",
+      'Wailulu Bar & Grill: Smart casual',
+      "Narcoossee's: Smart casual",
+    ]);
     expect(screen.queryByText('Hat and sunglasses')).not.toBeInTheDocument();
     const parkBag = screen.getByRole('region', { name: 'Park day essentials' });
     const sunglasses = within(parkBag).getByText('Sunglasses').closest('li');

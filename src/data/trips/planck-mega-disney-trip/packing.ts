@@ -172,19 +172,21 @@ export const planckMegaDisneyTripPacking: TripPackingData = {
           name: 'Four park day outfits',
           priority: 'must',
           details: [
-            'Epcot: Travel themed, Ratatouille, Nemo, Frozen',
             'Hollywood Studios: Toy Story or Star Wars',
-            'Animal Kingdom: Animals lol, Lion King, cheetah print',
-            'Magic Kingdom: Mickey and the gang, Princesses',
+            'Magic Kingdom: Anything Disney theme plus Christmas',
+            'EPCOT: Ratatouille, Nemo, Frozen, or travel themed',
+            'Animal Kingdom: Up, Wilderness Explorer, Lion King, or animal print',
           ],
         },
         {
           name: 'Special dining outfits',
           priority: 'must',
           details: [
-            'Hoop-Dee-Doo Revue: Denim',
+            'Hoop-Dee-Doo Revue: Denim Night',
             "'Ohana: Hawaiian Shirts",
-            '1–2 additional smart casual outfits for Narcoossee’s and other dining.',
+            "Chef Mickey's: Mickey and friends",
+            'Wailulu Bar & Grill: Smart casual',
+            "Narcoossee's: Smart casual",
           ],
         },
         {

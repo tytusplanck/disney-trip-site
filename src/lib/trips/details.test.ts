@@ -248,18 +248,18 @@ describe('trip detail helpers', () => {
     const days = getScheduleDaySummaries(planckMegaDisneyTripData.schedule);
 
     expect(days.map((day) => [day.entry.date, day.entry.outfit])).toEqual([
-      ['2026-11-07', 'Denim for Hoop-Dee-Doo.'],
-      ['2026-11-08', 'Toy Story or Star Wars. Bring a hoodie for Fantasmic.'],
-      ['2026-11-09', "Pool day, then Hawaiian shirts for 'Ohana."],
-      ['2026-11-10', 'Mickey and the gang, or Princesses. Ears encouraged.'],
-      ['2026-11-11', "Mickey and friends for Chef Mickey's, then casual resort wear."],
+      ['2026-11-07', 'Travel clothes and Denim Night at Hoop-Dee-Doo.'],
+      ['2026-11-08', 'Toy Story or Star Wars.'],
+      ['2026-11-09', "Lounge resort wear then Hawaiian shirts for 'Ohana."],
+      ['2026-11-10', 'Anything Disney theme plus Christmas.'],
       [
-        '2026-11-12',
-        'Ratatouille, Nemo, Frozen, or travel themed. Stretchy pants for Food & Wine.',
+        '2026-11-11',
+        "Mickey and friends for Chef Mickey's, then lounge resort wear. Wailulu is smart casual.",
       ],
-      ['2026-11-13', "Smart casual for Narcoossee's. Skip the park tees and hats."],
-      ['2026-11-14', 'Animals, Lion King, or cheetah print. Warm layer for the 6:10 AM start.'],
-      ['2026-11-15', 'Comfy clothes for the trip home.'],
+      ['2026-11-12', 'Ratatouille, Nemo, Frozen, or travel themed.'],
+      ['2026-11-13', "Lounge resort wear and smart casual for Narcoossee's."],
+      ['2026-11-14', 'Up, Wilderness Explorer, Lion King, or animal print.'],
+      ['2026-11-15', 'Travel clothes.'],
     ]);
     expect(
       getScheduleDaySummaries(osborneFallFamilyTripData.schedule).every(
