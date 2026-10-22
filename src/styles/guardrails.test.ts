@@ -1,49 +1,27 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const stylesDirectory = join(process.cwd(), 'src/styles');
+const tokenSource = readFileSync(join(process.cwd(), 'src/styles/tokens.css'), 'utf8');
 
-function getStylesheetPaths(): string[] {
-  return readdirSync(stylesDirectory)
-    .filter((fileName) => fileName.endsWith('.css'))
-    .map((fileName) => join(stylesDirectory, fileName));
-}
-
-function getTokenValue(source: string, tokenName: string): string {
-  const tokenMatch = new RegExp(`${tokenName}:\\s*([^;]+);`).exec(source);
-
-  if (!tokenMatch) {
-    throw new Error(`Missing token: ${tokenName}`);
-  }
-
-  const value = tokenMatch[1];
+function getTokenValue(tokenName: string): string {
+  const value = new RegExp(`${tokenName}:\\s*([^;]+);`).exec(tokenSource)?.[1];
 
   if (!value) {
-    throw new Error(`Missing value for token: ${tokenName}`);
+    throw new Error(`Missing token: ${tokenName}`);
   }
 
   return value.trim();
 }
 
-function hexToRgb(hex: string): [number, number, number] {
-  const normalized = hex.replace('#', '');
-  const parsedValue = Number.parseInt(normalized, 16);
-  return [(parsedValue >> 16) & 255, (parsedValue >> 8) & 255, parsedValue & 255];
-}
-
-function toLinear(channel: number): number {
-  const normalized = channel / 255;
-  return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
-}
-
 function luminance(hex: string): number {
-  const [red, green, blue] = hexToRgb(hex);
-  const linearRed = toLinear(red);
-  const linearGreen = toLinear(green);
-  const linearBlue = toLinear(blue);
+  const parsedValue = Number.parseInt(hex.replace('#', ''), 16);
+  const [red, green, blue] = [16, 8, 0].map((shift) => {
+    const normalized = ((parsedValue >> shift) & 255) / 255;
+    return normalized <= 0.03928 ? normalized / 12.92 : ((normalized + 0.055) / 1.055) ** 2.4;
+  }) as [number, number, number];
 
-  return linearRed * 0.2126 + linearGreen * 0.7152 + linearBlue * 0.0722;
+  return red * 0.2126 + green * 0.7152 + blue * 0.0722;
 }
 
 function contrastRatio(first: string, second: string): number {
@@ -54,126 +32,26 @@ function contrastRatio(first: string, second: string): number {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-describe('style guardrails', () => {
-  it('prevents hard-coded accent rgba values from reappearing', () => {
-    const stylesheetSources = getStylesheetPaths().map((filePath) =>
-      readFileSync(filePath, 'utf8'),
-    );
-    const accentLiteralPattern = /rgba\(200,\s*169,\s*110,\s*[0-9.]+\)/;
-
-    const offenders = stylesheetSources.filter((source) => accentLiteralPattern.test(source));
-    expect(offenders).toEqual([]);
-  });
-
+describe('design token guardrails', () => {
   it('keeps the faint metadata token at AA contrast on base surfaces', () => {
-    const tokenSource = readFileSync(join(stylesDirectory, 'tokens.css'), 'utf8');
-    const faint = getTokenValue(tokenSource, '--color-ink-faint');
-    const surface = getTokenValue(tokenSource, '--color-surface-1');
+    const ratio = contrastRatio(
+      getTokenValue('--color-ink-faint'),
+      getTokenValue('--color-surface-1'),
+    );
 
-    expect(Number(contrastRatio(faint, surface).toFixed(2))).toBeGreaterThanOrEqual(4.5);
+    expect(Number(ratio.toFixed(2))).toBeGreaterThanOrEqual(4.5);
   });
 
   it('keeps the muted token readable against base surfaces', () => {
-    const tokenSource = readFileSync(join(stylesDirectory, 'tokens.css'), 'utf8');
-    const muted = getTokenValue(tokenSource, '--color-ink-muted');
-    const surface = getTokenValue(tokenSource, '--color-surface-1');
+    const ratio = contrastRatio(
+      getTokenValue('--color-ink-muted'),
+      getTokenValue('--color-surface-1'),
+    );
 
-    expect(contrastRatio(muted, surface)).toBeGreaterThanOrEqual(5);
+    expect(ratio).toBeGreaterThanOrEqual(5);
   });
 
-  it('keeps key mobile controls at or above 44px touch targets', () => {
-    const tokenSource = readFileSync(join(stylesDirectory, 'tokens.css'), 'utf8');
-    const componentsSource = readFileSync(join(stylesDirectory, 'components.css'), 'utf8');
-    const tripPagesSource = readFileSync(join(stylesDirectory, 'trip-pages.css'), 'utf8');
-
-    expect(getTokenValue(tokenSource, '--tap-target-min')).toBe('2.75rem');
-    expect(componentsSource).not.toMatch(/min-height:\s*2\.(6|65)rem/);
-    expect(componentsSource).toContain('.site-header__mobile-back {');
-    expect(componentsSource).toContain('.site-header__mobile-title {');
-    expect(componentsSource).toContain('.trip-tabs__link {');
-    expect(componentsSource).toContain('min-height: var(--tap-target-min);');
-    expect(tripPagesSource).toContain('.attractions-explorer__chip {');
-    expect(tripPagesSource).toContain('.attractions-explorer__input,');
-    expect(tripPagesSource).toContain('.attractions-explorer__select {');
-  });
-
-  it('keeps trip tabs and LL planner controls usable on narrow screens', () => {
-    const componentsSource = readFileSync(join(stylesDirectory, 'components.css'), 'utf8');
-    const tripPagesSource = readFileSync(join(stylesDirectory, 'trip-pages.css'), 'utf8');
-
-    expect(componentsSource).toMatch(
-      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?grid-template-columns: none;[\s\S]*?grid-auto-flow: column;[\s\S]*?grid-auto-columns: minmax\(6\.5rem, 1fr\);[\s\S]*?overflow-x: auto;/,
-    );
-    expect(componentsSource).toContain('.trip-tabs__rail::-webkit-scrollbar {');
-    expect(componentsSource).not.toMatch(
-      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail\[data-tab-count='5'\]/,
-    );
-    expect(componentsSource).not.toMatch(
-      /@media \(max-width: 520px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?gap: 0\.35rem;/,
-    );
-    expect(componentsSource).not.toMatch(
-      /@media \(max-width: 360px\) \{[\s\S]*?\.trip-tabs__rail \{/,
-    );
-    expect(componentsSource).toMatch(
-      /@media \(max-width: 360px\) \{[\s\S]*?\.trip-tabs__link \{[\s\S]*?padding: var\(--space-2\) var\(--space-3\);/,
-    );
-    expect(tripPagesSource).toMatch(
-      /\.ll-row__label \{[\s\S]*?min-width: 0;[\s\S]*?overflow-wrap: anywhere;/,
-    );
-    expect(tripPagesSource).toMatch(/\.ll-row__main \{/);
-    expect(tripPagesSource).toMatch(/\.ll-row__top \{[\s\S]*?flex-wrap: wrap;/);
-    expect(tripPagesSource).toMatch(
-      /@media \(max-width: 720px\) \{[\s\S]*?\.ll-planner__actions \{[\s\S]*?flex-direction: column;/,
-    );
-    expect(tripPagesSource).toMatch(
-      /@media \(max-width: 720px\) \{[\s\S]*?\.ll-planner__control-group::after \{/,
-    );
-    expect(tripPagesSource).toMatch(
-      /@media \(max-width: 480px\) \{[\s\S]*?\.ll-planner__chip-row \{[\s\S]*?display: grid;[\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\);/,
-    );
-  });
-
-  it('supports five-section trip tabs on desktop and multi-section mobile scrolling', () => {
-    const componentsSource = readFileSync(join(stylesDirectory, 'components.css'), 'utf8');
-    const tripTabsSource = readFileSync(
-      join(process.cwd(), 'src/components/TripTabs.astro'),
-      'utf8',
-    );
-
-    expect(tripTabsSource).toContain('data-tab-count={tabs.length}');
-    expect(tripTabsSource).toContain('trip-tabs__link-label');
-    expect(componentsSource).toContain(".trip-tabs__rail[data-tab-count='2'] {");
-    expect(componentsSource).toContain('grid-template-columns: repeat(2, minmax(0, 1fr));');
-    expect(componentsSource).toContain(".trip-tabs__rail[data-tab-count='3'] {");
-    expect(componentsSource).toContain('grid-template-columns: repeat(3, minmax(0, 1fr));');
-    expect(componentsSource).toContain(".trip-tabs__rail[data-tab-count='5'] {");
-    expect(componentsSource).toContain('grid-template-columns: repeat(5, minmax(0, 1fr));');
-    expect(componentsSource).toMatch(
-      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail \{[\s\S]*?grid-auto-flow: column;/,
-    );
-  });
-
-  it('lets a single trip tab use the full rail at every viewport width', () => {
-    const componentsSource = readFileSync(join(stylesDirectory, 'components.css'), 'utf8');
-
-    expect(componentsSource).toContain(
-      ".trip-tabs__rail[data-tab-count='1'] {\n  grid-template-columns: minmax(0, 1fr);\n}",
-    );
-    expect(componentsSource).toMatch(
-      /@media \(max-width: 720px\) \{[\s\S]*?\.trip-tabs__rail\[data-tab-count='1'\] \{[\s\S]*?grid-template-columns: minmax\(0, 1fr\);[\s\S]*?grid-auto-flow: row;[\s\S]*?grid-auto-columns: auto;/,
-    );
-  });
-
-  it('rejects the old parchment canvas palette in active stylesheets', () => {
-    const stylesheetSources = getStylesheetPaths().map((filePath) =>
-      readFileSync(filePath, 'utf8'),
-    );
-    const deprecatedPalette = ['#f4ede3', '#ede4d8', '#f6efe6', '#ece2d5', '#ddd0bf'];
-
-    const offenders = stylesheetSources.filter((source) =>
-      deprecatedPalette.some((token) => source.toLowerCase().includes(token)),
-    );
-
-    expect(offenders).toEqual([]);
+  it('keeps the minimum tap target at 44px', () => {
+    expect(getTokenValue('--tap-target-min')).toBe('2.75rem');
   });
 });

@@ -5,7 +5,6 @@ import { declanBigSummerTripData } from '../../data/trips/declan-big-summer-trip
 import { osborneFallFamilyTripData } from '../../data/trips/osborne-fall-family-trip';
 import { planckMegaDisneyTripData } from '../../data/trips/planck-mega-disney-trip';
 import {
-  getAttractionMustDoVoteCount,
   getPartyOverview,
   getPartySummaries,
   getPreferenceMeta,
@@ -17,7 +16,6 @@ import {
 
 const fallbackTripData: TripDataModule = {
   summary: {
-    attractionCount: 4,
     dateLabel: 'TBD',
     dayCount: 0,
     slug: 'fallback-test',
@@ -26,7 +24,6 @@ const fallbackTripData: TripDataModule = {
     status: 'planning',
     themeId: 'primary',
     title: 'Fallback Test',
-    topPick: 'Space Mountain',
   },
   party: [
     { id: 'tytus', name: 'Tytus' },
@@ -71,7 +68,6 @@ const fallbackTripData: TripDataModule = {
 
 const personaFixtureTripData: TripDataModule = {
   summary: {
-    attractionCount: 9,
     dateLabel: 'TBD',
     dayCount: 0,
     slug: 'persona-fixture',
@@ -80,7 +76,6 @@ const personaFixtureTripData: TripDataModule = {
     status: 'planning',
     themeId: 'primary',
     title: 'Persona Fixture',
-    topPick: 'Ride 1',
   },
   party: [
     { id: 'big', name: 'Big Swing' },
@@ -183,7 +178,7 @@ describe('trip detail helpers', () => {
 
     expect(summaries).toHaveLength(10);
     expect(summaries[0]).toHaveProperty('styleDescription');
-    expect(summaries.find((summary) => summary.member.name === 'Tytus')?.topChoices[0]).toBe(
+    expect(summaries.find((summary) => summary.member.name === 'Tytus')?.topChoice).toBe(
       'Fantasmic!',
     );
     expect(overview.memberCount).toBe(10);
@@ -210,7 +205,6 @@ describe('trip detail helpers', () => {
     });
     expect(days[0]?.weekdayLabel).toBe('Sat');
     expect(days[0]?.dateLabel).toBe('Mar 28');
-    expect(getAttractionMustDoVoteCount(casschwlanck2026TripData.attractions)).toBeGreaterThan(0);
   });
 
   it('derives schedule summaries for an itinerary-only upcoming trip', () => {
@@ -302,7 +296,7 @@ describe('trip detail helpers', () => {
       enthusiasmCount: 0,
       avoidCount: 0,
       styleLabel: 'Balanced explorer',
-      topChoices: [],
+      topChoice: null,
     });
     expect(overview).toEqual({
       averageMustDoCount: 0,
@@ -316,12 +310,11 @@ describe('trip detail helpers', () => {
     const partySummaries = getPartySummaries(fallbackTripData);
 
     expect(getPreferenceMeta(1).label).toBe('Must Do');
-    expect(
-      partySummaries.find((summary) => summary.member.id === 'cassie')?.tierSummaries[2],
-    ).toMatchObject({
-      count: 2,
-      label: 'Indifferent',
-      tier: 3,
+    expect(partySummaries.find((summary) => summary.member.id === 'cassie')).toMatchObject({
+      avoidCount: 0,
+      enthusiasmCount: 2,
+      mustDoCount: 1,
+      topChoice: 'Space Mountain',
     });
   });
 

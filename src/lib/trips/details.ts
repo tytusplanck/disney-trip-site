@@ -5,6 +5,7 @@ import type {
   TripPartyMember,
   TripScheduleEntry,
 } from './types';
+import { getAttractionTone, getDayLabels } from './format';
 import { getPartyPersonaProfile, getPartyPreferenceCounts } from './party-analytics';
 import {
   getScheduleEntryBadges,
@@ -28,22 +29,14 @@ export interface RankedAttraction extends TripAttractionPreference {
   tone: 'high' | 'medium' | 'low';
 }
 
-export interface PartyTierSummary {
-  tier: PreferenceTier;
-  label: string;
-  count: number;
-  maxCount: number;
-}
-
 export interface PartyMemberSummary {
   member: TripPartyMember;
   styleLabel: string;
   styleDescription: string;
-  topChoices: string[];
+  topChoice: string | null;
   mustDoCount: number;
   enthusiasmCount: number;
   avoidCount: number;
-  tierSummaries: PartyTierSummary[];
 }
 
 export interface PartyOverview {
@@ -78,9 +71,6 @@ const PREFERENCE_META_BY_TIER: Record<PreferenceTier, PreferenceMeta> = {
   5: { tier: 5, label: 'Will Skip', shortLabel: 'S', tone: 'skip' },
 };
 
-const WEEKDAY_FORMATTER = new Intl.DateTimeFormat('en-US', { weekday: 'short' });
-const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
-
 function getPreferenceTierCount(
   attraction: TripAttractionPreference,
   tier: PreferenceTier,
@@ -89,36 +79,33 @@ function getPreferenceTierCount(
     .length;
 }
 
-function getTopChoicesForMember(
+function getTopChoiceForMember(
   memberId: string,
   attractions: TripAttractionPreference[],
-): string[] {
-  return attractions
-    .map((attraction) => ({
-      attractionLabel: attraction.attractionLabel,
-      tier: attraction.preferenceByPartyMemberId[memberId],
-      consensusScore: attraction.consensusScore,
-    }))
-    .filter(
-      (item): item is { attractionLabel: string; tier: PreferenceTier; consensusScore: number } =>
-        item.tier !== undefined && item.tier <= 2,
-    )
-    .sort(
-      (left, right) =>
-        left.tier - right.tier ||
-        right.consensusScore - left.consensusScore ||
-        left.attractionLabel.localeCompare(right.attractionLabel),
-    )
-    .slice(0, 3)
-    .map((item) => item.attractionLabel);
+): string | null {
+  return (
+    attractions
+      .map((attraction) => ({
+        attractionLabel: attraction.attractionLabel,
+        tier: attraction.preferenceByPartyMemberId[memberId],
+        consensusScore: attraction.consensusScore,
+      }))
+      .filter(
+        (item): item is { attractionLabel: string; tier: PreferenceTier; consensusScore: number } =>
+          item.tier !== undefined && item.tier <= 2,
+      )
+      .sort(
+        (left, right) =>
+          left.tier - right.tier ||
+          right.consensusScore - left.consensusScore ||
+          left.attractionLabel.localeCompare(right.attractionLabel),
+      )
+      .map((item) => item.attractionLabel)[0] ?? null
+  );
 }
 
 export function getPreferenceMeta(tier: PreferenceTier): PreferenceMeta {
   return PREFERENCE_META_BY_TIER[tier];
-}
-
-export function getPreferenceLegend(): PreferenceMeta[] {
-  return Object.values(PREFERENCE_META_BY_TIER);
 }
 
 export function getRankedAttractions(
@@ -142,7 +129,7 @@ export function getRankedAttractions(
         scorePercent,
         mustDoVotes: getPreferenceTierCount(attraction, 1),
         preferredVotes: getPreferenceTierCount(attraction, 2),
-        tone: scorePercent >= 74 ? 'high' : scorePercent >= 58 ? 'medium' : 'low',
+        tone: getAttractionTone(scorePercent),
       };
     });
 }
@@ -162,13 +149,6 @@ export function getSharedPriorityAttractions(
     .slice(0, limit);
 }
 
-export function getAttractionMustDoVoteCount(attractions: TripAttractionPreference[]): number {
-  return attractions.reduce(
-    (total, attraction) => total + getPreferenceTierCount(attraction, 1),
-    0,
-  );
-}
-
 export function getPartySummaries(module: TripDataModule): PartyMemberSummary[] {
   const totalAttractions = module.attractions.length;
 
@@ -180,16 +160,10 @@ export function getPartySummaries(module: TripDataModule): PartyMemberSummary[] 
       member,
       styleLabel: persona.label,
       styleDescription: persona.description,
-      topChoices: getTopChoicesForMember(member.id, module.attractions),
+      topChoice: getTopChoiceForMember(member.id, module.attractions),
       mustDoCount: counts[1],
       enthusiasmCount: counts[1] + counts[2],
       avoidCount: counts[4] + counts[5],
-      tierSummaries: ([1, 2, 3, 4, 5] as const).map((tier) => ({
-        tier,
-        label: getPreferenceMeta(tier).label,
-        count: counts[tier],
-        maxCount: totalAttractions,
-      })),
     };
   });
 }
@@ -246,12 +220,9 @@ export function getScheduleOverview(schedule: TripScheduleEntry[]): ScheduleOver
 
 export function getScheduleDaySummaries(schedule: TripScheduleEntry[]): ScheduleDaySummary[] {
   return schedule.map((entry, index) => {
-    const date = new Date(`${entry.date}T12:00:00`);
-
     return {
       dayNumber: index + 1,
-      weekdayLabel: WEEKDAY_FORMATTER.format(date),
-      dateLabel: DATE_FORMATTER.format(date),
+      ...getDayLabels(entry.date),
       entry,
       badges: getScheduleEntryBadges(entry),
       moments: getScheduleMomentViews(entry),

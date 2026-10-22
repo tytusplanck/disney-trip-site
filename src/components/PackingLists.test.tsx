@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import PackingLists from './PackingLists';
 import { planckMegaDisneyTripPacking } from '../data/trips/planck-mega-disney-trip/packing';
 import { planckMegaDisneyTripData } from '../data/trips/planck-mega-disney-trip';
-import { getTripSectionConfig, getLegacyTripRedirectPath } from '../lib/trips/all-trips';
+import { getTripSectionConfig } from '../lib/trips/all-trips';
 import { hasTripSectionContent } from '../lib/trips/readiness';
 
 const adultItems = planckMegaDisneyTripPacking.categories
@@ -72,7 +72,7 @@ describe('Packing lists', () => {
     expect(container.querySelectorAll('svg')).toHaveLength(2);
   });
 
-  it('adds Packing after Plan only to the opted-in trip and recognizes legacy links', () => {
+  it('adds Packing after Plan only to the opted-in trip', () => {
     expect(getTripSectionConfig(planckMegaDisneyTripData).map((tab) => tab.label)).toEqual([
       'Plan',
       'Packing',
@@ -83,14 +83,6 @@ describe('Packing lists', () => {
     expect(
       hasTripSectionContent({ ...planckMegaDisneyTripData, packing: undefined }, 'packing'),
     ).toBe(false);
-    expect(
-      getLegacyTripRedirectPath(
-        [planckMegaDisneyTripData],
-        'casschwlanck',
-        'future-trip',
-        'packing',
-      ),
-    ).toBe('/planck-mega-disney-trip/packing');
   });
 
   it('starts with adults and counts every item independently of priority filters', () => {

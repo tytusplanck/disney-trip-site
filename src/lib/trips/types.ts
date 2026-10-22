@@ -38,22 +38,14 @@ export interface ScheduleMoment {
   menuUrl?: string;
 }
 
-export interface TripLegacyRoute {
-  familySlug: string;
-  tripSlug: string;
-}
-
 export interface TripSummary {
   slug: string;
-  legacyRoutes?: TripLegacyRoute[];
   title: string;
   dateLabel: string;
   parkLabels: string[];
   partySize: number | null;
   dayCount: number | null;
-  attractionCount: number | null;
   status: TripStatus;
-  topPick: string | null;
   themeId: TripThemeId;
 }
 
@@ -168,7 +160,6 @@ export interface TripDataModule {
 }
 
 export interface TripStubPage {
-  title: string;
   calloutTitle: string;
   calloutBody: string;
   checklist: string[];

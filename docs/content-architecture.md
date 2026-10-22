@@ -5,7 +5,6 @@
 - Store trip summaries shared across multiple routes in [`/src/data/all-trips.ts`](../src/data/all-trips.ts).
 - Keep shared trip data typed so All Trips cards, stub routes, and future trip pages read the same source of truth.
 - Use `TripSummary.slug` as the canonical public trip identifier. Trip pages live at `/:tripSlug/:section`, and helper-generated URLs should use the single-slug path instead of family/trip pairs.
-- Store old two-part URLs in `TripSummary.legacyRoutes` when an existing trip URL needs a compatibility redirect.
 - Store full trip payloads as separate modules under [`/src/data/trips`](../src/data/trips) so `summary`, `party`, `schedule`, and `attractions` can evolve independently while sharing one interface.
 - Trip-specific grouping rules such as named party cohorts belong in the trip data module itself so reusable analytics stay free of hardcoded trip ids, member ids, or family-specific presets.
 - Use helpers in [`/src/lib/trips/all-trips.ts`](../src/lib/trips/all-trips.ts) to derive grouped sections, compact card facts, and route paths instead of hard-coding those rules in Astro templates.
@@ -40,7 +39,6 @@
 - [`/src/layouts/BaseLayout.astro`](../src/layouts/BaseLayout.astro) owns only document concerns: fonts, metadata, global styles, and skip-link behavior.
 - Visible page chrome lives in page-level shell components such as All Trips, auth, and trip shells.
 - The trip root route redirects to the first planner section, with the protected planner continuing under single-slug attractions, schedule, and party routes.
-- Legacy family/trip URLs redirect to their canonical single-slug trip route instead of rendering duplicate pages.
 - Planning trip tabs render inside the shared content shell so attractions, schedule, and party pages all open with the same content-width embedded tab strip.
 - The embedded planner tabs are label-only. Supporting detail belongs in the shell-owned page summary, not inside each tab.
 - On narrow screens, embedded planner tabs with multiple sections use equal-width columns that fill the rail while preserving a 6.5rem minimum; the rail scrolls horizontally when those columns cannot fit. A single-section trip keeps its only tab full-width and disables horizontal scrolling at every viewport size.

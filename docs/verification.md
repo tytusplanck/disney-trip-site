@@ -14,9 +14,10 @@
 1. Pick the smallest existing test surface that matches the change:
    - pure helpers and view models: route-adjacent or `src/lib/**/*.test.ts`
    - auth, middleware, and routing: `src/middleware.test.ts`, `src/pages/api/auth/auth-routes.test.ts`, `src/lib/auth/*.test.ts`
-   - page structure and content contracts: route-adjacent `*.test.ts`
+   - route view models: route-adjacent `*.page.test.ts`
    - React islands and interactive components: component `*.test.tsx`
-   - CSS and markup guardrails: `src/styles/guardrails.test.ts`, `src/test/no-inline-styles.test.ts`
+   - design token and markup guardrails: `src/styles/guardrails.test.ts` (contrast and tap-target tokens), `src/test/no-inline-styles.test.ts`
+   - do not add tests that assert on source text (exact CSS declarations, import lines, markup strings); verify layout and styling in the browser instead
 2. Update or add the relevant spec first.
 3. Run a focused Vitest command, for example `npx vitest run src/middleware.test.ts`.
 4. Confirm the new or changed assertion fails before implementation when behavior is meant to change.
@@ -59,7 +60,7 @@ Run these commands as needed while fixing issues, then finish with the aggregate
   - run focused tests for `src/middleware.test.ts`, `src/pages/api/auth/auth-routes.test.ts`, and the relevant files in `src/lib/auth`
   - manually verify login, logout, redirect, and direct URL access in a real browser
 - Trip data, derived view models, or route copy changes:
-  - run the affected `src/lib/trips/*.test.ts` files and any route-adjacent page tests
+  - run the affected `src/lib/trips/*.test.ts` files and any route-adjacent `*.page.test.ts` files
   - visually verify the changed trip route in the browser at mobile and desktop widths
 - Styling, shells, or interactive component changes:
   - run component tests plus `src/styles/guardrails.test.ts` and `src/test/no-inline-styles.test.ts` when relevant

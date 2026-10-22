@@ -14,7 +14,6 @@ function buildSummaryView(module: TripDataModule) {
 
 const affinityFixture: TripDataModule = {
   summary: {
-    attractionCount: 6,
     dateLabel: 'TBD',
     dayCount: 0,
     slug: 'affinity-fixture',
@@ -23,7 +22,6 @@ const affinityFixture: TripDataModule = {
     status: 'planning',
     themeId: 'primary',
     title: 'Affinity Fixture',
-    topPick: 'Pirates',
   },
   party: [
     { id: 'ava', name: 'Ava' },
@@ -88,7 +86,6 @@ const affinityFixture: TripDataModule = {
 
 const tieBreakFixture: TripDataModule = {
   summary: {
-    attractionCount: 4,
     dateLabel: 'TBD',
     dayCount: 0,
     slug: 'tie-break-fixture',
@@ -97,7 +94,6 @@ const tieBreakFixture: TripDataModule = {
     status: 'planning',
     themeId: 'primary',
     title: 'Tie Break Fixture',
-    topPick: 'Astro Orbiter',
   },
   party: [
     { id: 'amy', name: 'Amy' },
@@ -144,7 +140,6 @@ const tieBreakFixture: TripDataModule = {
 
 const longTitleFixture: TripDataModule = {
   summary: {
-    attractionCount: 2,
     dateLabel: 'TBD',
     dayCount: 0,
     slug: 'long-title-fixture',
@@ -153,7 +148,6 @@ const longTitleFixture: TripDataModule = {
     status: 'planning',
     themeId: 'primary',
     title: 'Long Title Fixture',
-    topPick: 'Millennium Falcon: Smugglers Run',
   },
   party: [
     { id: 'ivy', name: 'Ivy' },
@@ -182,7 +176,6 @@ const longTitleFixture: TripDataModule = {
 
 const leftoverAssignmentFixture: TripDataModule = {
   summary: {
-    attractionCount: 6,
     dateLabel: 'TBD',
     dayCount: 0,
     slug: 'leftover-assignment-fixture',
@@ -191,7 +184,6 @@ const leftoverAssignmentFixture: TripDataModule = {
     status: 'planning',
     themeId: 'primary',
     title: 'Leftover Assignment Fixture',
-    topPick: 'Ride 1',
   },
   party: [
     { id: 'alma', name: 'Alma' },
@@ -253,7 +245,6 @@ const leftoverAssignmentFixture: TripDataModule = {
 
 const mergeSoloFixture: TripDataModule = {
   summary: {
-    attractionCount: 6,
     dateLabel: 'TBD',
     dayCount: 0,
     slug: 'merge-solo-fixture',
@@ -262,7 +253,6 @@ const mergeSoloFixture: TripDataModule = {
     status: 'planning',
     themeId: 'primary',
     title: 'Merge Solo Fixture',
-    topPick: 'Ride 1',
   },
   party: [
     { id: 'alma', name: 'Alma' },
@@ -376,7 +366,6 @@ const mergeSoloFixture: TripDataModule = {
 
 const noSharedFavoriteFixture: TripDataModule = {
   summary: {
-    attractionCount: 2,
     dateLabel: 'TBD',
     dayCount: 0,
     slug: 'no-shared-favorite-fixture',
@@ -385,7 +374,6 @@ const noSharedFavoriteFixture: TripDataModule = {
     status: 'planning',
     themeId: 'primary',
     title: 'No Shared Favorite Fixture',
-    topPick: 'Ride 1',
   },
   party: [{ id: 'nora', name: 'Nora' }],
   schedule: [],
@@ -411,7 +399,6 @@ const noSharedFavoriteFixture: TripDataModule = {
 
 const cohortFixture: TripDataModule = {
   summary: {
-    attractionCount: 4,
     dateLabel: 'TBD',
     dayCount: 0,
     slug: 'cohort-fixture',
@@ -420,7 +407,6 @@ const cohortFixture: TripDataModule = {
     status: 'planning',
     themeId: 'primary',
     title: 'Cohort Fixture',
-    topPick: 'TRON Lightcycle / Run',
   },
   party: [
     { id: 'tytus', name: 'Tytus' },
@@ -536,7 +522,6 @@ const invalidNamedCohortFixture: TripDataModule = {
 
 const soloMergeWithoutAttractionsFixture: TripDataModule = {
   summary: {
-    attractionCount: 0,
     dateLabel: 'TBD',
     dayCount: 0,
     slug: 'solo-merge-without-attractions',
@@ -545,7 +530,6 @@ const soloMergeWithoutAttractionsFixture: TripDataModule = {
     status: 'planning',
     themeId: 'primary',
     title: 'Solo Merge Without Attractions',
-    topPick: null,
   },
   party: [
     { id: 'adam', name: 'Adam' },
@@ -559,7 +543,6 @@ const soloMergeWithoutAttractionsFixture: TripDataModule = {
 
 const emptyFixture: TripDataModule = {
   summary: {
-    attractionCount: 0,
     dateLabel: 'TBD',
     dayCount: 0,
     slug: 'empty-fixture',
@@ -568,7 +551,6 @@ const emptyFixture: TripDataModule = {
     status: 'planning',
     themeId: 'primary',
     title: 'Empty Fixture',
-    topPick: null,
   },
   party: [],
   schedule: [],
@@ -576,18 +558,6 @@ const emptyFixture: TripDataModule = {
 };
 
 describe('party analytics and view helpers', () => {
-  it('orders stronger affinity pairs ahead of weaker overlap', () => {
-    const analysis = analyzeParty(affinityFixture);
-    const weakCrossGroupPair = analysis.pairs.find(
-      (pair) => pair.memberNames[0] === 'Ben' && pair.memberNames[1] === 'Drew',
-    );
-
-    expect(analysis.pairs[0]?.memberNames).toEqual(['Ava', 'Ben']);
-    expect(analysis.pairs[0]?.similarityScore).toBeGreaterThan(
-      weakCrossGroupPair?.similarityScore ?? 0,
-    );
-  });
-
   it('builds a 3-person cluster, a 2-person cluster, and a solo lane', () => {
     const analysis = analyzeParty(affinityFixture);
 
@@ -599,10 +569,10 @@ describe('party analytics and view helpers', () => {
     expect(analysis.clusters.map((cluster) => cluster.size)).toEqual([3, 2, 1]);
   });
 
-  it('uses stable alphabetical tie-breaking for equal-strength pairs', () => {
+  it('uses stable alphabetical tie-breaking for equal-strength clusters', () => {
     const analysis = analyzeParty(tieBreakFixture);
 
-    expect(analysis.pairs.slice(0, 2).map((pair) => pair.memberNames)).toEqual([
+    expect(analysis.clusters.map((cluster) => cluster.memberNames)).toEqual([
       ['Amy', 'Ben'],
       ['Cara', 'Drew'],
     ]);
@@ -657,7 +627,7 @@ describe('party analytics and view helpers', () => {
     const analysis = analyzeParty(cohortFixture);
     const view = buildSummaryView(cohortFixture);
 
-    expect(analysis.mode).toBe('named-cohorts');
+    expect(analysis.cohortContrasts).not.toBeNull();
     expect(analysis.clusters.map((cluster) => cluster.label)).toEqual(['Kids', 'Adults']);
     expect(view.headlineInsight?.eyebrow).toBe('Sharpest split');
     expect(view.gapItems.length).toBeGreaterThan(0);
@@ -667,22 +637,21 @@ describe('party analytics and view helpers', () => {
   it('falls back to automatic clustering when a named cohort config is invalid', () => {
     const analysis = analyzeParty(invalidNamedCohortFixture);
 
-    expect(analysis.mode).toBe('clusters');
     expect(analysis.cohortContrasts).toBeNull();
-    expect(analysis.clusters.flatMap((cluster) => cluster.memberIds).sort()).toEqual([
-      'ava',
-      'ben',
-      'cara',
-      'drew',
-      'elle',
-      'finn',
+    expect(analysis.clusters.flatMap((cluster) => cluster.memberNames).sort()).toEqual([
+      'Ava',
+      'Ben',
+      'Cara',
+      'Drew',
+      'Elle',
+      'Finn',
     ]);
   });
 
   it('merges extra solo clusters down to three lanes when no attractions are loaded yet', () => {
     const analysis = analyzeParty(soloMergeWithoutAttractionsFixture);
 
-    expect(analysis.mode).toBe('clusters');
+    expect(analysis.cohortContrasts).toBeNull();
     expect(analysis.clusters).toHaveLength(3);
     expect(
       analysis.clusters.map((cluster) => cluster.size).sort((left, right) => left - right),
@@ -702,8 +671,6 @@ describe('party analytics and view helpers', () => {
     expect(analysis).toEqual({
       clusters: [],
       cohortContrasts: null,
-      mode: 'clusters',
-      pairs: [],
       sharedPriorityAttractions: [],
     });
     expect(view).toEqual({
@@ -736,7 +703,7 @@ describe('party analytics and view helpers', () => {
     const analysis = analyzeParty(casschwlanck2026TripData);
     const view = buildSummaryView(casschwlanck2026TripData);
 
-    expect(analysis.mode).toBe('named-cohorts');
+    expect(analysis.cohortContrasts).not.toBeNull();
     expect(analysis.clusters).toHaveLength(2);
     expect(
       analysis.clusters.map((cluster) => ({ label: cluster.label, members: cluster.memberNames })),

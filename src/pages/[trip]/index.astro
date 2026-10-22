@@ -12,9 +12,5 @@ if (!trip) {
 const tripModule = findTripDataModule(allTripsData.modules, tripSlug);
 const tripLandingPath = getTripLandingPath(trip, tripModule);
 
-if (tripLandingPath === '') {
-  return Astro.redirect('/');
-}
-
 return Astro.redirect(tripLandingPath);
 ---

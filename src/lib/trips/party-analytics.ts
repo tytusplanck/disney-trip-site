@@ -6,7 +6,7 @@ import type {
   TripPartyMember,
 } from './types';
 
-export type PartyPersonaId =
+type PartyPersonaId =
   | 'headline_hunter'
   | 'big_swing_chaser'
   | 'all_in_planner'
@@ -15,51 +15,38 @@ export type PartyPersonaId =
   | 'flexible_floater'
   | 'balanced_explorer';
 
-export interface PartyPersonaProfile {
+interface PartyPersonaProfile {
   id: PartyPersonaId;
   label: string;
   description: string;
 }
 
-export interface PartyAffinityPair {
+interface PartyAffinityPair {
   memberIds: [string, string];
   memberNames: [string, string];
-  priorityOverlap: number;
-  ratingAgreement: number;
   similarityScore: number;
 }
 
-export interface PartyClusterFavorite {
-  attractionLabel: string;
-  parkLabel: string;
-  priorityVotes: number;
-  mustDoVotes: number;
-}
+type PairLookup = Map<string, number>;
 
-export interface PartySharedPriorityAttraction {
+interface PartySharedPriorityAttraction {
   attractionLabel: string;
   parkLabel: string;
   mustDoVotes: number;
-  consensusScore: number;
 }
 
 export interface PartyClusterAnalysisGroup {
   id: string;
   label: string | null;
-  memberIds: string[];
   memberNames: string[];
   size: number;
   averageAffinityScore: number;
-  sharedFavorites: PartyClusterFavorite[];
   topAnchorAttraction: string;
-  topAnchorParkLabel: string;
-  dominantParkLabel: string;
 }
 
 export interface PartyCohortContrast {
   attractionLabel: string;
   parkLabel: string;
-  gapScore: number;
   leadingCohortLabel: string;
   leadingPriorityVotes: number;
   leadingSize: number;
@@ -69,8 +56,6 @@ export interface PartyCohortContrast {
 }
 
 export interface PartyClusterAnalysis {
-  mode: 'named-cohorts' | 'clusters';
-  pairs: PartyAffinityPair[];
   clusters: PartyClusterAnalysisGroup[];
   sharedPriorityAttractions: PartySharedPriorityAttraction[];
   cohortContrasts: PartyCohortContrast[] | null;
@@ -126,16 +111,6 @@ function getMemberTier(attraction: TripAttractionPreference, memberId: string): 
   return attraction.preferenceByPartyMemberId[memberId] ?? DEFAULT_TIER;
 }
 
-function createEmptyTierCounts(): Record<PreferenceTier, number> {
-  return {
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0,
-  };
-}
-
 function isLowSignalMember(memberId: string, attractions: TripAttractionPreference[]): boolean {
   if (attractions.length === 0) {
     return false;
@@ -157,12 +132,8 @@ function buildPrioritySet(memberId: string, attractions: TripAttractionPreferenc
   );
 }
 
-function getPairNameKey(names: [string, string]): string {
-  return [...names].sort((left, right) => left.localeCompare(right)).join('|');
-}
-
-function getPairLookupKey(memberIds: [string, string]): string {
-  return [...memberIds].sort((left, right) => left.localeCompare(right)).join('|');
+function getSortedKey(values: [string, string]): string {
+  return [...values].sort((left, right) => left.localeCompare(right)).join('|');
 }
 
 function getJaccardOverlap(left: Set<string>, right: Set<string>): number {
@@ -215,8 +186,6 @@ function buildAffinityPairs(
         return {
           memberIds: [member.id, otherMember.id],
           memberNames: [member.name, otherMember.name],
-          priorityOverlap,
-          ratingAgreement,
           similarityScore: Math.round((priorityOverlap * 0.65 + ratingAgreement * 0.35) * 100),
         } satisfies PartyAffinityPair;
       }),
@@ -224,16 +193,16 @@ function buildAffinityPairs(
     .sort(
       (left, right) =>
         right.similarityScore - left.similarityScore ||
-        getPairNameKey(left.memberNames).localeCompare(getPairNameKey(right.memberNames)),
+        getSortedKey(left.memberNames).localeCompare(getSortedKey(right.memberNames)),
     );
 }
 
-function buildPairLookup(pairs: PartyAffinityPair[]): Map<string, PartyAffinityPair> {
-  return new Map(pairs.map((pair) => [getPairLookupKey(pair.memberIds), pair]));
+function buildPairLookup(pairs: PartyAffinityPair[]): PairLookup {
+  return new Map(pairs.map((pair) => [getSortedKey(pair.memberIds), pair.similarityScore]));
 }
 
 function getPairSimilarity(
-  pairLookup: Map<string, PartyAffinityPair>,
+  pairLookup: PairLookup,
   memberId: string,
   otherMemberId: string,
 ): number {
@@ -241,11 +210,11 @@ function getPairSimilarity(
     return 100;
   }
 
-  return pairLookup.get(getPairLookupKey([memberId, otherMemberId]))?.similarityScore ?? 0;
+  return pairLookup.get(getSortedKey([memberId, otherMemberId])) ?? 0;
 }
 
 function getAverageSimilarityToCluster(
-  pairLookup: Map<string, PartyAffinityPair>,
+  pairLookup: PairLookup,
   memberId: string,
   clusterMemberIds: string[],
 ): number {
@@ -262,10 +231,7 @@ function getAverageSimilarityToCluster(
   return total / clusterMemberIds.length;
 }
 
-function getAverageClusterAffinity(
-  pairLookup: Map<string, PartyAffinityPair>,
-  memberIds: string[],
-): number {
+function getAverageClusterAffinity(pairLookup: PairLookup, memberIds: string[]): number {
   if (memberIds.length < 2) {
     return 0;
   }
@@ -353,21 +319,53 @@ function getValidatedNamedCohorts(
   ];
 }
 
-function getPriorityVotesForMembers(
+function getTierStats(
   attraction: TripAttractionPreference,
   memberIds: string[],
-): { averageTier: number; priorityVotes: number } {
+): { mustDoVotes: number; priorityVotes: number; averageTier: number } {
   const tiers = memberIds.map((memberId) => getMemberTier(attraction, memberId));
 
   return {
-    averageTier: tiers.reduce((total, tier) => total + tier, 0) / Math.max(memberIds.length, 1),
+    mustDoVotes: tiers.filter((tier) => tier === 1).length,
     priorityVotes: tiers.filter((tier) => tier <= 2).length,
+    averageTier: tiers.reduce((total, tier) => total + tier, 0) / Math.max(tiers.length, 1),
   };
+}
+
+function findNearestCluster(
+  pairLookup: PairLookup,
+  memberId: string,
+  clusters: string[][],
+  excludedClusterIndex = -1,
+): { clusterIndex: number; averageSimilarity: number } | undefined {
+  return clusters
+    .map((clusterMemberIds, clusterIndex) => ({
+      clusterIndex,
+      averageSimilarity: getAverageSimilarityToCluster(pairLookup, memberId, clusterMemberIds),
+    }))
+    .filter((cluster) => cluster.clusterIndex !== excludedClusterIndex)
+    .sort(
+      (left, right) =>
+        right.averageSimilarity - left.averageSimilarity || left.clusterIndex - right.clusterIndex,
+    )[0];
+}
+
+function addMemberToCluster(
+  clusters: string[][],
+  clusterIndex: number,
+  memberId: string,
+  memberById: Map<string, TripPartyMember>,
+): void {
+  const cluster = clusters[clusterIndex];
+
+  if (cluster) {
+    clusters.splice(clusterIndex, 1, sortMemberIds([...cluster, memberId], memberById));
+  }
 }
 
 function buildClusterMemberIds(
   party: TripPartyMember[],
-  pairLookup: Map<string, PartyAffinityPair>,
+  pairLookup: PairLookup,
   pairs: PartyAffinityPair[],
   attractions: TripAttractionPreference[],
 ): string[][] {
@@ -429,52 +427,26 @@ function buildClusterMemberIds(
 
   while (clusters.length > 0) {
     const assignableCandidate = [...unassignedMembers]
-      .map((memberId) => {
-        const nearestCluster = clusters
-          .map((clusterMemberIds, clusterIndex) => ({
-            clusterIndex,
-            averageSimilarity: getAverageSimilarityToCluster(
-              pairLookup,
-              memberId,
-              clusterMemberIds,
-            ),
-          }))
-          .sort(
-            (left, right) =>
-              right.averageSimilarity - left.averageSimilarity ||
-              left.clusterIndex - right.clusterIndex,
-          )[0];
+      .flatMap((memberId) => {
+        const nearest = findNearestCluster(pairLookup, memberId, clusters);
 
-        return {
-          memberId,
-          name: getMemberName(memberById, memberId),
-          nearestClusterIndex: nearestCluster?.clusterIndex ?? -1,
-          nearestClusterSimilarity: nearestCluster?.averageSimilarity ?? 0,
-        };
+        return nearest ? [{ memberId, name: getMemberName(memberById, memberId), ...nearest }] : [];
       })
-      .filter((candidate) => candidate.nearestClusterIndex >= 0)
       .sort(
         (left, right) =>
-          right.nearestClusterSimilarity - left.nearestClusterSimilarity ||
-          left.name.localeCompare(right.name),
+          right.averageSimilarity - left.averageSimilarity || left.name.localeCompare(right.name),
       )[0];
 
-    if (
-      !assignableCandidate ||
-      assignableCandidate.nearestClusterSimilarity < CLUSTER_ASSIGN_THRESHOLD
-    ) {
+    if (!assignableCandidate || assignableCandidate.averageSimilarity < CLUSTER_ASSIGN_THRESHOLD) {
       break;
     }
 
-    const targetCluster = clusters[assignableCandidate.nearestClusterIndex];
-
-    if (!targetCluster) {
-      break;
-    }
-
-    targetCluster.push(assignableCandidate.memberId);
-    const sortedTargetCluster = sortMemberIds(targetCluster, memberById);
-    clusters.splice(assignableCandidate.nearestClusterIndex, 1, sortedTargetCluster);
+    addMemberToCluster(
+      clusters,
+      assignableCandidate.clusterIndex,
+      assignableCandidate.memberId,
+      memberById,
+    );
     unassignedMembers.delete(assignableCandidate.memberId);
   }
 
@@ -484,33 +456,13 @@ function buildClusterMemberIds(
   );
 
   for (const memberId of lowSignalAssignments) {
-    if (clusters.length === 0) {
+    const nearest = findNearestCluster(pairLookup, memberId, clusters);
+
+    if (!nearest) {
       break;
     }
 
-    const nearestCluster = clusters
-      .map((clusterMemberIds, clusterIndex) => ({
-        clusterIndex,
-        averageSimilarity: getAverageSimilarityToCluster(pairLookup, memberId, clusterMemberIds),
-      }))
-      .sort(
-        (left, right) =>
-          right.averageSimilarity - left.averageSimilarity ||
-          left.clusterIndex - right.clusterIndex,
-      )[0];
-
-    if (!nearestCluster) {
-      break;
-    }
-
-    const targetCluster = clusters[nearestCluster.clusterIndex];
-
-    if (!targetCluster) {
-      break;
-    }
-
-    targetCluster.push(memberId);
-    clusters.splice(nearestCluster.clusterIndex, 1, sortMemberIds(targetCluster, memberById));
+    addMemberToCluster(clusters, nearest.clusterIndex, memberId, memberById);
     unassignedMembers.delete(memberId);
   }
 
@@ -520,52 +472,22 @@ function buildClusterMemberIds(
 
   while (clusters.length > 3) {
     const soloClusterCandidate = clusters
-      .map((clusterMemberIds, clusterIndex) => ({ clusterIndex, clusterMemberIds }))
-      .filter((cluster) => cluster.clusterMemberIds.length === 1)
-      .map((cluster) => {
-        const memberId = cluster.clusterMemberIds[0];
+      .flatMap((clusterMemberIds, clusterIndex) => {
+        const [memberId] = clusterMemberIds;
 
-        if (!memberId) {
-          return null;
+        if (clusterMemberIds.length !== 1 || !memberId) {
+          return [];
         }
 
-        const nearestCluster = clusters
-          .map((candidateClusterMemberIds, candidateClusterIndex) => ({
-            clusterIndex: candidateClusterIndex,
-            averageSimilarity:
-              candidateClusterIndex === cluster.clusterIndex
-                ? -1
-                : getAverageSimilarityToCluster(pairLookup, memberId, candidateClusterMemberIds),
-          }))
-          .filter((candidate) => candidate.averageSimilarity >= 0)
-          .sort(
-            (left, right) =>
-              right.averageSimilarity - left.averageSimilarity ||
-              left.clusterIndex - right.clusterIndex,
-          )[0];
+        const nearest = findNearestCluster(pairLookup, memberId, clusters, clusterIndex);
 
-        return {
-          clusterIndex: cluster.clusterIndex,
-          memberId,
-          name: getMemberName(memberById, memberId),
-          nearestClusterIndex: nearestCluster?.clusterIndex ?? -1,
-          nearestClusterSimilarity: nearestCluster?.averageSimilarity ?? -1,
-        };
+        return nearest
+          ? [{ clusterIndex, memberId, name: getMemberName(memberById, memberId), nearest }]
+          : [];
       })
-      .filter(
-        (
-          cluster,
-        ): cluster is {
-          clusterIndex: number;
-          memberId: string;
-          name: string;
-          nearestClusterIndex: number;
-          nearestClusterSimilarity: number;
-        } => cluster !== null && cluster.nearestClusterIndex >= 0,
-      )
       .sort(
         (left, right) =>
-          left.nearestClusterSimilarity - right.nearestClusterSimilarity ||
+          left.nearest.averageSimilarity - right.nearest.averageSimilarity ||
           left.name.localeCompare(right.name),
       )[0];
 
@@ -573,24 +495,13 @@ function buildClusterMemberIds(
       break;
     }
 
-    const soloCluster = clusters[soloClusterCandidate.clusterIndex];
-    const targetCluster = clusters[soloClusterCandidate.nearestClusterIndex];
-
-    if (!soloCluster || !targetCluster) {
-      break;
-    }
-
-    targetCluster.push(soloClusterCandidate.memberId);
-    const sortedTargetCluster = sortMemberIds(targetCluster, memberById);
-    const nextClusters = clusters.filter(
-      (_, clusterIndex) => clusterIndex !== soloClusterCandidate.clusterIndex,
+    addMemberToCluster(
+      clusters,
+      soloClusterCandidate.nearest.clusterIndex,
+      soloClusterCandidate.memberId,
+      memberById,
     );
-    const adjustedTargetClusterIndex =
-      soloClusterCandidate.nearestClusterIndex > soloClusterCandidate.clusterIndex
-        ? soloClusterCandidate.nearestClusterIndex - 1
-        : soloClusterCandidate.nearestClusterIndex;
-    nextClusters.splice(adjustedTargetClusterIndex, 1, sortedTargetCluster);
-    clusters.splice(0, clusters.length, ...nextClusters);
+    clusters.splice(soloClusterCandidate.clusterIndex, 1);
   }
 
   return [...clusters].sort(
@@ -601,188 +512,98 @@ function buildClusterMemberIds(
   );
 }
 
-function countSharedPriorityVotes(
-  attraction: TripAttractionPreference,
-  clusterMemberIds: string[],
-): { mustDoVotes: number; priorityVotes: number; averageTier: number } {
-  const clusterTiers = clusterMemberIds.map((memberId) => getMemberTier(attraction, memberId));
-  const mustDoVotes = clusterTiers.filter((tier) => tier === 1).length;
-  const priorityVotes = clusterTiers.filter((tier) => tier <= 2).length;
-  const averageTier =
-    clusterTiers.reduce((total, tier) => total + tier, 0) / Math.max(clusterTiers.length, 1);
-
-  return {
-    mustDoVotes,
-    priorityVotes,
-    averageTier,
-  };
-}
-
-function getClusterSharedFavorites(
+function getTopAnchorAttraction(
   clusterMemberIds: string[],
   attractions: TripAttractionPreference[],
-): PartyClusterFavorite[] {
-  return attractions
-    .map((attraction) => {
-      const { mustDoVotes, priorityVotes, averageTier } = countSharedPriorityVotes(
-        attraction,
-        clusterMemberIds,
-      );
+): string {
+  const stats = attractions.map((attraction) => ({
+    attraction,
+    ...getTierStats(attraction, clusterMemberIds),
+  }));
 
-      return {
-        attractionLabel: attraction.attractionLabel,
-        parkLabel: attraction.parkLabel,
-        consensusScore: attraction.consensusScore,
-        averageTier,
-        mustDoVotes,
-        priorityVotes,
-      };
-    })
-    .filter((attraction) => attraction.priorityVotes / clusterMemberIds.length >= 0.5)
+  const sharedFavorite = stats
+    .filter((item) => item.priorityVotes / clusterMemberIds.length >= 0.5)
     .sort(
       (left, right) =>
         right.priorityVotes - left.priorityVotes ||
         right.mustDoVotes - left.mustDoVotes ||
         left.averageTier - right.averageTier ||
-        right.consensusScore - left.consensusScore ||
-        left.attractionLabel.localeCompare(right.attractionLabel),
-    )
-    .map(({ attractionLabel, parkLabel, priorityVotes, mustDoVotes }) => ({
-      attractionLabel,
-      parkLabel,
-      priorityVotes,
-      mustDoVotes,
-    }));
-}
-
-function getTopAnchorAttraction(
-  clusterMemberIds: string[],
-  attractions: TripAttractionPreference[],
-  sharedFavorites: PartyClusterFavorite[],
-): { attractionLabel: string; parkLabel: string } {
-  if (sharedFavorites.length > 0) {
-    const leadFavorite = sharedFavorites[0];
-
-    if (leadFavorite) {
-      return {
-        attractionLabel: leadFavorite.attractionLabel,
-        parkLabel: leadFavorite.parkLabel,
-      };
-    }
-  }
-
-  const fallbackAttraction = [...attractions]
-    .map((attraction) => {
-      const { averageTier } = countSharedPriorityVotes(attraction, clusterMemberIds);
-
-      return {
-        attractionLabel: attraction.attractionLabel,
-        parkLabel: attraction.parkLabel,
-        averageTier,
-        consensusScore: attraction.consensusScore,
-      };
-    })
-    .sort(
-      (left, right) =>
-        left.averageTier - right.averageTier ||
-        right.consensusScore - left.consensusScore ||
-        left.attractionLabel.localeCompare(right.attractionLabel),
+        right.attraction.consensusScore - left.attraction.consensusScore ||
+        left.attraction.attractionLabel.localeCompare(right.attraction.attractionLabel),
     )[0];
 
-  return {
-    attractionLabel: fallbackAttraction?.attractionLabel ?? 'No anchor attraction yet',
-    parkLabel: fallbackAttraction?.parkLabel ?? 'Unassigned park',
-  };
-}
-
-function getDominantParkLabel(
-  sharedFavorites: PartyClusterFavorite[],
-  fallbackParkLabel: string,
-): string {
-  if (sharedFavorites.length === 0) {
-    return fallbackParkLabel;
-  }
-
-  const parkStats = new Map<string, { count: number; voteTotal: number }>();
-
-  for (const favorite of sharedFavorites) {
-    const current = parkStats.get(favorite.parkLabel) ?? { count: 0, voteTotal: 0 };
-    parkStats.set(favorite.parkLabel, {
-      count: current.count + 1,
-      voteTotal: current.voteTotal + favorite.priorityVotes,
-    });
-  }
-
-  return (
-    [...parkStats.entries()].sort(
+  const lead =
+    sharedFavorite ??
+    stats.sort(
       (left, right) =>
-        right[1].count - left[1].count ||
-        right[1].voteTotal - left[1].voteTotal ||
-        left[0].localeCompare(right[0]),
-    )[0]?.[0] ?? fallbackParkLabel
-  );
-}
+        left.averageTier - right.averageTier ||
+        right.attraction.consensusScore - left.attraction.consensusScore ||
+        left.attraction.attractionLabel.localeCompare(right.attraction.attractionLabel),
+    )[0];
 
-function getAttractionMustDoVoteCount(attraction: TripAttractionPreference): number {
-  return Object.values(attraction.preferenceByPartyMemberId).filter((tier) => tier === 1).length;
+  return lead?.attraction.attractionLabel ?? 'No anchor attraction yet';
 }
 
 function buildSharedPriorityAttractions(
   attractions: TripAttractionPreference[],
 ): PartySharedPriorityAttraction[] {
-  return [...attractions]
+  return attractions
     .map((attraction) => ({
-      attractionLabel: attraction.attractionLabel,
-      parkLabel: attraction.parkLabel,
-      mustDoVotes: getAttractionMustDoVoteCount(attraction),
-      consensusScore: attraction.consensusScore,
+      attraction,
+      mustDoVotes: Object.values(attraction.preferenceByPartyMemberId).filter((tier) => tier === 1)
+        .length,
     }))
     .sort(
       (left, right) =>
         right.mustDoVotes - left.mustDoVotes ||
-        right.consensusScore - left.consensusScore ||
-        left.attractionLabel.localeCompare(right.attractionLabel),
+        right.attraction.consensusScore - left.attraction.consensusScore ||
+        left.attraction.attractionLabel.localeCompare(right.attraction.attractionLabel),
     )
-    .slice(0, SHARED_PRIORITY_LIMIT);
+    .slice(0, SHARED_PRIORITY_LIMIT)
+    .map(({ attraction, mustDoVotes }) => ({
+      attractionLabel: attraction.attractionLabel,
+      parkLabel: attraction.parkLabel,
+      mustDoVotes,
+    }));
 }
 
 function buildCohortContrasts(
   attractions: TripAttractionPreference[],
-  firstCohortMemberIds: string[],
-  secondCohortMemberIds: string[],
-  firstCohortLabel: string,
-  secondCohortLabel: string,
+  firstCohort: { label: string; memberIds: string[] },
+  secondCohort: { label: string; memberIds: string[] },
 ): PartyCohortContrast[] {
-  const contrastAttractions = [...attractions]
+  return attractions
     .map((attraction) => {
-      const firstCohortStats = getPriorityVotesForMembers(attraction, firstCohortMemberIds);
-      const secondCohortStats = getPriorityVotesForMembers(attraction, secondCohortMemberIds);
-      const firstCohortShare =
-        firstCohortStats.priorityVotes / Math.max(firstCohortMemberIds.length, 1);
-      const secondCohortShare =
-        secondCohortStats.priorityVotes / Math.max(secondCohortMemberIds.length, 1);
-      const shareGap = Math.abs(firstCohortShare - secondCohortShare);
-      const averageTierGap =
-        Math.abs(firstCohortStats.averageTier - secondCohortStats.averageTier) / 4;
-      const firstCohortLeads =
-        firstCohortShare > secondCohortShare ||
-        (firstCohortShare === secondCohortShare &&
-          firstCohortStats.averageTier < secondCohortStats.averageTier);
+      const first = getTierStats(attraction, firstCohort.memberIds);
+      const second = getTierStats(attraction, secondCohort.memberIds);
+      const firstShare = first.priorityVotes / Math.max(firstCohort.memberIds.length, 1);
+      const secondShare = second.priorityVotes / Math.max(secondCohort.memberIds.length, 1);
+      const averageTierGap = Math.abs(first.averageTier - second.averageTier) / 4;
+      const firstLeads =
+        firstShare > secondShare ||
+        (firstShare === secondShare && first.averageTier < second.averageTier);
+      const [leading, trailing] = firstLeads
+        ? [
+            { cohort: firstCohort, stats: first },
+            { cohort: secondCohort, stats: second },
+          ]
+        : [
+            { cohort: secondCohort, stats: second },
+            { cohort: firstCohort, stats: first },
+          ];
 
       return {
-        attractionLabel: attraction.attractionLabel,
-        gapScore: shareGap * 0.7 + averageTierGap * 0.3,
-        parkLabel: attraction.parkLabel,
-        leadingCohortLabel: firstCohortLeads ? firstCohortLabel : secondCohortLabel,
-        leadingPriorityVotes: firstCohortLeads
-          ? firstCohortStats.priorityVotes
-          : secondCohortStats.priorityVotes,
-        leadingSize: firstCohortLeads ? firstCohortMemberIds.length : secondCohortMemberIds.length,
-        trailingCohortLabel: firstCohortLeads ? secondCohortLabel : firstCohortLabel,
-        trailingPriorityVotes: firstCohortLeads
-          ? secondCohortStats.priorityVotes
-          : firstCohortStats.priorityVotes,
-        trailingSize: firstCohortLeads ? secondCohortMemberIds.length : firstCohortMemberIds.length,
+        contrast: {
+          attractionLabel: attraction.attractionLabel,
+          parkLabel: attraction.parkLabel,
+          leadingCohortLabel: leading.cohort.label,
+          leadingPriorityVotes: leading.stats.priorityVotes,
+          leadingSize: leading.cohort.memberIds.length,
+          trailingCohortLabel: trailing.cohort.label,
+          trailingPriorityVotes: trailing.stats.priorityVotes,
+          trailingSize: trailing.cohort.memberIds.length,
+        },
+        gapScore: Math.abs(firstShare - secondShare) * 0.7 + averageTierGap * 0.3,
         consensusScore: attraction.consensusScore,
       };
     })
@@ -790,32 +611,9 @@ function buildCohortContrasts(
       (left, right) =>
         right.gapScore - left.gapScore ||
         right.consensusScore - left.consensusScore ||
-        left.attractionLabel.localeCompare(right.attractionLabel),
-    );
-
-  return contrastAttractions.map(
-    ({
-      attractionLabel,
-      gapScore,
-      leadingCohortLabel,
-      leadingPriorityVotes,
-      leadingSize,
-      parkLabel,
-      trailingCohortLabel,
-      trailingPriorityVotes,
-      trailingSize,
-    }) => ({
-      attractionLabel,
-      gapScore,
-      leadingCohortLabel,
-      leadingPriorityVotes,
-      leadingSize,
-      parkLabel,
-      trailingCohortLabel,
-      trailingPriorityVotes,
-      trailingSize,
-    }),
-  );
+        left.contrast.attractionLabel.localeCompare(right.contrast.attractionLabel),
+    )
+    .map(({ contrast }) => contrast);
 }
 
 function buildClusterAnalysisGroup(
@@ -823,25 +621,16 @@ function buildClusterAnalysisGroup(
   label: string | null,
   memberIds: string[],
   memberById: Map<string, TripPartyMember>,
-  pairLookup: Map<string, PartyAffinityPair>,
+  pairLookup: PairLookup,
   attractions: TripAttractionPreference[],
 ): PartyClusterAnalysisGroup {
-  const memberNames = memberIds.map((memberId) => memberById.get(memberId)?.name ?? memberId);
-  const sharedFavorites = getClusterSharedFavorites(memberIds, attractions);
-  const topAnchor = getTopAnchorAttraction(memberIds, attractions, sharedFavorites);
-  const dominantParkLabel = getDominantParkLabel(sharedFavorites, topAnchor.parkLabel);
-
   return {
     averageAffinityScore: getAverageClusterAffinity(pairLookup, memberIds),
-    dominantParkLabel,
     id,
     label,
-    memberIds,
-    memberNames,
-    sharedFavorites,
+    memberNames: memberIds.map((memberId) => getMemberName(memberById, memberId)),
     size: memberIds.length,
-    topAnchorAttraction: topAnchor.attractionLabel,
-    topAnchorParkLabel: topAnchor.parkLabel,
+    topAnchorAttraction: getTopAnchorAttraction(memberIds, attractions),
   };
 }
 
@@ -895,63 +684,39 @@ export function getPartyClusterAnalysis(module: TripDataModule): PartyClusterAna
   const namedCohorts = getValidatedNamedCohorts(module.partyGrouping, module.party);
 
   if (namedCohorts) {
-    const [firstCohort, secondCohort] = namedCohorts;
-    const firstCohortMemberIds = sortMemberIds(firstCohort.memberIds, memberById);
-    const secondCohortMemberIds = sortMemberIds(secondCohort.memberIds, memberById);
-    const cohortContrasts = buildCohortContrasts(
-      module.attractions,
-      firstCohortMemberIds,
-      secondCohortMemberIds,
-      firstCohort.label,
-      secondCohort.label,
-    );
+    const cohorts = namedCohorts.map((cohort) => ({
+      ...cohort,
+      memberIds: sortMemberIds(cohort.memberIds, memberById),
+    })) as [(typeof namedCohorts)[0], (typeof namedCohorts)[1]];
 
     return {
-      clusters: [
+      clusters: cohorts.map((cohort) =>
         buildClusterAnalysisGroup(
-          firstCohort.id,
-          firstCohort.label,
-          firstCohortMemberIds,
+          cohort.id,
+          cohort.label,
+          cohort.memberIds,
           memberById,
           pairLookup,
           module.attractions,
         ),
-        buildClusterAnalysisGroup(
-          secondCohort.id,
-          secondCohort.label,
-          secondCohortMemberIds,
-          memberById,
-          pairLookup,
-          module.attractions,
-        ),
-      ],
-      cohortContrasts,
-      mode: 'named-cohorts',
-      pairs,
+      ),
+      cohortContrasts: buildCohortContrasts(module.attractions, cohorts[0], cohorts[1]),
       sharedPriorityAttractions,
     };
   }
 
-  const clusterMemberIds = buildClusterMemberIds(
-    module.party,
-    pairLookup,
-    pairs,
-    module.attractions,
-  );
-
   return {
     cohortContrasts: null,
-    mode: 'clusters',
-    pairs,
-    clusters: clusterMemberIds.map((memberIds, index) =>
-      buildClusterAnalysisGroup(
-        `cluster-${String(index + 1)}`,
-        null,
-        memberIds,
-        memberById,
-        pairLookup,
-        module.attractions,
-      ),
+    clusters: buildClusterMemberIds(module.party, pairLookup, pairs, module.attractions).map(
+      (memberIds, index) =>
+        buildClusterAnalysisGroup(
+          `cluster-${String(index + 1)}`,
+          null,
+          memberIds,
+          memberById,
+          pairLookup,
+          module.attractions,
+        ),
     ),
     sharedPriorityAttractions,
   };
@@ -961,7 +726,7 @@ export function getPartyPreferenceCounts(
   memberId: string,
   attractions: TripAttractionPreference[],
 ): Record<PreferenceTier, number> {
-  const counts = createEmptyTierCounts();
+  const counts: Record<PreferenceTier, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
 
   for (const attraction of attractions) {
     counts[getMemberTier(attraction, memberId)] += 1;

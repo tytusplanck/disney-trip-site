@@ -8,18 +8,6 @@ import type {
 } from './types';
 
 const SECTION_ORDER: TripStatus[] = ['planning', 'upcoming', 'completed'];
-const TRIP_SECTIONS = [
-  'attractions',
-  'schedule',
-  'party',
-  'll',
-  'guide',
-  'travelers',
-  'logistics',
-  'packing',
-] as const satisfies readonly TripSection[];
-
-const VALID_TRIP_SECTIONS = new Set<string>(TRIP_SECTIONS);
 
 export const DEFAULT_SECTION_CONFIG: TripSectionTab[] = [
   { label: 'Rides', section: 'attractions' },
@@ -109,35 +97,6 @@ export function getTripLandingPath(
 
 export function getTripBasePath(trip: Pick<TripSummary, 'slug'>): string {
   return `/${trip.slug}`;
-}
-
-function isTripSection(section: string): section is TripSection {
-  return VALID_TRIP_SECTIONS.has(section);
-}
-
-export function getLegacyTripRedirectPath(
-  modules: TripDataModule[],
-  familySlug: string,
-  tripSlug: string,
-  section?: string,
-): string | null {
-  const tripModule = modules.find((module) =>
-    module.summary.legacyRoutes?.some(
-      (route) => route.familySlug === familySlug && route.tripSlug === tripSlug,
-    ),
-  );
-
-  if (!tripModule) return null;
-
-  if (!section) {
-    return getTripLandingPath(tripModule.summary, tripModule);
-  }
-
-  if (!isTripSection(section)) {
-    return null;
-  }
-
-  return getTripSectionPath(tripModule.summary, section);
 }
 
 export function getTripCompactFactsLine(trip: TripSummary): string {

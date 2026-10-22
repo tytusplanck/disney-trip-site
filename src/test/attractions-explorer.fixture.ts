@@ -51,9 +51,7 @@ const summary: TripSummary = {
   parkLabels: ['EPCOT', 'Magic Kingdom'],
   partySize: party.length,
   dayCount: schedule.length,
-  attractionCount: 6,
   status: 'planning',
-  topPick: 'Living with the Land',
   themeId: 'primary',
 };
 

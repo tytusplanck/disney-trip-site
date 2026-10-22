@@ -25,10 +25,6 @@
   max-width: 12ch;
 }
 
-.all-trips-intro__body {
-  max-width: min(34rem, 38ch);
-}
-
 .all-trips-section {
   display: grid;
   gap: var(--space-5);
@@ -83,8 +79,7 @@
 
 .trip-card__title,
 .trip-card__date,
-.trip-card__facts,
-.trip-card__summary-copy {
+.trip-card__facts {
   margin: 0;
 }
 
@@ -141,11 +136,6 @@
   font-weight: 600;
   letter-spacing: var(--tracking-meta);
   text-transform: uppercase;
-}
-
-.trip-card__summary-copy {
-  max-width: 34ch;
-  color: var(--color-ink-muted);
 }
 
 .all-trips-footer {

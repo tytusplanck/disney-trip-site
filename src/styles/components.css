@@ -81,9 +81,7 @@
 .page-label,
 .section-header__count,
 .status-badge,
-.chip-list__item,
-.field__label,
-.detail-label {
+.field__label {
   font-size: var(--text-meta);
   letter-spacing: var(--tracking-meta);
   text-transform: uppercase;
@@ -155,29 +153,10 @@
   color: var(--color-status-completed);
 }
 
-.chip-list,
-.bullet-list,
 .stub-panel__checklist {
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-.chip-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-.chip-list__item {
-  min-height: 2rem;
-  padding: 0.4rem 0.8rem;
-  border: var(--border-thin) solid var(--color-line-subtle);
-  border-radius: var(--radius-pill);
-  background: var(--color-surface-2);
-  color: var(--color-ink-muted);
-  display: inline-flex;
-  align-items: center;
 }
 
 .page-label {
@@ -185,8 +164,7 @@
   color: var(--color-ink-faint);
 }
 
-.page-title,
-.section-title {
+.page-title {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
@@ -199,15 +177,7 @@
   letter-spacing: var(--tracking-display);
 }
 
-.section-title {
-  font-size: var(--text-headline-2);
-  line-height: var(--leading-snug);
-  letter-spacing: var(--tracking-title);
-}
-
-.page-intro,
 .body-copy,
-.helper-note,
 .stub-panel__body,
 .auth-card__quip,
 .all-trips-footer__note {
@@ -215,8 +185,7 @@
   color: var(--color-ink-muted);
 }
 
-.body-copy,
-.page-intro {
+.body-copy {
   max-width: min(42rem, 42ch);
 }
 
@@ -371,48 +340,6 @@
   color: var(--trip-accent-strong, var(--color-brand-strong));
 }
 
-.detail-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-3);
-  margin: 0;
-}
-
-.detail-card {
-  min-width: 0;
-  padding: var(--space-4);
-  border: var(--border-thin) solid var(--color-line-subtle);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-2);
-}
-
-.detail-label {
-  display: block;
-  margin-bottom: var(--space-2);
-  color: var(--color-ink-muted);
-}
-
-.detail-value {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-headline-2);
-  font-weight: 600;
-  line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-title);
-  color: var(--color-ink);
-}
-
-.bullet-list {
-  display: grid;
-  gap: var(--space-3);
-  padding-left: var(--space-4);
-  list-style: disc;
-}
-
-.bullet-list li {
-  color: var(--color-ink-muted);
-}
-
 .form-stack {
   display: grid;
   gap: var(--space-4);
@@ -522,10 +449,6 @@ select:focus {
 
   .site-header__context .breadcrumbs {
     justify-content: flex-start;
-  }
-
-  .detail-grid {
-    grid-template-columns: 1fr;
   }
 }
 

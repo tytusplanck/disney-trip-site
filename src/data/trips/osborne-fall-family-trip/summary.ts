@@ -8,8 +8,6 @@ export const osborneFallFamilyTripSummary: TripSummary = {
   parkLabels: ["Disney's Animal Kingdom", 'Magic Kingdom', 'EPCOT', "Disney's Hollywood Studios"],
   partySize: null,
   dayCount: osborneFallFamilyTripSchedule.length,
-  attractionCount: null,
   status: 'completed',
-  topPick: null,
   themeId: 'primary',
 };

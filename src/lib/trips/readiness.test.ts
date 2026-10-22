@@ -4,7 +4,6 @@ import { hasTripSectionContent } from './readiness';
 
 const emptyTripData: TripDataModule = {
   summary: {
-    attractionCount: 0,
     dateLabel: 'TBD',
     dayCount: 0,
     slug: 'empty-test',
@@ -13,7 +12,6 @@ const emptyTripData: TripDataModule = {
     status: 'upcoming',
     themeId: 'secondary',
     title: 'Empty Test',
-    topPick: null,
   },
   party: [],
   schedule: [],

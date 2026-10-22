@@ -1,7 +1,6 @@
 import type { PreferenceTier, TripDataModule, TripPartyMember, TripScheduleEntry } from './types';
+import { getAttractionTone, getDayLabels, type AttractionTone } from './format';
 import { hasScheduleEntryKind } from './schedule';
-
-type AttractionTone = 'high' | 'medium' | 'low';
 
 export interface AttractionsExplorerAttraction {
   id: string;
@@ -44,33 +43,15 @@ export interface AttractionsExplorerView {
   hasResults: boolean;
 }
 
-const WEEKDAY_FORMATTER = new Intl.DateTimeFormat('en-US', { weekday: 'short' });
-const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
-
-function getTone(scorePercent: number): AttractionTone {
-  if (scorePercent >= 74) {
-    return 'high';
-  }
-
-  if (scorePercent >= 58) {
-    return 'medium';
-  }
-
-  return 'low';
-}
-
 function countTier(memberTiers: Record<string, PreferenceTier>, tier: PreferenceTier): number {
   return Object.values(memberTiers).filter((value) => value === tier).length;
 }
 
 function buildDayPreset(entry: TripScheduleEntry, dayNumber: number): AttractionsExplorerDayPreset {
-  const date = new Date(`${entry.date}T12:00:00`);
-
   return {
     id: `park-day-${entry.date}`,
     dayNumber,
-    weekdayLabel: WEEKDAY_FORMATTER.format(date),
-    dateLabel: DATE_FORMATTER.format(date),
+    ...getDayLabels(entry.date),
     parkLabel: entry.parkLabel ?? entry.label,
     notes: entry.notes,
   };
@@ -131,7 +112,7 @@ export function buildAttractionsExplorerData(module: TripDataModule): Attraction
         scorePercent,
         mustDoVotes: countTier(memberTiers, 1),
         preferredVotes: countTier(memberTiers, 2),
-        tone: getTone(scorePercent),
+        tone: getAttractionTone(scorePercent),
         memberTiers,
       };
     }),

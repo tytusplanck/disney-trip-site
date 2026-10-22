@@ -59,15 +59,3 @@ export function getTripParkLabels(
 ): string[] {
   return Array.from(new Set(attractions.map((attraction) => attraction.parkLabel)));
 }
-
-export function getTopAttractionPick(
-  attractions: readonly Pick<TripAttractionPreference, 'attractionLabel' | 'consensusScore'>[],
-): string | null {
-  const [topAttraction] = [...attractions].sort(
-    (left, right) =>
-      right.consensusScore - left.consensusScore ||
-      left.attractionLabel.localeCompare(right.attractionLabel),
-  );
-
-  return topAttraction?.attractionLabel ?? null;
-}

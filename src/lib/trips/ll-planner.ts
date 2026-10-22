@@ -9,23 +9,8 @@ import type {
   LLProjectedPrice,
 } from './ll-types';
 import type { TripDataModule } from './types';
+import { getDayLabels } from './format';
 import { hasScheduleEntryKind } from './schedule';
-
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] as const;
-const MONTHS = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-] as const;
 
 const PARK_LABEL_TO_ID: Readonly<Record<string, LLParkId | undefined>> = {
   'Magic Kingdom': 'magic-kingdom',
@@ -109,16 +94,13 @@ export function buildLLPlannerData(module: TripDataModule): LLPlannerData {
       const d = new Date(entry.date + 'T12:00:00');
       const dayNumber = Math.round((d.getTime() - tripStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
       const parkId = getParkIdForLabel(entry.parkLabel);
-      const monthLabel = MONTHS[d.getMonth()] ?? '';
-      const weekdayLabel = WEEKDAYS[d.getDay()] ?? '';
 
       return {
         parkDate: entry.date,
         parkId,
         parkLabel: entry.parkLabel,
         dayNumber,
-        weekdayLabel,
-        dateLabel: `${monthLabel} ${String(d.getDate())}`,
+        ...getDayLabels(entry.date),
         scheduleNotes: entry.notes,
       };
     });

@@ -8,3 +8,6 @@ coverage/
 !.env.example
 .DS_Store
 .playwright-cli/
+output/
+.codex-artifacts/
+LL Cost March 2026/

@@ -1,11 +1,12 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
+import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import LightningLanePlanner from './LightningLanePlanner';
 import { casschwlanck2026TripData } from '../data/trips/casschwlanck-2026';
 import { declanBigSummerTripData } from '../data/trips/declan-big-summer-trip';
 import { osborneFallFamilyTripData } from '../data/trips/osborne-fall-family-trip';
 import { planckMegaDisneyTripData } from '../data/trips/planck-mega-disney-trip';
-import { buildLLPlannerData } from '../lib/trips/ll-planner';
+import { buildLLPlannerData, emptySelections, serializePlan } from '../lib/trips/ll-planner';
 
 function renderPlanner() {
   window.location.hash = '';
@@ -140,5 +141,52 @@ describe('LightningLanePlanner pricing', () => {
 
     expect(within(september22Card as HTMLElement).getAllByText('$59')).not.toHaveLength(0);
     expect(within(september24Card as HTMLElement).getAllByText('$61')).not.toHaveLength(0);
+  });
+});
+
+describe('LightningLanePlanner navigation', () => {
+  it('does not change the URL hash when switching park days', () => {
+    renderDeclanPlanner();
+    const initialHash = window.location.hash;
+
+    fireEvent.click(screen.getByRole('button', { name: 'Customize picks' }));
+    fireEvent.click(screen.getByRole('button', { name: 'MK · Jul 9' }));
+
+    expect(window.location.hash).toBe(initialHash);
+    expect(window.location.hash).not.toContain('day=');
+  });
+});
+
+describe('LightningLanePlanner shared links', () => {
+  function setSharedHash() {
+    const data = buildLLPlannerData(planckMegaDisneyTripData);
+    const firstParkDate = data.parkDays[0]?.parkDate ?? '';
+    const sharedPlan = {
+      ...data.defaultPlan,
+      parkDays: { ...data.defaultPlan.parkDays, [firstParkDate]: emptySelections() },
+    };
+    window.location.hash = serializePlan(sharedPlan, data.inventory, data.parkDays);
+    return data;
+  }
+
+  it('restores a shared plan from the URL hash after mount', () => {
+    const data = setSharedHash();
+
+    render(<LightningLanePlanner data={data} />);
+
+    expect(screen.getByText(/Someone thinks they can outplan Tytus/)).toBeInTheDocument();
+    expect(screen.queryByText('Star Wars: Rise of the Resistance')).not.toBeInTheDocument();
+    window.location.hash = '';
+  });
+
+  it('server-renders the default plan so hydration matches when a hash is present', () => {
+    const data = setSharedHash();
+
+    const markup = renderToString(<LightningLanePlanner data={data} />);
+
+    expect(markup).toContain('Lightning Lane picks');
+    expect(markup).not.toContain('Someone thinks they can outplan Tytus');
+    expect(markup).toContain('Star Wars: Rise of the Resistance');
+    window.location.hash = '';
   });
 });

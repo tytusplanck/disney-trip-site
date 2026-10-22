@@ -32,7 +32,7 @@ This repository is a private Disney trip site built to be maintained primarily b
 - Keep React islands as orchestration shells plus small view components. If a component starts combining URL state, editing flows, read-only summaries, price math display, and row rendering, split the view pieces before adding another mode.
 - Prefer deleting concepts over centralizing them when behavior allows it. New booleans, nullable modes, or repeated special-case checks should be treated as a missing model until proven otherwise.
 - Do not hide data invariants behind casts. If a helper needs a full park inventory, exact trip section, or validated route section, make the type boundary explicit instead of casting at the call site.
-- Source-inspection tests are allowed only for narrow guardrails such as security, CSS token contracts, and route shell contracts. Prefer behavioral tests for application behavior so future structural simplifications are not blocked by implementation-string assertions.
+- Source-inspection tests are allowed only for narrow, computed guardrails such as token contrast ratios or banning inline styles. Never assert on exact CSS declarations, import lines, or markup strings; prefer behavioral tests so structural simplifications are not blocked by implementation-string assertions.
 - When a strict no-behavior-change cleanup is needed, keep the focused tests green before and after, then run the full verification gate. Do not combine structural refactors with content or visual behavior changes.
 
 ## Astro and React Policy

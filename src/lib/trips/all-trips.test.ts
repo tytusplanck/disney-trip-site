@@ -5,7 +5,6 @@ import {
   findTripDataModule,
   findTripSummary,
   getAllTripsSections,
-  getLegacyTripRedirectPath,
   getTripBasePath,
   getTripCompactFactsLine,
   getTripLandingPath,
@@ -31,7 +30,7 @@ describe('all trips helpers', () => {
     expect(sections[0]?.trips.map((trip) => trip.title)).toEqual(['Planck Mega Disney trip']);
     expect(sections[0]?.countLabel).toBe('1 trip');
     expect(sections[1]?.trips.map((trip) => trip.title)).toEqual([
-      'Secret Planck / Osborne Janurary Trip',
+      'Secret Planck / Osborne January Trip',
     ]);
     expect(sections[1]?.countLabel).toBe('1 trip');
     expect(sections[2]?.trips.map((trip) => trip.title)).toEqual([
@@ -47,7 +46,7 @@ describe('all trips helpers', () => {
     const module = findTripDataModule(allTripsData.modules, 'secret-planck-osborne-january-trip');
 
     expect(trip).toMatchObject({
-      title: 'Secret Planck / Osborne Janurary Trip',
+      title: 'Secret Planck / Osborne January Trip',
       status: 'upcoming',
       dateLabel: 'January • Dates TBD',
       partySize: null,
@@ -129,16 +128,6 @@ describe('all trips helpers', () => {
     expect(getTripBasePath(planningTrip)).toBe('/planck-mega-disney-trip');
   });
 
-  it('maps legacy two-segment routes to canonical trip paths', () => {
-    expect(getLegacyTripRedirectPath(allTripsData.modules, 'casschwlanck', '2026')).toBe(
-      '/casschwlanck-2026/attractions',
-    );
-    expect(
-      getLegacyTripRedirectPath(allTripsData.modules, 'casschwlanck', 'future-trip', 'guide'),
-    ).toBe('/planck-mega-disney-trip/guide');
-    expect(getLegacyTripRedirectPath(allTripsData.modules, 'missing', 'trip')).toBeNull();
-  });
-
   it('builds the compact facts row used on the simplified trip cards', () => {
     const archivedTrip = findTripSummary(allTripsData.trips, 'casschwlanck-2026');
     const planningTrip = findTripSummary(allTripsData.trips, 'planck-mega-disney-trip');
@@ -159,9 +148,7 @@ describe('all trips helpers', () => {
       parkLabels: [],
       partySize: null,
       dayCount: null,
-      attractionCount: null,
       status: 'planning',
-      topPick: null,
       themeId: 'primary',
     };
 

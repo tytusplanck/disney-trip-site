@@ -6,7 +6,7 @@ import type {
 import { getPartyClusterAnalysis } from './party-analytics';
 import type { TripDataModule } from './types';
 
-export interface PartySummaryCluster {
+interface PartySummaryCluster {
   id: string;
   anchorAttraction: string;
   affinityValue: string;
@@ -14,13 +14,13 @@ export interface PartySummaryCluster {
   memberSummary: string;
 }
 
-export interface PartySummaryGapItem {
+interface PartySummaryGapItem {
   badge: string;
   detail: string;
   title: string;
 }
 
-export interface PartySummaryHeadlineInsight {
+interface PartySummaryHeadlineInsight {
   detail: string;
   eyebrow: string;
   title: string;
@@ -97,16 +97,12 @@ function buildGapItems(analysis: PartyClusterAnalysis): PartySummaryGapItem[] {
   }));
 }
 
-export function buildPartySummaryViewFromAnalysis(
-  analysis: PartyClusterAnalysis,
-): PartySummaryView {
+export function buildPartySummaryView(module: TripDataModule): PartySummaryView {
+  const analysis = getPartyClusterAnalysis(module);
+
   return {
     headlineInsight: buildHeadlineInsight(analysis.cohortContrasts?.[0]),
     clusters: analysis.clusters.map(buildCluster),
     gapItems: buildGapItems(analysis),
   };
-}
-
-export function buildPartySummaryView(module: TripDataModule): PartySummaryView {
-  return buildPartySummaryViewFromAnalysis(getPartyClusterAnalysis(module));
 }

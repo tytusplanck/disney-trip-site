@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import DisclosurePanel from './islands/DisclosurePanel';
 import type {
   LLAttraction,
@@ -41,14 +41,28 @@ const CHILD_CARD_ABBREVIATIONS: Record<string, string> = {
   'TRON Lightcycle / Run': 'TRON',
 };
 
-function getSharedPlan(data: LLPlannerData): LLMemberPlan | null {
-  if (typeof window === 'undefined') return null;
-  const hash = window.location.hash;
+function getSharedPlan(data: LLPlannerData, hash: string): LLMemberPlan | null {
   if (!hash.includes('ll=')) return null;
 
   const result = deserializePlan(hash, data.inventory, data.parkDays);
   if (!result) return null;
   return result.plan;
+}
+
+function subscribeToHash(onChange: () => void) {
+  window.addEventListener('hashchange', onChange);
+  return () => {
+    window.removeEventListener('hashchange', onChange);
+  };
+}
+
+function getHashSnapshot() {
+  return window.location.hash;
+}
+
+// The hash only exists in the browser; the server snapshot keeps hydration in sync with the server render.
+function getServerHashSnapshot() {
+  return '';
 }
 
 function makeEmptyPlan(data: LLPlannerData): LLMemberPlan {
@@ -61,10 +75,11 @@ function makeEmptyPlan(data: LLPlannerData): LLMemberPlan {
 export default function LightningLanePlanner({ data }: Props) {
   const firstParkDay = data.parkDays[0];
   const [activeParkDate, setActiveParkDate] = useState(firstParkDay?.parkDate ?? '');
-  const [isSharedLink] = useState(() => getSharedPlan(data) != null);
-  const [currentPlan, setCurrentPlan] = useState<LLMemberPlan>(
-    () => getSharedPlan(data) ?? data.defaultPlan,
-  );
+  const hash = useSyncExternalStore(subscribeToHash, getHashSnapshot, getServerHashSnapshot);
+  const sharedPlan = useMemo(() => getSharedPlan(data, hash), [data, hash]);
+  const isSharedLink = sharedPlan != null;
+  const [editedPlan, setEditedPlan] = useState<LLMemberPlan | null>(null);
+  const currentPlan = editedPlan ?? sharedPlan ?? data.defaultPlan;
   const [viewMode, setViewMode] = useState<ViewMode>('summary');
   const [toastVisible, setToastVisible] = useState(false);
 
@@ -76,30 +91,22 @@ export default function LightningLanePlanner({ data }: Props) {
   const handleToggle = useCallback(
     (attractionId: string) => {
       if (!activeInventory) return;
-      setCurrentPlan((previousPlan) => {
-        const currentSelections = previousPlan.parkDays[activeParkDate] ?? emptySelections();
-        const newSelections = toggleSelection(currentSelections, attractionId, activeInventory);
-        return {
-          ...previousPlan,
-          parkDays: {
-            ...previousPlan.parkDays,
-            [activeParkDate]: newSelections,
-          },
-        };
+      const currentSelections = currentPlan.parkDays[activeParkDate] ?? emptySelections();
+      const newSelections = toggleSelection(currentSelections, attractionId, activeInventory);
+      setEditedPlan({
+        ...currentPlan,
+        parkDays: {
+          ...currentPlan.parkDays,
+          [activeParkDate]: newSelections,
+        },
       });
     },
-    [activeInventory, activeParkDate],
+    [activeInventory, activeParkDate, currentPlan],
   );
 
-  function handleParkDaySwitch(parkDate: string) {
-    setActiveParkDate(parkDate);
-    const dayCode = parkDate.slice(5).replace('-', '');
-    window.history.replaceState(null, '', `#day=${dayCode}`);
-  }
-
   function handleCopyLink() {
-    const hash = serializePlan(currentPlan, data.inventory, data.parkDays);
-    const url = `${window.location.origin}${window.location.pathname}#${hash}`;
+    const planHash = serializePlan(currentPlan, data.inventory, data.parkDays);
+    const url = `${window.location.origin}${window.location.pathname}#${planHash}`;
     void navigator.clipboard.writeText(url).then(() => {
       setToastVisible(true);
       setTimeout(() => {
@@ -109,7 +116,7 @@ export default function LightningLanePlanner({ data }: Props) {
   }
 
   function handleStartFresh() {
-    setCurrentPlan(makeEmptyPlan(data));
+    setEditedPlan(makeEmptyPlan(data));
   }
 
   const ownerName = data.party.find((member) => member.id === data.ownerMemberId)?.name;
@@ -164,7 +171,7 @@ export default function LightningLanePlanner({ data }: Props) {
                       className={`ll-planner__chip${activeParkDate === day.parkDate ? ' ll-planner__chip--active' : ''}`}
                       key={day.parkDate}
                       onClick={() => {
-                        handleParkDaySwitch(day.parkDate);
+                        setActiveParkDate(day.parkDate);
                       }}
                       type="button"
                     >
@@ -233,6 +240,59 @@ function getParkAbbreviation(parkId: LLParkId): string {
   }
 }
 
+function getMultiPassSummary(selections: LLParkDaySelections, inventory: LLParkInventory) {
+  return {
+    multiPassCount: getMultiPassCount(selections, inventory),
+    multiPassMax: inventory.hasTiers
+      ? inventory.maxTier1 + inventory.maxTier2
+      : inventory.maxMultiPass,
+  };
+}
+
+function LLCardTop({
+  day,
+  inventory,
+  selections,
+  hasChildren,
+  heightRestrictionsMatter,
+  showScheduleNotes = false,
+}: {
+  day: LLParkDay;
+  inventory: LLParkInventory;
+  selections: LLParkDaySelections;
+  hasChildren?: boolean | undefined;
+  heightRestrictionsMatter: boolean;
+  showScheduleNotes?: boolean;
+}) {
+  return (
+    <>
+      <div className="ll-card__header">
+        <h3 className="ll-card__park-name">{day.parkLabel}</h3>
+        <p className="ll-card__day-info">
+          Day {day.dayNumber} &middot; {day.weekdayLabel} {day.dateLabel}
+          {showScheduleNotes && day.scheduleNotes ? ` · ${day.scheduleNotes}` : ''}
+        </p>
+      </div>
+
+      <LLProjectedCosts
+        multiPassEstimate={getMultiPassPriceEstimate(inventory)}
+        selectedSinglePassEstimate={getSelectedSinglePassPriceEstimate(selections, inventory)}
+        totalEstimate={getProjectedParkDayPriceEstimate(selections, inventory)}
+        childEstimate={
+          hasChildren
+            ? getChildParkDayPriceEstimate(selections, inventory, heightRestrictionsMatter)
+            : undefined
+        }
+        heightRestrictedSelections={
+          hasChildren
+            ? getHeightRestrictedSelections(selections, inventory, heightRestrictionsMatter)
+            : undefined
+        }
+      />
+    </>
+  );
+}
+
 function LLParkDayCard({
   day,
   inventory,
@@ -261,35 +321,17 @@ function LLParkDayCard({
     (attraction) => attraction.passType === 'multipass' && attraction.tier === 'notier',
   );
 
-  const multiPassCount = getMultiPassCount(selections, inventory);
-  const multiPassMax = inventory.hasTiers
-    ? inventory.maxTier1 + inventory.maxTier2
-    : inventory.maxMultiPass;
+  const { multiPassCount, multiPassMax } = getMultiPassSummary(selections, inventory);
 
   return (
     <div className="ll-card">
-      <div className="ll-card__header">
-        <h3 className="ll-card__park-name">{day.parkLabel}</h3>
-        <p className="ll-card__day-info">
-          Day {day.dayNumber} &middot; {day.weekdayLabel} {day.dateLabel}
-          {day.scheduleNotes ? ` · ${day.scheduleNotes}` : ''}
-        </p>
-      </div>
-
-      <LLProjectedCosts
-        multiPassEstimate={getMultiPassPriceEstimate(inventory)}
-        selectedSinglePassEstimate={getSelectedSinglePassPriceEstimate(selections, inventory)}
-        totalEstimate={getProjectedParkDayPriceEstimate(selections, inventory)}
-        childEstimate={
-          hasChildren
-            ? getChildParkDayPriceEstimate(selections, inventory, heightRestrictionsMatter)
-            : undefined
-        }
-        heightRestrictedSelections={
-          hasChildren
-            ? getHeightRestrictedSelections(selections, inventory, heightRestrictionsMatter)
-            : undefined
-        }
+      <LLCardTop
+        day={day}
+        inventory={inventory}
+        selections={selections}
+        hasChildren={hasChildren}
+        heightRestrictionsMatter={heightRestrictionsMatter}
+        showScheduleNotes
       />
 
       <LLSection eyebrow="Lightning Lane Single Pass" subtitle={SINGLE_PASS_SUBTITLE}>
@@ -572,10 +614,7 @@ function LLParkDayCardReadOnly({
   hasChildren?: boolean | undefined;
   heightRestrictionsMatter: boolean;
 }) {
-  const multiPassCount = getMultiPassCount(selections, inventory);
-  const multiPassMax = inventory.hasTiers
-    ? inventory.maxTier1 + inventory.maxTier2
-    : inventory.maxMultiPass;
+  const { multiPassCount, multiPassMax } = getMultiPassSummary(selections, inventory);
 
   function getSelectedAttractions(ids: string[]): LLAttraction[] {
     return ids
@@ -594,27 +633,12 @@ function LLParkDayCardReadOnly({
 
   return (
     <div className="ll-card ll-card--readonly">
-      <div className="ll-card__header">
-        <h3 className="ll-card__park-name">{day.parkLabel}</h3>
-        <p className="ll-card__day-info">
-          Day {day.dayNumber} &middot; {day.weekdayLabel} {day.dateLabel}
-        </p>
-      </div>
-
-      <LLProjectedCosts
-        multiPassEstimate={getMultiPassPriceEstimate(inventory)}
-        selectedSinglePassEstimate={getSelectedSinglePassPriceEstimate(selections, inventory)}
-        totalEstimate={getProjectedParkDayPriceEstimate(selections, inventory)}
-        childEstimate={
-          hasChildren
-            ? getChildParkDayPriceEstimate(selections, inventory, heightRestrictionsMatter)
-            : undefined
-        }
-        heightRestrictedSelections={
-          hasChildren
-            ? getHeightRestrictedSelections(selections, inventory, heightRestrictionsMatter)
-            : undefined
-        }
+      <LLCardTop
+        day={day}
+        inventory={inventory}
+        selections={selections}
+        hasChildren={hasChildren}
+        heightRestrictionsMatter={heightRestrictionsMatter}
       />
 
       {!hasSelections && <p className="ll-card__empty">No selections for this park day.</p>}

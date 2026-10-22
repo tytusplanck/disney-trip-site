@@ -528,19 +528,6 @@
   gap: var(--space-5);
 }
 
-.attractions-explorer__scope-row {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: var(--space-4);
-}
-
-.attractions-explorer__context {
-  display: grid;
-  gap: var(--space-2);
-  max-width: min(38rem, 38ch);
-}
-
 .attractions-explorer__reset,
 .attractions-explorer__list-toggle {
   min-height: var(--tap-target-min);
@@ -616,8 +603,7 @@
   font-size: var(--text-body-sm);
 }
 
-.attractions-explorer__input,
-.attractions-explorer__select {
+.attractions-explorer__input {
   width: 100%;
   min-height: var(--tap-target-min);
   padding: 0 var(--space-4);
@@ -1346,11 +1332,6 @@
   background: var(--trip-accent-soft, var(--color-brand-soft));
   border-color: var(--trip-accent, var(--color-brand));
   color: var(--color-ink);
-}
-
-.ll-planner__chip-meta {
-  font-weight: 400;
-  color: var(--color-ink-faint);
 }
 
 /* Park Day Card */

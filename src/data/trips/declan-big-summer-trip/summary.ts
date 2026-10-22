@@ -9,8 +9,6 @@ export const declanBigSummerTripSummary: TripSummary = {
   parkLabels: ["Disney's Animal Kingdom", "Disney's Hollywood Studios", 'Magic Kingdom', 'EPCOT'],
   partySize: declanBigSummerTripParty.length,
   dayCount: declanBigSummerTripSchedule.length,
-  attractionCount: null,
   status: 'completed',
-  topPick: null,
   themeId: 'secondary',
 };
