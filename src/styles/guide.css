@@ -1,0 +1,105 @@
+/* Ride guide: park jump links, park sections, and attraction rows. */
+
+.guide-park-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.guide-park {
+  scroll-margin-top: var(--space-6);
+}
+
+.guide-park-heading {
+  margin: 0;
+  padding-bottom: var(--space-3);
+  border-bottom: var(--border-strong) solid var(--trip-accent, var(--color-brand));
+  font-family: var(--font-display);
+  font-size: var(--text-headline-2);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-title);
+  color: var(--color-ink);
+}
+
+.guide-attraction-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: var(--border-thin) solid var(--color-line-subtle);
+  border-radius: var(--radius-xl);
+  background: var(--color-surface-1);
+  overflow: hidden;
+}
+
+.guide-attraction-card {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: var(--border-thin) solid var(--color-line-subtle);
+}
+
+.guide-attraction-card:last-child {
+  border-bottom: none;
+}
+
+.guide-attraction-card__header {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.guide-attraction-card__title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.guide-attraction-card__name {
+  margin: 0 var(--space-1) 0 0;
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  font-weight: 600;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-title);
+  color: var(--color-ink);
+}
+
+.guide-attraction-card__area {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: var(--text-body-sm);
+}
+
+.guide-attraction-card__notes {
+  max-width: var(--content-reading);
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body);
+}
+
+@media (max-width: 720px) {
+  /* The sticky mobile header covers the top of the viewport when jumping to a park. */
+  .guide-park {
+    scroll-margin-top: calc(var(--tap-target-min) + var(--space-11));
+  }
+
+  .guide-park-nav {
+    flex-wrap: nowrap;
+    margin-inline: calc(-1 * var(--space-1));
+    padding: var(--space-1);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .guide-park-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .guide-attraction-card {
+    padding: var(--space-3) var(--space-4);
+  }
+}

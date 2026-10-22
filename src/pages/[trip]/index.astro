@@ -4,13 +4,12 @@ import { findTripDataModule, findTripSummary, getTripLandingPath } from '../../l
 
 const tripSlug = Astro.params['trip'] ?? '';
 const trip = findTripSummary(allTripsData.trips, tripSlug);
+const redirectPath = trip
+  ? getTripLandingPath(trip, findTripDataModule(allTripsData.modules, tripSlug))
+  : '/';
 
-if (!trip) {
-  return Astro.redirect('/');
+// astro check only counts reads inside a branch, so the redirect stays in one.
+if (redirectPath) {
+  return Astro.redirect(redirectPath);
 }
-
-const tripModule = findTripDataModule(allTripsData.modules, tripSlug);
-const tripLandingPath = getTripLandingPath(trip, tripModule);
-
-return Astro.redirect(tripLandingPath);
 ---

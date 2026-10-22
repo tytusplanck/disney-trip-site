@@ -14,6 +14,11 @@ interface Props {
 
 const ARCHETYPES = ['adults', 'kids'] as const;
 const FILTERS = ['all', 'must', 'rec', 'nice'] as const;
+const PRIORITY_TONES: Record<PackingPriority, string> = {
+  must: 'must',
+  rec: 'recommended',
+  nice: 'optional',
+};
 
 export default function PackingLists({ data }: Props) {
   const [archetype, setArchetype] = useState<PackingArchetype>('adults');
@@ -88,7 +93,7 @@ export default function PackingLists({ data }: Props) {
           <button
             key={value}
             type="button"
-            className="packing__chip"
+            className="choice-chip"
             aria-pressed={priority === value}
             onClick={() => {
               setPriority(value);
@@ -112,7 +117,7 @@ export default function PackingLists({ data }: Props) {
           <div className="packing__section-heading">
             <h2 id={`${id}-${String(index)}`}>{category.category}</h2>
             {category.kidsOnly && (
-              <span className="packing__pill" data-priority="rec">
+              <span className="tag" data-tone="recommended">
                 Kids only
               </span>
             )}
@@ -135,7 +140,7 @@ export default function PackingLists({ data }: Props) {
                     </ul>
                   )}
                 </div>
-                <span className="packing__pill" data-priority={item.priority}>
+                <span className="tag" data-tone={PRIORITY_TONES[item.priority]}>
                   {PACKING_PRIORITY_LABELS[item.priority]}
                 </span>
               </li>

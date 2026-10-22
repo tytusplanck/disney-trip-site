@@ -5,6 +5,8 @@ import TripStubShell from '../../components/shells/TripStubShell.astro';
 import { allTripsData } from '../../data/all-trips';
 import { getTripStubStatusCopy, tripStubPages } from '../../data/trip-stubs';
 import { getTripRouteContext } from '../../lib/trips/all-trips';
+import { getShortParkLabel } from '../../lib/trips/format';
+import { getGuideParkGroups } from '../../lib/trips/guide';
 import { hasTripSectionContent } from '../../lib/trips/readiness';
 import { tripSectionCopy } from './trip-sections.page';
 
@@ -21,13 +23,7 @@ const stubPage = tripStubPages.guide;
 const pageCopy = tripSectionCopy.guide;
 const statusCopy = getTripStubStatusCopy(trip.status);
 const tripIsStub = !hasTripSectionContent(tripModule, 'guide');
-const guideAttractions = tripModule.guide ?? [];
-
-const parkLabels = [...new Set(guideAttractions.map((a) => a.parkLabel))];
-const attractionsByPark = parkLabels.map((parkLabel) => ({
-  parkLabel,
-  attractions: guideAttractions.filter((a) => a.parkLabel === parkLabel),
-}));
+const attractionsByPark = getGuideParkGroups(tripModule.guide ?? [], tripModule.schedule);
 ---
 
 {
@@ -54,8 +50,17 @@ const attractionsByPark = parkLabels.map((parkLabel) => ({
       pageTitle={pageCopy.title}
       pageSummary={pageCopy.summary}
     >
+      {attractionsByPark.length > 1 && (
+        <nav class="guide-park-nav" aria-label="Jump to park">
+          {attractionsByPark.map((group) => (
+            <a class="choice-chip" href={`#${group.anchorId}`}>
+              {getShortParkLabel(group.parkLabel)}
+            </a>
+          ))}
+        </nav>
+      )}
       {attractionsByPark.map((group) => (
-        <section class="trip-page-section">
+        <section class="trip-page-section guide-park" id={group.anchorId}>
           <h2 class="guide-park-heading">{group.parkLabel}</h2>
           <GuideAttractionList attractions={group.attractions} />
         </section>

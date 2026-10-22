@@ -2,15 +2,7 @@ import type { LLMemberPlan, LLParkId, LLPolicy, LLParkInventory } from './ll-typ
 
 export type TripStatus = 'planning' | 'upcoming' | 'completed';
 
-export type TripSection =
-  | 'attractions'
-  | 'schedule'
-  | 'party'
-  | 'll'
-  | 'guide'
-  | 'travelers'
-  | 'logistics'
-  | 'packing';
+export type TripSection = 'attractions' | 'schedule' | 'party' | 'll' | 'guide' | 'packing';
 
 export interface TripSectionTab {
   label: string;
@@ -103,22 +95,8 @@ export interface GuideAttraction {
   areaLabel: string;
   attractionLabel: string;
   priority: 'must-do' | 'recommended' | 'if-time' | 'skip';
-  notes: string;
-}
-
-export interface TravelerProfile {
-  memberId: string;
-  notes: string;
-  priorities: string[];
-}
-
-export type LogisticsEntryKind = 'dining' | 'resort' | 'transport' | 'tip' | 'general';
-
-export interface LogisticsEntry {
-  id: string;
-  kind: LogisticsEntryKind;
-  title: string;
-  date: string | null;
+  /** Minimum rider height in inches, `'any'` when there is none; omitted for shows and events. */
+  height?: number | 'any';
   notes: string;
 }
 
@@ -155,8 +133,6 @@ export interface TripDataModule {
   sectionConfig?: TripSectionTab[];
   packing?: TripPackingData;
   guide?: GuideAttraction[];
-  travelerProfiles?: TravelerProfile[];
-  logistics?: LogisticsEntry[];
 }
 
 export interface TripStubPage {

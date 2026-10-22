@@ -12,16 +12,16 @@ const context = getTripRouteContext(
   allTripsData.modules,
   Astro.params['trip'] ?? '',
 );
-if (!context) return Astro.redirect('/');
-const { trip, tripModule, sectionConfig } = context;
-const packing = tripModule.packing;
-if (
-  !packing ||
-  !hasTripSectionContent(tripModule, 'packing') ||
-  !sectionConfig.some((tab) => tab.section === 'packing')
-) {
-  return Astro.redirect(getTripLandingPath(trip, tripModule));
-}
+const packing = context?.tripModule.packing;
+const redirectPath = !context
+  ? '/'
+  : !packing ||
+      !hasTripSectionContent(context.tripModule, 'packing') ||
+      !context.sectionConfig.some((tab) => tab.section === 'packing')
+    ? getTripLandingPath(context.trip, context.tripModule)
+    : null;
+if (redirectPath || !context || !packing) return Astro.redirect(redirectPath ?? '/');
+const { trip, sectionConfig } = context;
 const pageCopy = tripSectionCopy.packing;
 ---
 
@@ -30,7 +30,6 @@ const pageCopy = tripSectionCopy.packing;
   description={`Packing recommendations for ${trip.title}.`}
   trip={trip}
   activeSection="packing"
-  showHeadingOnMobile
   sectionConfig={sectionConfig}
   pageTitle={pageCopy.title}
   pageSummary={pageCopy.summary}

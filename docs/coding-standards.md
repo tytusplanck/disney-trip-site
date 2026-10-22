@@ -27,7 +27,7 @@ This repository is a private Disney trip site built to be maintained primarily b
 ## Maintainability Guardrails
 
 - Treat 1000 lines as a hard review threshold for source files. Do not push a file from below 1000 lines to above 1000 lines without decomposing first or documenting the structural reason in the change.
-- Do not add new feature blocks to already-sprawling files. `src/styles/trip-pages.css` is past the threshold; new route or component styling should move toward focused stylesheet modules instead of making that file larger. Schedule moment styling is the first such module (`src/styles/schedule.css`).
+- Do not add new feature blocks to already-sprawling files. Stylesheets are split by surface: `trip-pages.css` holds only the shared planner shell and disclosure panels, while `schedule.css`, `attractions.css`, `party.css`, `guide.css`, `ll.css`, and `packing.css` own their routes. New route or component styling goes in the matching module, or a new one imported from `global.css`.
 - `src/lib/trips/party-analytics.ts` is near the threshold and mixes persona scoring, affinity pair math, clustering, cohort contrast, and analysis DTO construction. New party-analysis behavior should first extract the relevant ownership slice into a focused module rather than adding another branch to that file.
 - Keep React islands as orchestration shells plus small view components. If a component starts combining URL state, editing flows, read-only summaries, price math display, and row rendering, split the view pieces before adding another mode.
 - Prefer deleting concepts over centralizing them when behavior allows it. New booleans, nullable modes, or repeated special-case checks should be treated as a missing model until proven otherwise.
@@ -52,11 +52,15 @@ This repository is a private Disney trip site built to be maintained primarily b
 - When a visual direction changes, update the shared stylesheet and keep the route markup class-based
 - Theme variants such as family gradients must be mapped through classes or data attributes, never inline styles
 - Keep surface styling intentional with token tiers:
-  - `--surface-base` for regular containers
-  - `--surface-elevated` for important grouped controls
-  - `--surface-featured` for primary, high-attention panels only
+  - `--color-surface-1` for regular containers
+  - `--color-surface-2` for important grouped controls
+  - `--color-surface-3` for primary, high-attention panels only
+- Use the `--color-*`, `--text-*`, and spacing tokens directly; the legacy short aliases (`--surface`, `--muted`, `--must-bg`, and similar) were removed
+- Font sizes come from the type tokens (`--text-display-*`, `--text-headline-1/2/3`, `--text-title`, body, and meta sizes); do not hand-write `clamp()` font sizes in component styles
+- Responsive rules use three breakpoints only: `max-width: 960px` (tablet), `720px` (mobile), and `480px` (small phones)
+- Reuse the shared `.tag`, `.choice-chip`, and `.eyebrow` primitives and the shared selected-state treatment described in [Content Architecture](./content-architecture.md#shared-ui-primitives)
 - Avoid reusing one heavy card treatment for every section; reserve shadows and accent treatments for truly primary surfaces
-- Keep the shared visual language restrained and tool-like: warm light neutrals, muted accent hues, condensed sans headings, and low-motion interactions
+- Keep the shared visual language restrained and tool-like: cool-white neutrals, muted blue/teal/slate accents, a single Manrope sans, and low-motion interactions (see [Design System](./design-system.md))
 
 ## Auth and Secrecy Rules
 

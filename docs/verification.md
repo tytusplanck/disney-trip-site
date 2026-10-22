@@ -42,15 +42,20 @@ Run these commands as needed while fixing issues, then finish with the aggregate
 
 - Use Chrome DevTools MCP for any change that affects layout, styling, copy, navigation, forms, responsive behavior, or perceived interaction.
 - Do not sign off UI work from static code inspection alone.
-- Start the site with `npm run dev`, then open the changed route and the nearest related route in Chrome DevTools MCP.
+- Start the site with `SITE_PASSWORD=replace-me npm run dev`, then open the changed route and the nearest related route in Chrome DevTools MCP.
+  - The shell variable overrides `.env`, so agents sign in at `/login` with the placeholder key from `.env.example` and never need the real site key. Do not read, type, or paste the deployed `SITE_PASSWORD`.
+  - The session cookie lasts for the browser session, so one sign-in covers the whole check.
+  - Astro's dev toolbar overlays the bottom of the page; hide it (`document.querySelector('astro-dev-toolbar')?.remove()`) before taking screenshots.
 - Check at minimum:
-  - one mobile width such as `390px`
+  - one mobile width such as `375px` or `390px`
   - one desktop width such as `1280px`
   - an intermediate width such as `768px` when the layout meaningfully shifts
+  - `320px` when a change touches the trip tab strip or any single-row scrolling chip row
+  - layouts only change at the `960px`, `720px`, and `480px` breakpoints, so check one width on each side of any breakpoint the change touches
   - console output stays clean
   - relevant network and form requests succeed
   - keyboard and focus behavior still work when interaction changed
-  - no clipping, overflow, broken spacing, or missing states appear
+  - no clipping, overflow, broken spacing, or missing states appear; `html` uses `overflow-x: clip`, so measure the widest content element rather than trusting `document.documentElement.scrollWidth`
 - When auth, redirects, or guarded routes change, manually verify `/login`, `/`, logout, and a direct deep link to the changed protected route.
 - If Chrome DevTools MCP is unavailable in the session, use the available real-browser MCP equivalent and say which tool was used.
 

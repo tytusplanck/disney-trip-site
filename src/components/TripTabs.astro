@@ -1,5 +1,5 @@
 ---
-import { DEFAULT_SECTION_CONFIG, getTripSectionPath } from '../lib/trips/all-trips';
+import { getTripNavTabs, getTripSectionPath } from '../lib/trips/all-trips';
 import type { TripSection, TripSectionTab, TripSummary } from '../lib/trips/types';
 
 interface Props {
@@ -10,24 +10,26 @@ interface Props {
 
 const { trip, activeSection, sectionConfig } = Astro.props;
 
-const tabs = sectionConfig ?? DEFAULT_SECTION_CONFIG;
+const tabs = getTripNavTabs(sectionConfig);
 ---
 
-<nav class="trip-tabs" aria-label="Trip sections">
-  <div class="trip-tabs__rail" data-tab-count={tabs.length}>
-    {
-      tabs.map((tab) => (
-        <a
-          class:list={[
-            'trip-tabs__link',
-            activeSection === tab.section && 'trip-tabs__link--active',
-          ]}
-          href={getTripSectionPath(trip, tab.section)}
-          aria-current={activeSection === tab.section ? 'page' : undefined}
-        >
-          <span class="trip-tabs__link-label">{tab.label}</span>
-        </a>
-      ))
-    }
-  </div>
-</nav>
+{
+  tabs.length > 0 && (
+    <nav class="trip-tabs" aria-label="Trip sections">
+      <div class="trip-tabs__rail" data-tab-count={tabs.length}>
+        {tabs.map((tab) => (
+          <a
+            class:list={[
+              'trip-tabs__link',
+              activeSection === tab.section && 'trip-tabs__link--active',
+            ]}
+            href={getTripSectionPath(trip, tab.section)}
+            aria-current={activeSection === tab.section ? 'page' : undefined}
+          >
+            <span class="trip-tabs__link-label">{tab.label}</span>
+          </a>
+        ))}
+      </div>
+    </nav>
+  )
+}

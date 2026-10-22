@@ -3,8 +3,6 @@ import type { TripDataModule, TripSection } from './types';
 type TripSectionData = Pick<TripDataModule, 'attractions' | 'party' | 'schedule'> & {
   llInventory?: TripDataModule['llInventory'];
   guide?: TripDataModule['guide'];
-  travelerProfiles?: TripDataModule['travelerProfiles'];
-  logistics?: TripDataModule['logistics'];
   packing?: TripDataModule['packing'];
 };
 
@@ -20,12 +18,8 @@ export function hasTripSectionContent(module: TripSectionData, section: TripSect
       return module.llInventory != null && Object.keys(module.llInventory).length > 0;
     case 'guide':
       return module.guide != null && module.guide.length > 0;
-    case 'travelers':
-      return module.travelerProfiles != null && module.travelerProfiles.length > 0;
     case 'packing':
       return module.packing?.categories.some((category) => category.items.length > 0) ?? false;
-    case 'logistics':
-      return module.logistics != null && module.logistics.length > 0;
     default:
       throw new Error('Unsupported trip section.');
   }

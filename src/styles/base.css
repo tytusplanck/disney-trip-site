@@ -90,11 +90,11 @@ img {
   text-decoration: none;
   transform: translateY(calc(-100% - var(--space-4)));
   transition: transform var(--motion-base) var(--ease-standard);
-  box-shadow: var(--shadow-soft);
 }
 
 .skip-link:focus-visible {
   transform: translateY(0);
+  box-shadow: var(--shadow-soft);
 }
 
 .visually-hidden {

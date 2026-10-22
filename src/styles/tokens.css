@@ -103,6 +103,7 @@
   --text-display-2: clamp(2rem, 3.4vw, 3rem);
   --text-headline-1: clamp(1.625rem, 2.5vw, 2.125rem);
   --text-headline-2: clamp(1.375rem, 2vw, 1.75rem);
+  --text-headline-3: clamp(1.25rem, 2vw, 1.5rem);
   --text-title: 1.125rem;
   --text-body-lg: 1.0625rem;
   --text-body: 1rem;
@@ -163,37 +164,6 @@
   --content-main: 72rem;
   --content-wide: 88rem;
   --tap-target-min: 2.75rem;
-
-  /* Compatibility aliases for existing shared classes */
-  --bg: var(--color-canvas);
-  --surface-base: var(--color-surface-1);
-  --surface-elevated: var(--color-surface-2);
-  --surface-featured: var(--color-surface-3);
-  --surface: var(--color-surface-1);
-  --surface2: var(--color-surface-2);
-  --text: var(--color-ink);
-  --muted: var(--color-ink-muted);
-  --faint: var(--color-ink-faint);
-  --border: var(--color-line-subtle);
-  --border2: var(--color-line-strong);
-  --accent: var(--color-brand);
-  --status-planning: var(--color-status-planning);
-  --status-upcoming: var(--color-status-upcoming);
-  --status-completed: var(--color-status-completed);
-  --must: var(--color-pref-must);
-  --must-bg: var(--color-viz-1-soft);
-  --pref: var(--color-pref-pref);
-  --pref-bg: var(--color-viz-2-soft);
-  --indif: var(--color-pref-indif);
-  --indif-bg: var(--color-viz-3-soft);
-  --dont: var(--color-pref-dont);
-  --dont-bg: var(--color-viz-4-soft);
-  --skip: var(--color-pref-skip);
-  --skip-bg: var(--color-viz-5-soft);
-  --viz-affinity: var(--color-viz-2-strong);
-  --viz-track: var(--color-viz-track);
-  --font-mono: var(--font-ui);
-  --content-width: var(--content-main);
 
   color-scheme: light;
 }

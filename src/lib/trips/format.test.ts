@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { getAttractionTone, getDayLabels } from './format';
+import { getAttractionTone, getDayLabels, getShortParkLabel } from './format';
 
 describe('trip format helpers', () => {
+  it('drops the Disney possessive from park labels for compact chips', () => {
+    expect(getShortParkLabel("Disney's Hollywood Studios")).toBe('Hollywood Studios');
+    expect(getShortParkLabel('Disney’s Animal Kingdom')).toBe('Animal Kingdom');
+    expect(getShortParkLabel('Magic Kingdom')).toBe('Magic Kingdom');
+    expect(getShortParkLabel('EPCOT')).toBe('EPCOT');
+  });
+
   it('builds short weekday and date labels from an ISO date', () => {
     expect(getDayLabels('2026-03-28')).toEqual({ weekdayLabel: 'Sat', dateLabel: 'Mar 28' });
     expect(getDayLabels('2026-09-05')).toEqual({ weekdayLabel: 'Sat', dateLabel: 'Sep 5' });

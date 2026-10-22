@@ -1,11 +1,12 @@
 import { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
-import DisclosurePanel from './islands/DisclosurePanel';
+import LLProjectedCosts from './LLProjectedCosts';
+import ParkDayPicker from './ParkDayPicker';
+import { getShortParkLabel } from '../lib/trips/format';
 import type {
   LLAttraction,
   LLMemberPlan,
   LLParkDay,
   LLParkDaySelections,
-  LLParkId,
   LLParkInventory,
   LLPlannerData,
   LLProjectedPrice,
@@ -13,7 +14,6 @@ import type {
 import {
   deserializePlan,
   emptySelections,
-  formatPriceEstimate,
   getAttractionPriceEstimate,
   getChildParkDayPriceEstimate,
   getHeightRestrictedSelections,
@@ -33,13 +33,6 @@ interface Props {
 type ViewMode = 'summary' | 'edit';
 
 const SINGLE_PASS_SUBTITLE = 'Purchased individually';
-
-const CHILD_CARD_ABBREVIATIONS: Record<string, string> = {
-  'Avatar Flight of Passage': 'FOP',
-  'Star Wars: Rise of the Resistance': 'RoTR',
-  'Guardians of the Galaxy: Cosmic Rewind': 'GoTGCR',
-  'TRON Lightcycle / Run': 'TRON',
-};
 
 function getSharedPlan(data: LLPlannerData, hash: string): LLMemberPlan | null {
   if (!hash.includes('ll=')) return null;
@@ -159,29 +152,18 @@ export default function LightningLanePlanner({ data }: Props) {
         </>
       ) : (
         <>
-          <div className="ll-planner__controls">
-            <div className="ll-planner__control-group">
-              <p className="ll-planner__control-label">Park day</p>
-              <div className="ll-planner__chip-row">
-                {data.parkDays.map((day) => {
-                  const abbreviation = getParkAbbreviation(day.parkId);
-                  return (
-                    <button
-                      aria-pressed={activeParkDate === day.parkDate}
-                      className={`ll-planner__chip${activeParkDate === day.parkDate ? ' ll-planner__chip--active' : ''}`}
-                      key={day.parkDate}
-                      onClick={() => {
-                        setActiveParkDate(day.parkDate);
-                      }}
-                      type="button"
-                    >
-                      {abbreviation} &middot; {day.dateLabel}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          <ParkDayPicker
+            label="Park day"
+            options={data.parkDays.map((day) => ({
+              id: day.parkDate,
+              label: getShortParkLabel(day.parkLabel),
+              meta: `${day.weekdayLabel} ${day.dateLabel}`,
+            }))}
+            selectedId={activeParkDate}
+            onSelect={(parkDate) => {
+              if (parkDate) setActiveParkDate(parkDate);
+            }}
+          />
 
           {activeParkDay && activeInventory && (
             <LLParkDayCard
@@ -225,19 +207,6 @@ export default function LightningLanePlanner({ data }: Props) {
       )}
     </div>
   );
-}
-
-function getParkAbbreviation(parkId: LLParkId): string {
-  switch (parkId) {
-    case 'magic-kingdom':
-      return 'MK';
-    case 'epcot':
-      return 'EPCOT';
-    case 'hollywood-studios':
-      return 'DHS';
-    case 'animal-kingdom':
-      return 'DAK';
-  }
 }
 
 function getMultiPassSummary(selections: LLParkDaySelections, inventory: LLParkInventory) {
@@ -425,87 +394,6 @@ function LLParkDayCard({
   );
 }
 
-function LLProjectedCosts({
-  multiPassEstimate,
-  selectedSinglePassEstimate,
-  totalEstimate,
-  childEstimate,
-  heightRestrictedSelections,
-}: {
-  multiPassEstimate: LLProjectedPrice;
-  selectedSinglePassEstimate: LLProjectedPrice | null;
-  totalEstimate: LLProjectedPrice | null;
-  childEstimate?: LLProjectedPrice | null | undefined;
-  heightRestrictedSelections?: LLAttraction[] | undefined;
-}) {
-  const showChildRow =
-    childEstimate != null &&
-    totalEstimate != null &&
-    childEstimate.estimatedPriceUsd !== totalEstimate.estimatedPriceUsd;
-  const visibleChildEstimate = showChildRow ? childEstimate : null;
-
-  const childSubtitle =
-    showChildRow && heightRestrictedSelections && heightRestrictedSelections.length > 0
-      ? `Excl. ${heightRestrictedSelections.map((a) => `${CHILD_CARD_ABBREVIATIONS[a.attractionLabel] ?? a.attractionLabel}${a.heightRestriction ? ` (${a.heightRestriction})` : ''}`).join(', ')}`
-      : undefined;
-
-  return (
-    <DisclosurePanel
-      label="Projected per-person costs"
-      summary={totalEstimate ? formatPriceEstimate(totalEstimate) : 'No selections'}
-      detail="Projections based on historical data · actual prices vary"
-      className="ll-costs"
-      defaultOpen={true}
-      mobileBehavior="collapsed"
-    >
-      <div className="ll-costs__items">
-        <LLProjectedCostItem label="Multi Pass" value={formatPriceEstimate(multiPassEstimate)} />
-        {selectedSinglePassEstimate && (
-          <LLProjectedCostItem
-            label="Selected Single Pass"
-            value={formatPriceEstimate(selectedSinglePassEstimate)}
-          />
-        )}
-        {totalEstimate && (
-          <LLProjectedCostItem
-            emphasized
-            label={showChildRow ? 'Adult total' : 'Current plan total'}
-            value={formatPriceEstimate(totalEstimate)}
-          />
-        )}
-        {visibleChildEstimate && (
-          <LLProjectedCostItem
-            emphasized
-            label="Child total"
-            subtitle={childSubtitle}
-            value={formatPriceEstimate(visibleChildEstimate)}
-          />
-        )}
-      </div>
-    </DisclosurePanel>
-  );
-}
-
-function LLProjectedCostItem({
-  label,
-  value,
-  emphasized = false,
-  subtitle,
-}: {
-  label: string;
-  value: string;
-  emphasized?: boolean;
-  subtitle?: string | undefined;
-}) {
-  return (
-    <div className={`ll-costs__item${emphasized ? ' ll-costs__item--total' : ''}`}>
-      <span className="ll-costs__label">{label}</span>
-      {subtitle && <span className="ll-costs__subtitle">{subtitle}</span>}
-      <span className="ll-costs__value">{value}</span>
-    </div>
-  );
-}
-
 function LLSection({
   eyebrow,
   subtitle,
@@ -584,11 +472,19 @@ function LLAttractionRow({
             (showHeightRestrictions && attraction.heightRestriction != null)) && (
             <span className="ll-row__meta">
               {priceEstimate && (
-                <span className="ll-badge--price">{formatPriceBadge(priceEstimate)}</span>
+                <span className="tag" data-tone="accent">
+                  {formatPriceBadge(priceEstimate)}
+                </span>
               )}
-              {isClosed && <span className="ll-badge--closed">CLOSED</span>}
+              {isClosed && (
+                <span className="tag" data-tone="highlight">
+                  CLOSED
+                </span>
+              )}
               {showHeightRestrictions && attraction.heightRestriction && (
-                <span className="ll-badge--height">{attraction.heightRestriction}</span>
+                <span className="tag" data-tone="recommended">
+                  {attraction.heightRestriction}
+                </span>
               )}
             </span>
           )}
@@ -661,12 +557,20 @@ function LLParkDayCardReadOnly({
                     priceEstimate != null ||
                     (heightRestrictionsMatter && attraction.heightRestriction != null)) && (
                     <span className="ll-section__check-meta">
-                      {returnWindow && <span className="ll-badge--time">{returnWindow}</span>}
+                      {returnWindow && (
+                        <span className="tag" data-tone="neutral">
+                          {returnWindow}
+                        </span>
+                      )}
                       {priceEstimate && (
-                        <span className="ll-badge--price">{formatPriceBadge(priceEstimate)}</span>
+                        <span className="tag" data-tone="accent">
+                          {formatPriceBadge(priceEstimate)}
+                        </span>
                       )}
                       {heightRestrictionsMatter && attraction.heightRestriction && (
-                        <span className="ll-badge--height">{attraction.heightRestriction}</span>
+                        <span className="tag" data-tone="recommended">
+                          {attraction.heightRestriction}
+                        </span>
                       )}
                     </span>
                   )}
@@ -694,9 +598,15 @@ function LLParkDayCardReadOnly({
                   {(returnWindow != null ||
                     (heightRestrictionsMatter && attraction.heightRestriction != null)) && (
                     <span className="ll-section__check-meta">
-                      {returnWindow && <span className="ll-badge--time">{returnWindow}</span>}
+                      {returnWindow && (
+                        <span className="tag" data-tone="neutral">
+                          {returnWindow}
+                        </span>
+                      )}
                       {heightRestrictionsMatter && attraction.heightRestriction && (
-                        <span className="ll-badge--height">{attraction.heightRestriction}</span>
+                        <span className="tag" data-tone="recommended">
+                          {attraction.heightRestriction}
+                        </span>
                       )}
                     </span>
                   )}

@@ -33,55 +33,36 @@ function renderOsbornePlanner() {
 }
 
 describe('LightningLanePlanner pricing', () => {
-  it('shows the pricing disclaimer and projected costs in summary mode', () => {
+  it('shows the pricing disclaimer and one projected total per audience in summary mode', () => {
     renderPlanner();
 
-    const totalLabel = screen.getAllByText('Adult total')[0];
-    const totalItem = totalLabel?.parentElement;
-    const selectedSinglePassLabel = screen.getAllByText('Selected Single Pass')[0];
-    const selectedSinglePassItem = selectedSinglePassLabel?.parentElement;
+    const singlePassLabel = screen.getAllByText('Single Pass picks')[0];
+    const singlePassItem = singlePassLabel?.parentElement;
 
-    if (!totalItem || !selectedSinglePassItem) {
-      throw new Error('Expected projected cost items to render in summary mode');
+    if (!singlePassItem) {
+      throw new Error('Expected the single pass breakdown to render in summary mode');
     }
 
     expect(screen.getAllByText(/Projections based on historical data/i)).not.toHaveLength(0);
-    expect(screen.getAllByText('Projected per-person costs')).not.toHaveLength(0);
-    expect(within(selectedSinglePassItem).getByText('$18')).toBeInTheDocument();
-    expect(within(totalItem).getByText('$53')).toBeInTheDocument();
-    expect(screen.queryByText('$53 ($37–$41)')).not.toBeInTheDocument();
+    expect(screen.getAllByText('Projected per-person cost')).not.toHaveLength(0);
+    expect(within(singlePassItem).getByText('$18')).toBeInTheDocument();
+    expect(screen.getAllByText('$53 adult')).not.toHaveLength(0);
+    expect(screen.queryByText('Adult total')).not.toBeInTheDocument();
+    expect(screen.queryByText('Current plan total')).not.toBeInTheDocument();
   });
 
-  it('shows price pills in edit mode and updates the current total when selections change', () => {
+  it('updates the projected total in edit mode when selections change', () => {
     renderPlanner();
 
     fireEvent.click(screen.getByRole('button', { name: 'Customize picks' }));
 
-    const totalLabel = screen.getByText('Adult total');
-    const totalItem = totalLabel.parentElement;
-    if (!totalItem) {
-      throw new Error('Expected the adult total cost item to render');
-    }
-
-    const selectedSinglePassLabel = screen.getByText('Selected Single Pass');
-    const selectedSinglePassItem = selectedSinglePassLabel.parentElement;
-    if (!selectedSinglePassItem) {
-      throw new Error('Expected the selected single pass cost item to render');
-    }
-
-    expect(within(totalItem).getByText('$53')).toBeInTheDocument();
-    expect(within(selectedSinglePassItem).getByText('$18')).toBeInTheDocument();
+    const headline = () => document.querySelector('.ll-costs .disclosure-panel__headline');
+    expect(headline()).toHaveTextContent('$53 adult');
 
     fireEvent.click(screen.getByRole('checkbox', { name: /Avatar Flight of Passage/i }));
 
-    const updatedTotalLabel = screen.getByText('Current plan total');
-    const updatedTotalItem = updatedTotalLabel.parentElement;
-    if (!updatedTotalItem) {
-      throw new Error('Expected the current total cost item to render');
-    }
-
-    expect(within(updatedTotalItem).getByText('$35')).toBeInTheDocument();
-    expect(screen.queryByText('$53 ($37–$41)')).not.toBeInTheDocument();
+    expect(headline()).toHaveTextContent(/^\$35$/);
+    expect(screen.queryByText('Current plan total')).not.toBeInTheDocument();
     expect(screen.queryByText('$35 ($20–$23)')).not.toBeInTheDocument();
   });
 
@@ -95,7 +76,7 @@ describe('LightningLanePlanner pricing', () => {
     expect(screen.getByText('12:20 PM - 1:20 PM')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Customize picks' }));
-    fireEvent.click(screen.getByRole('button', { name: 'MK · Jul 9' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Magic Kingdom .*Jul 9$/ }));
 
     expect(screen.getByRole('radio', { name: /Big Thunder Mountain Railroad/i })).toBeEnabled();
     fireEvent.click(screen.getByRole('checkbox', { name: /Haunted Mansion/i }));
@@ -103,7 +84,7 @@ describe('LightningLanePlanner pricing', () => {
       screen.getByRole('checkbox', { name: /Buzz Lightyear's Space Ranger Spin/i }),
     ).toBeEnabled();
 
-    fireEvent.click(screen.getByRole('button', { name: 'DHS · Jul 8' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Hollywood Studios .*Jul 8$/ }));
 
     expect(
       screen.getByRole('radio', { name: /Rock 'n' Roller Coaster Starring The Muppets/i }),
@@ -150,7 +131,7 @@ describe('LightningLanePlanner navigation', () => {
     const initialHash = window.location.hash;
 
     fireEvent.click(screen.getByRole('button', { name: 'Customize picks' }));
-    fireEvent.click(screen.getByRole('button', { name: 'MK · Jul 9' }));
+    fireEvent.click(screen.getByRole('button', { name: /^Magic Kingdom .*Jul 9$/ }));
 
     expect(window.location.hash).toBe(initialHash);
     expect(window.location.hash).not.toContain('day=');

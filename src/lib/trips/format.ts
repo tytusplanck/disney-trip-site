@@ -12,6 +12,11 @@ export function getDayLabels(isoDate: string): { weekdayLabel: string; dateLabel
   };
 }
 
+/** Compact park name for chips and anchors: "Disney's Hollywood Studios" becomes "Hollywood Studios". */
+export function getShortParkLabel(parkLabel: string): string {
+  return parkLabel.replace(/^Disney['’]s\s+/, '');
+}
+
 export function getAttractionTone(scorePercent: number): AttractionTone {
   if (scorePercent >= 74) {
     return 'high';

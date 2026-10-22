@@ -13,7 +13,11 @@ export default function ConsensusBars({ items }: Props) {
             <div className="consensus-row__meta">
               <p className="consensus-row__label">
                 <span className="consensus-row__label-text">{item.attractionLabel}</span>
-                {index < 3 ? <span className="consensus-row__star">Top {index + 1}</span> : null}
+                {index < 3 ? (
+                  <span className="tag" data-tone="recommended">
+                    Top {index + 1}
+                  </span>
+                ) : null}
               </p>
               <p className="consensus-row__sub">{item.parkLabel}</p>
             </div>

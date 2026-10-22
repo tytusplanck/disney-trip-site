@@ -25,6 +25,21 @@ describe('Planck Mega Disney Trip guide attractions', () => {
     });
   });
 
+  it('keeps height requirements as structured data instead of note prose', () => {
+    const byId = new Map(
+      planckMegaDisneyTripGuide.map((attraction) => [attraction.id, attraction]),
+    );
+
+    expect(byId.get('expedition-everest')?.height).toBe(44);
+    expect(byId.get('rock-n-roller-coaster')?.height).toBe(48);
+    expect(byId.get('kilimanjaro-safaris')?.height).toBe('any');
+    expect(byId.get('remy-ratatouille')?.height).toBe('any');
+    expect(byId.get('happily-ever-after')?.height).toBeUndefined();
+    for (const attraction of planckMegaDisneyTripGuide) {
+      expect(attraction.notes).not.toMatch(/height requirement/i);
+    }
+  });
+
   it('keeps Rock n Roller Coaster aligned with the Muppets update', () => {
     const attraction = planckMegaDisneyTripGuide.find(
       (guideAttraction) => guideAttraction.id === 'rock-n-roller-coaster',

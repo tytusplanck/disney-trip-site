@@ -9,27 +9,38 @@ const { attractions } = Astro.props;
 
 const priorityMeta: Record<
   GuideAttraction['priority'],
-  { label: string; tone: 'must' | 'recommended' | 'if-time' | 'skip' }
+  { label: string; tone: 'must' | 'recommended' | 'optional' | 'skip' }
 > = {
   'must-do': { label: 'Must Do', tone: 'must' },
   recommended: { label: 'Recommended', tone: 'recommended' },
-  'if-time': { label: 'If Time', tone: 'if-time' },
+  'if-time': { label: 'If Time', tone: 'optional' },
   skip: { label: 'Skip', tone: 'skip' },
 };
+
+function formatHeight(height: GuideAttraction['height']): string | null {
+  if (height === undefined) return null;
+  return height === 'any' ? 'Any height' : `${String(height)}" min`;
+}
 ---
 
 <ul class="guide-attraction-list">
   {
     attractions.map((attraction) => {
       const meta = priorityMeta[attraction.priority];
+      const heightLabel = formatHeight(attraction.height);
       return (
         <li class="guide-attraction-card" data-priority={attraction.priority}>
           <div class="guide-attraction-card__header">
             <div class="guide-attraction-card__title-row">
               <h3 class="guide-attraction-card__name">{attraction.attractionLabel}</h3>
-              <span class="guide-attraction-card__badge" data-tone={meta.tone}>
+              <span class="tag" data-tone={meta.tone}>
                 {meta.label}
               </span>
+              {heightLabel && (
+                <span class="tag" data-tone="neutral">
+                  {heightLabel}
+                </span>
+              )}
             </div>
             <p class="guide-attraction-card__area">{attraction.areaLabel}</p>
           </div>

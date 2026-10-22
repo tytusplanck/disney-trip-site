@@ -1,5 +1,7 @@
 # Design Calibration
 
+> Historical reference. These notes guided an earlier paper-toned direction. The current palette and rules live in [Design System](./design-system.md), which wins wherever the two disagree.
+
 This redesign intentionally avoids AI product-launch and dark SaaS references. The calibration set below was used for direction only: palette, typography, navigation cues, and spatial rhythm. It is not a copying list.
 
 ## Transit / Wayfinding

@@ -7,11 +7,13 @@ import {
   type ChangeEvent,
 } from 'react';
 import ConsensusBars from './ConsensusBars';
+import ParkDayPicker from './ParkDayPicker';
 import type {
   AttractionsExplorerData,
   AttractionsExplorerState,
 } from '../lib/trips/attractions-explorer';
 import { deriveAttractionsExplorerView } from '../lib/trips/attractions-explorer';
+import { getShortParkLabel } from '../lib/trips/format';
 
 interface Props {
   data: AttractionsExplorerData;
@@ -86,7 +88,7 @@ export default function AttractionsExplorer({ data }: Props) {
           className="attractions-explorer__field attractions-explorer__field--search"
           htmlFor={searchFieldId}
         >
-          <span className="attractions-explorer__filter-label">Search</span>
+          <span className="eyebrow">Search</span>
           <input
             className="attractions-explorer__input"
             id={searchFieldId}
@@ -97,57 +99,24 @@ export default function AttractionsExplorer({ data }: Props) {
           />
         </label>
 
-        <section className="attractions-explorer__filter-group">
-          <div className="attractions-explorer__filter-heading">
-            <p className="attractions-explorer__filter-label">Day scope</p>
-            {!resetDisabled ? (
+        <ParkDayPicker
+          label="Day scope"
+          allOption={{ label: 'All park days', meta: 'Whole trip' }}
+          options={data.dayPresets.map((preset) => ({
+            id: preset.id,
+            label: getShortParkLabel(preset.parkLabel),
+            meta: `${preset.weekdayLabel} ${preset.dateLabel}`,
+          }))}
+          selectedId={state.selectedDayId}
+          onSelect={handleDaySelect}
+          action={
+            !resetDisabled ? (
               <button className="attractions-explorer__reset" onClick={handleReset} type="button">
                 Reset filters
               </button>
-            ) : null}
-          </div>
-
-          <div className="attractions-explorer__chip-row">
-            <button
-              aria-pressed={state.selectedDayId === null}
-              className={[
-                'attractions-explorer__chip',
-                state.selectedDayId === null ? 'attractions-explorer__chip--active' : null,
-              ]
-                .filter(Boolean)
-                .join(' ')}
-              onClick={() => {
-                handleDaySelect(null);
-              }}
-              type="button"
-            >
-              <span className="attractions-explorer__chip-label">All Park Days</span>
-              <span className="attractions-explorer__chip-meta">Whole-trip ranking</span>
-            </button>
-
-            {data.dayPresets.map((preset) => (
-              <button
-                aria-pressed={state.selectedDayId === preset.id}
-                className={[
-                  'attractions-explorer__chip',
-                  state.selectedDayId === preset.id ? 'attractions-explorer__chip--active' : null,
-                ]
-                  .filter(Boolean)
-                  .join(' ')}
-                key={preset.id}
-                onClick={() => {
-                  handleDaySelect(preset.id);
-                }}
-                type="button"
-              >
-                <span className="attractions-explorer__chip-label">{preset.parkLabel}</span>
-                <span className="attractions-explorer__chip-meta">
-                  Day {preset.dayNumber} / {preset.weekdayLabel} {preset.dateLabel}
-                </span>
-              </button>
-            ))}
-          </div>
-        </section>
+            ) : null
+          }
+        />
       </article>
 
       {view.hasResults ? (

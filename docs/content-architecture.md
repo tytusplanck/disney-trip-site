@@ -9,9 +9,10 @@
 - Trip-specific grouping rules such as named party cohorts belong in the trip data module itself so reusable analytics stay free of hardcoded trip ids, member ids, or family-specific presets.
 - Use helpers in [`/src/lib/trips/all-trips.ts`](../src/lib/trips/all-trips.ts) to derive grouped sections, compact card facts, and route paths instead of hard-coding those rules in Astro templates.
 - Use [`/src/lib/trips/details.ts`](../src/lib/trips/details.ts) to derive page-level view models such as rankings, party summaries, and schedule day cards from the typed trip modules.
-- Schedule days may carry optional `moments` (`ScheduleMoment[]`, 24-hour `HH:MM` times, kinds `depart | rope-drop | dining | show | arrival`, optional `detail` and `booked | penciled` status). Helpers in [`/src/lib/trips/schedule.ts`](../src/lib/trips/schedule.ts) validate and format times and sort moments; `notes` stays for non-time-bound context and must not duplicate a moment. Dining moments may add `menuUrl`, which must be an `https` link on `disneyworld.disney.go.com`; the helper throws for any other host, protocol, or non-dining kind so bad links fail the build rather than ship. The card renders the restaurant label as the link and opens it in a new tab with a visually-hidden "menu (opens in a new tab)" hint.
+- Schedule days may carry optional `moments` (`ScheduleMoment[]`, 24-hour `HH:MM` times, kinds `depart | rope-drop | dining | show | arrival`, optional `detail` and `booked | penciled` status). Helpers in [`/src/lib/trips/schedule.ts`](../src/lib/trips/schedule.ts) validate and format times and sort moments; `notes` stays for non-time-bound context and must not duplicate a moment. Dining moments may add `menuUrl`, which must be an `https` link on `disneyworld.disney.go.com`; the helper throws for any other host, protocol, or non-dining kind so bad links fail the build rather than ship. The card renders the restaurant label as the link and opens it in a new tab with a visually-hidden "menu (opens in a new tab)" hint. The underline sits on an inner `schedule-moment__link-text` span so markup whitespace inside the link is never underlined.
 - Schedule days may also carry optional `outfit` text (one or two short sentences). `ScheduleDayCard` renders it as an always-visible paragraph after the moments and optional note, spanning the card body with a teal uppercase label. Missing or empty outfit text renders nothing; its styles live in `src/styles/schedule.css`.
 - Use [`/src/lib/trips/readiness.ts`](../src/lib/trips/readiness.ts) to decide when each protected section can leave placeholder mode; attractions, schedule, and party routes each unlock when their own arrays are populated.
+- Planner sections are `attractions | schedule | party | ll | guide | packing`. Every section must be reachable from some trip's tabs; the old `logistics` and `travelers` routes were removed because no trip linked to them. Add a section only alongside the trip data and tab that use it.
 - When one planner route needs richer interactive filtering, add a dedicated view-model helper under [`/src/lib/trips`](../src/lib/trips) for that surface instead of forcing unrelated logic into `details.ts`.
 - Keep analytics and renderer DTOs separate when a planning surface needs both. Analytics helpers may expose richer testable results, but the object passed into a component should contain only the fields that component actually renders.
 - Lightning Lane planner data treats scheduled park labels as a strict boundary. Park-day schedule labels must map to the canonical Disney park ids, and LL inventory must include every canonical park before planner data is built; do not silently fall back to another park.
@@ -22,10 +23,9 @@
 
 - Add `packing: TripPackingData` to a trip module and append `{ label: 'Packing', section: 'packing' }` to its `sectionConfig` to enable `/:tripSlug/packing`. Trips without populated packing data or without the tab redirect to their normal landing route.
 - Keep editable categories, item names, and priorities (`must | rec | nice`) in `src/data/trips/<slug>/packing.ts`. The Planck mega trip is the first enabled trip. The archetype cards use Tabler `user` and `friends` outline icons. These two decorative SVGs live in `PackingIcon.tsx`, with attribution in `docs/licenses/tabler-icons.md`; item row icons remain omitted.
-- Categories use `archetypes: ['adults']`, `['kids']`, or both. Families inherit all adult categories. Mark child-specific categories `kidsOnly: true` to show the pill and sort them first; these do not appear in the adult view.
+- Categories use `archetypes: ['adults']`, `['kids']`, or both. Families inherit all adult categories. Mark child-specific categories `kidsOnly: true` to show the "Kids only" tag and sort them first; these do not appear in the adult view.
 - `PackingLists.tsx` server-renders the default adult list and hydrates only the archetype and priority controls. Counts derive from unfiltered data; filters hide empty categories. Items sort within each category by `must`, `rec`, then `nice`, preserving editorial order within a priority and leaving source data unchanged. Radio cards use roving focus and arrow/Home/End navigation. Selection is ephemeral; there are no checkboxes, saved packing state, or extra login requirements. The existing site key gate still applies.
-- Packing passes `showHeadingOnMobile` to the shared shell so its title and lede remain visible on small screens; other routes retain their existing heading behavior.
-- Packing styles live in `src/styles/packing.css` and reuse app tokens. Archetype cards stack at 640px and narrower, while compact item rows show regular-weight 15px names and priority pills. Packing items have no general descriptions. An optional `details: string[]` renders an editorial bullet list beneath the item name, used for park and dining outfit themes.
+- Packing styles live in `src/styles/packing.css` and reuse app tokens. At 720px and narrower the two archetype cards stay side by side in a compact form and the priority filters stay on one horizontally scrolling row, so the first items show without scrolling. Item rows show regular-weight 15px names and shared priority tags; filters use the shared `choice-chip`. Packing items have no general descriptions. An optional `details: string[]` renders an editorial bullet list beneath the item name, used for park and dining outfit themes.
 
 ## Route-Owned Copy
 
@@ -41,28 +41,36 @@
 - The trip root route redirects to the first planner section, with the protected planner continuing under single-slug attractions, schedule, and party routes.
 - Planning trip tabs render inside the shared content shell so attractions, schedule, and party pages all open with the same content-width embedded tab strip.
 - The embedded planner tabs are label-only. Supporting detail belongs in the shell-owned page summary, not inside each tab.
-- On narrow screens, embedded planner tabs with multiple sections use equal-width columns that fill the rail while preserving a 6.5rem minimum; the rail scrolls horizontally when those columns cannot fit. A single-section trip keeps its only tab full-width and disables horizontal scrolling at every viewport size.
+- On narrow screens, embedded planner tabs use equal-width columns that fill the rail, never narrower than their label; the rail scrolls horizontally only when the labels cannot fit. `getTripNavTabs` in [`/src/lib/trips/all-trips.ts`](../src/lib/trips/all-trips.ts) returns no tabs for a single-section trip, so those routes render no tab strip at all.
 - Desktop trip pages use a lean shared header for brand and breadcrumb context only.
 - Trip shells use a compact mobile header pattern: breadcrumbs collapse to a back link and trip title, with no extra facts disclosure.
-- [`/src/components/shells/TripPageShell.astro`](../src/components/shells/TripPageShell.astro) owns the visible route heading block. Routes pass `pageTitle` and `pageSummary` and should not render their own intro sections above the main tool surface.
-- The Lightning Lane planner keeps park-day chips horizontally scrollable on narrow screens and stacks its action bar vertically so every control remains reachable.
+- [`/src/components/shells/TripPageShell.astro`](../src/components/shells/TripPageShell.astro) owns the visible route heading block. Routes pass `pageTitle` and `pageSummary` and should not render their own intro sections above the main tool surface. The heading shows at every width; on mobile it drops to the `--text-headline-1` size so every tab names the page the same way.
+- Lightning Lane and ride rankings share [`ParkDayPicker`](../src/components/ParkDayPicker.tsx): `choice-chip` buttons labelled with the short park name (`getShortParkLabel` drops "Disney's") and the weekday and date, plus an optional whole-trip chip. The chips wrap on desktop and scroll horizontally on one row at 720px and narrower. The Lightning Lane action bar stacks vertically on narrow screens so every control remains reachable.
+- Lightning Lane park cards show the projected per-person cost once, in the disclosure headline (`$53 adult` when a child total differs). The body is a flat inline breakdown (Multi Pass, Single Pass picks, Child total) inside the card rather than a nested panel. [`LLProjectedCosts`](../src/components/LLProjectedCosts.tsx) owns that view.
 - Disclosure panels use explicit responsive behavior via `data-mobile-behavior`:
   - `expanded`: open by default on mobile first load
   - `collapsed`: collapsed by default on mobile first load
   - `match-desktop`: mirror the desktop `open` default
+- Disclosure toggles read "Show" and "Hide" through CSS `content`; the toggle text span is `aria-hidden` because `<details>` already announces its expanded state.
 - The attractions scoring guide defaults to `collapsed` on mobile to keep the first screen focused.
 - Party now renders its traveler preference cards inline below the split summary instead of hiding them behind a disclosure.
 - Schedule now renders directly as an always-visible timeline with no disclosure wrapper.
-- Days with moments render a compact ordered time list between the day title and the note; days without moments render unchanged. Moment styles live in `src/styles/schedule.css`, not `trip-pages.css`.
+- Days with moments render a compact ordered time list between the day title and the note; days without moments render unchanged. Schedule card and moment styles live in `src/styles/schedule.css`. At 720px and narrower the day number, date, and day-type tags share one row (the decorative day marker is hidden) and each moment keeps time, kind, and label on one row.
 - This split keeps route layouts flexible without duplicating document scaffolding.
+
+## Ride Guide
+
+- Trips with `guide` data render `/:tripSlug/guide` through `getGuideParkGroups` in [`/src/lib/trips/guide.ts`](../src/lib/trips/guide.ts). Parks follow the order of their first scheduled park day (parks missing from the schedule keep editorial order after them), and rides within a park sort `must-do`, `recommended`, `if-time`, then `skip`, preserving editorial order within a priority.
+- Ride notes are capped at `--content-reading` so long descriptions keep a readable line length on wide screens.
+- Each park group carries an `anchorId` (`park-magic-kingdom`); with more than one park the page opens with jump-link chips to each section. Ride names use `--text-title` so they stay smaller than park headings.
+- `GuideAttraction.height` holds the minimum height in inches, or `'any'` when there is none; leave it out for shows and events. It renders as a neutral tag (`40" min`, `Any height`), so keep height requirements out of `notes`.
 
 ## Attractions Filter IA
 
 - The attractions decision board is intentionally reduced to one primary workflow:
   - scoring guide disclosure
   - search
-  - day scope chips
-  - traveler select
+  - day scope chips (shared `ParkDayPicker`)
   - ranked ride list
 - Remove secondary analytics from the route instead of hiding them behind additional disclosures.
 - Day scope still follows the trip schedule so park-day filters stay grounded in the itinerary.
@@ -72,3 +80,11 @@
 - Trip-specific visuals are mapped through `data-trip-theme` attributes and CSS variables.
 - Do not use inline styles for gradients, accent pips, or status treatments.
 - Shared theme tokens belong in the stylesheet layer so future trip pages inherit the same system.
+
+## Shared UI Primitives
+
+- `components.css` owns the cross-route primitives; use them instead of adding route-specific pills or chips:
+  - `.eyebrow` for small uppercase labels.
+  - `.tag` with `data-tone` (`must | recommended | optional | skip | highlight | travel | park | resort | accent | neutral`) for priorities, day types, ranking badges, and Lightning Lane price, time, height, and closed badges.
+  - `.choice-chip` for pill buttons and jump links; `aria-pressed='true'` marks the selection.
+- Every "currently chosen" control (active trip tab, pressed `choice-chip`, checked packing archetype) shares one treatment: trip accent border, soft accent background, and strong accent text. Extend that selector group in `components.css` rather than inventing a new selected style.

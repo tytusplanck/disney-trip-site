@@ -1,4 +1,92 @@
-/* Schedule moments and outfit guidance inside a schedule day card. */
+/* Schedule day cards, moments, and outfit guidance. */
+
+.schedule-grid {
+  display: grid;
+  gap: 0;
+}
+
+.schedule-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-5) 0;
+  border-bottom: var(--border-thin) solid var(--color-line-subtle);
+}
+
+.schedule-card[data-today='true'] {
+  background: var(--trip-accent-soft, var(--color-brand-soft));
+  border-radius: var(--radius-lg);
+  padding-inline: var(--space-4);
+  margin-inline: calc(-1 * var(--space-4));
+}
+
+.schedule-card:first-child {
+  padding-top: 0;
+}
+
+.schedule-card:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.schedule-card__day {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: var(--space-2);
+  width: 4.5rem;
+}
+
+.schedule-card__day-marker {
+  width: 3px;
+  min-height: 5.2rem;
+  border-radius: var(--radius-pill);
+  background: var(--trip-accent, var(--color-brand));
+}
+
+.schedule-card__body {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.schedule-card__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+}
+
+.schedule-card__kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.schedule-card__date,
+.schedule-card__title,
+.schedule-card__park,
+.schedule-card__note {
+  margin: 0;
+}
+
+.schedule-card__title {
+  font-family: var(--font-display);
+  font-size: var(--text-headline-2);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-title);
+  color: var(--color-ink);
+}
+
+.schedule-card__park {
+  color: var(--color-ink);
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+}
+
+.schedule-card__note {
+  color: var(--color-ink-muted);
+}
 
 .schedule-card__outfit {
   margin: var(--space-3) 0 0;
@@ -77,8 +165,13 @@
   font-style: italic;
 }
 
+/* Underline only the label so markup whitespace inside the link stays undecorated. */
 .schedule-moment__link {
   color: inherit;
+  text-decoration: none;
+}
+
+.schedule-moment__link-text {
   text-decoration-line: underline;
   text-decoration-color: var(--color-line-contrast);
 }
@@ -86,15 +179,40 @@
 .schedule-moment__link:hover,
 .schedule-moment__link:focus-visible {
   color: var(--color-brand);
+}
+
+.schedule-moment__link:hover .schedule-moment__link-text,
+.schedule-moment__link:focus-visible .schedule-moment__link-text {
   text-decoration-color: currentColor;
 }
 
 @media (max-width: 720px) {
+  /* Compact day header: "Day 3", the date, and day-type tags share one row. */
+  .schedule-card {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-2) var(--space-3);
+    align-items: center;
+  }
+
+  .schedule-card__day {
+    display: block;
+    width: auto;
+  }
+
+  .schedule-card__day-marker {
+    display: none;
+  }
+
+  .schedule-card__body {
+    display: contents;
+  }
+
+  .schedule-card__body > :not(.schedule-card__meta) {
+    grid-column: 1 / -1;
+  }
+
   .schedule-moment {
-    grid-template-columns: 4.5rem minmax(0, 1fr);
-    grid-template-areas:
-      'time kind'
-      'time body';
-    row-gap: var(--space-1);
+    grid-template-columns: 4.25rem 4.75rem minmax(0, 1fr);
+    column-gap: var(--space-2);
   }
 }

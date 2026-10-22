@@ -31,20 +31,10 @@ export const tripStubPages: Record<TripSection, TripStubPage> = {
     calloutBody: "Tytus' ride notes will show up here once they're written.",
     checklist: ['Rides grouped by park', 'Top picks', 'Notes on each ride'],
   },
-  travelers: {
-    calloutTitle: 'Traveler notes are coming',
-    calloutBody: "Notes on each traveler will show up here once they're written.",
-    checklist: ["Each traveler's priorities", 'Notes for the trip', 'What the group should know'],
-  },
   packing: {
     calloutTitle: 'Packing lists are coming',
     calloutBody: 'Packing lists will show up here once recommendations are added.',
     checklist: ['Adult essentials', 'Kids extras', 'Trip-specific notes'],
-  },
-  logistics: {
-    calloutTitle: 'Logistics are coming',
-    calloutBody: "Dining, resort, and transport details will show up here once they're booked.",
-    checklist: ['Dining reservations', 'Resort details', 'Transport plans'],
   },
 };
 

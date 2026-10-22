@@ -22,7 +22,7 @@ const { day, isToday = false } = Astro.props;
       <div class="schedule-card__kinds">
         {
           day.badges.map((badge) => (
-            <p class:list={['schedule-card__kind', `schedule-card__kind--${badge.kind}`]}>
+            <p class="tag" data-tone={badge.kind}>
               {badge.label}
             </p>
           ))
@@ -52,7 +52,7 @@ const { day, isToday = false } = Astro.props;
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {moment.label}
+                    <span class="schedule-moment__link-text">{moment.label}</span>
                     <span class="visually-hidden">, menu (opens in a new tab)</span>
                   </a>
                 ) : (

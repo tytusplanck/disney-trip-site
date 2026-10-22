@@ -31,7 +31,9 @@ const { view } = Astro.props;
             </div>
             <div class="party-summary__cluster-meta">
               <span class="party-summary__cluster-anchor">{cluster.anchorAttraction}</span>
-              <span class="party-summary__cluster-affinity">{cluster.affinityValue}</span>
+              <span class="tag" data-tone="recommended">
+                {cluster.affinityValue}
+              </span>
             </div>
           </li>
         ))
@@ -45,7 +47,9 @@ const { view } = Astro.props;
       {
         view.gapItems.map((item) => (
           <li class="party-summary__gap-item">
-            <span class="party-summary__gap-badge">{item.badge}</span>
+            <span class="tag" data-tone="highlight">
+              {item.badge}
+            </span>
             <div class="party-summary__gap-copy">
               <strong>{item.title}</strong>
               <span>{item.detail}</span>

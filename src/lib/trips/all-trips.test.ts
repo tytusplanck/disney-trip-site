@@ -9,10 +9,34 @@ import {
   getTripCompactFactsLine,
   getTripLandingPath,
   getTripRouteContext,
+  getTripNavTabs,
   getTripSectionPath,
 } from './all-trips';
 
 describe('all trips helpers', () => {
+  it("keeps Declan's archive limited to the plan and Lightning Lane data it links to", () => {
+    const declanModule = findTripDataModule(allTripsData.modules, 'declan-big-summer-trip');
+
+    expect(declanModule).not.toHaveProperty('guide');
+    expect(declanModule).not.toHaveProperty('travelerProfiles');
+  });
+
+  it('omits trip section navigation when a trip has only one section', () => {
+    expect(getTripNavTabs([{ label: 'Plan', section: 'schedule' }])).toEqual([]);
+    expect(
+      getTripNavTabs([
+        { label: 'Plan', section: 'schedule' },
+        { label: 'LL', section: 'll' },
+      ]).map((tab) => tab.label),
+    ).toEqual(['Plan', 'LL']);
+    expect(getTripNavTabs(undefined).map((tab) => tab.label)).toEqual([
+      'Rides',
+      'Plan',
+      'Party',
+      'LL',
+    ]);
+  });
+
   it('groups trips by status in planning, upcoming, completed order', () => {
     const sections = getAllTripsSections(allTripsData.trips);
 
@@ -116,8 +140,6 @@ describe('all trips helpers', () => {
       'll',
       'guide',
     ]);
-    expect(planningModule?.travelerProfiles).toBeUndefined();
-    expect(planningModule?.logistics).toBeUndefined();
     expect(declanRouteContext?.sectionConfig.map((tab) => tab.label)).toEqual(['Plan', 'LL']);
     expect(declanRouteContext?.sectionConfig.map((tab) => tab.section)).toEqual(['schedule', 'll']);
 

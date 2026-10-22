@@ -13,13 +13,13 @@
 - UI, body, and display font: `Manrope`
 - Keep `--font-display` as a semantic alias, but it resolves to `Manrope` so titles and shell chrome stay in the same family.
 - Weight usage:
-  - `800` for hero titles, day markers, and highest-emphasis page titles
-  - `700` for section headings, trip names, and major card headers
-  - `600` for tabs, buttons, chips, badges, attraction names, and prominent utility labels
-  - `500` for body copy, metadata, timestamps, and helper text
-  - `400` only when long text blocks feel too dense at `500`
-- Keep uppercase metadata to utility labels, tabs, badges, and supporting system text.
-- Minimum body copy size is `1rem`.
+  - `600` for page titles, headings, trip and attraction names, tabs, buttons, chips, and eyebrow labels
+  - `700` for `.tag` text and emphasized figures such as Lightning Lane prices
+  - `500` for secondary chip text and helper text
+  - `400` for body copy and dense list rows such as packing items
+- Keep uppercase metadata to eyebrow labels, tags, and supporting system text.
+- Sizes come from the type tokens: `--text-display-1/2` for page titles, `--text-headline-1/2/3` for section and card headings, `--text-title` for list-item names, then body and meta sizes. Body copy uses `--text-body`; dense rows and secondary text may drop to `--text-body-sm`.
+- Keep heading levels visibly ordered: a list item's name must stay smaller than the section heading above it (ride names use `--text-title` under `--text-headline-2` park headings).
 
 ## Core Tokens
 
@@ -30,7 +30,7 @@
 - Surface 3: `#e9eff6`
 - Ink: `#19242f`
 - Ink muted: `#566474`
-- Ink faint: `#6b7888`
+- Ink faint: `#606d7d`
 - Brand: `#2b6f8a`
 - Brand strong: `#1f5f7c`
 - Slate accent: `#607b97`
@@ -46,9 +46,9 @@
   - `travel` maps to plum
   - `park` maps to lake / brand blue
   - `resort` maps to teal
-- Apply schedule-day semantics to the day-type badge only.
-- Keep the vertical day marker on one shared trip accent so the timeline rail stays calm and consistent.
-- Badge treatments should stay as soft pills with stronger text, not solid saturated fills.
+- Apply schedule-day semantics to the day-type tag only (`.tag` with `data-tone` `travel`, `park`, or `resort`).
+- Keep the vertical day marker on one shared trip accent so the timeline rail stays calm and consistent. On mobile the marker is hidden and the day number joins the date row.
+- Tag treatments stay as soft pills with stronger text, not solid saturated fills.
 
 ## Data Viz Spectrum
 
@@ -62,7 +62,8 @@
 - Apply the spectrum to bars, badges, stat cells, and thin summary rails only. Keep long-form copy, control chrome, tabs, and page shells on the neutral/trip-accent system.
 - `--color-danger*` remains reserved for destructive or error UI. It is not part of planner preference visualization.
 - Schedule stays the reference for semantic vibrance, but its travel / park / resort colors remain scoped to the schedule badge treatment.
-- Party should stay metrics-first: color belongs in affinity pills, gap badges, stat cells, and summary rails, not full-card washes.
+- Party should stay metrics-first: color belongs in affinity and gap tags, stat cells, and summary rails, not full-card washes.
+- Priority tags map onto the spectrum through shared tones: `must` → `viz-1`, `recommended` → `viz-2`, `optional` (nice to have, if time) → `viz-3`, `highlight` → `viz-4`, `skip` → `viz-5`.
 
 ## Layout Rules
 
@@ -73,6 +74,8 @@
 - Main content width: `72rem`
 - Wide content width: `88rem`
 - Reading width: `40rem`
+- Breakpoints: `960px` (tablet: gutters tighten, stub panels stack), `720px` (mobile: compact trip header, single-column cards, single-row scrolling chip rows), and `480px` (small phones: tightest padding). Do not add other widths.
+- Shell grids use `minmax(0, 1fr)` columns so a scrolling chip row or long word can never widen the page.
 
 ## Surface And Radius Rules
 
@@ -85,7 +88,13 @@
 ## Component Rules
 
 - The homepage remains a chooser. Trip cards should contain only status, title, date, primary action, compact facts, and one supporting sentence.
-- Trip tabs are a segmented planner rail with label-only wayfinding.
+- Trip tabs are a segmented planner rail with label-only wayfinding. Trips with one section show no rail.
+- One selected state everywhere: active tab, pressed chip, and checked packing audience all use the trip accent border, soft accent fill, and strong accent text.
+- Pills come in two shared kinds: `.tag` for read-only labels and `.choice-chip` for buttons and jump links. Do not add route-specific pill classes.
+- Park-day filters use the shared `ParkDayPicker` (short park name plus weekday and date) on both Lightning Lane and ride rankings.
+- Lightning Lane park cards show the projected cost once, in the headline, with a flat breakdown row; do not nest boxed panels inside the card.
+- The ride guide opens with park jump links, lists parks in trip order with must-do rides first, and shows height requirements as a tag instead of in the notes.
+- Every planner tab shows its page title at all widths; mobile uses the smaller headline size.
 - Attractions should lead with the scoring guide disclosure, the small filter stack, and the ranked ride list. Do not reintroduce side rails, heatmaps, signals, or area breakdowns.
 - Schedule reads as a vertical trip timeline with clear day markers.
 - Party leads with one compact split summary and follows with visible slim traveler cards that surface each person's total preference counts.

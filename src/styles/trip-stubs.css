@@ -7,6 +7,7 @@
   margin: 0 auto;
   padding: var(--space-7) var(--gutter-desktop) var(--space-12);
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-6);
 }
 
@@ -47,7 +48,7 @@
 .stub-panel__title {
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(1.55rem, 2.4vw, 2rem);
+  font-size: var(--text-headline-1);
   font-weight: 600;
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-title);
@@ -83,6 +84,10 @@
 }
 
 @media (max-width: 960px) {
+  .trip-shell__main {
+    padding-inline: var(--gutter-tablet);
+  }
+
   .stub-panel {
     grid-template-columns: 1fr;
   }
@@ -91,5 +96,12 @@
 @media (max-width: 720px) {
   .trip-shell__main {
     padding: var(--space-5) var(--gutter-mobile) var(--space-11);
+    gap: var(--space-5);
+  }
+}
+
+@media (max-width: 480px) {
+  .trip-shell__main {
+    padding-inline: var(--space-4);
   }
 }

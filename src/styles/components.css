@@ -9,7 +9,7 @@
 
 .brand-mark__wordmark {
   font-family: var(--font-display);
-  font-size: clamp(1.25rem, 2vw, 1.55rem);
+  font-size: var(--text-headline-3);
   font-weight: 600;
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-title);
@@ -287,10 +287,6 @@
   background: var(--color-surface-2);
 }
 
-.trip-tabs__rail[data-tab-count='1'] {
-  grid-template-columns: minmax(0, 1fr);
-}
-
 .trip-tabs__rail[data-tab-count='2'] {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -336,8 +332,155 @@
 
 .trip-tabs__link--active {
   border-color: var(--trip-accent, var(--color-brand));
+}
+
+/* -- Shared label, tag, chip, and selected-state primitives -- */
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-ink-faint);
+  font-size: var(--text-meta);
+  font-weight: 600;
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+}
+
+/* One pill for priorities, day types, and small facts; `data-tone` picks the colors. */
+.tag {
+  --tag-strong: var(--color-ink-soft);
+  --tag-soft: var(--color-surface-2);
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  margin: 0;
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-pill);
+  background: var(--tag-soft);
+  color: var(--tag-strong);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tag[data-tone='must'] {
+  --tag-strong: var(--color-viz-1-strong);
+  --tag-soft: var(--color-viz-1-soft);
+}
+
+.tag[data-tone='recommended'] {
+  --tag-strong: var(--color-viz-2-strong);
+  --tag-soft: var(--color-viz-2-soft);
+}
+
+.tag[data-tone='optional'] {
+  --tag-strong: var(--color-viz-3-strong);
+  --tag-soft: var(--color-viz-3-soft);
+}
+
+.tag[data-tone='highlight'] {
+  --tag-strong: var(--color-viz-4-strong);
+  --tag-soft: var(--color-viz-4-soft);
+}
+
+.tag[data-tone='skip'] {
+  --tag-strong: var(--color-viz-5-strong);
+  --tag-soft: var(--color-viz-5-soft);
+}
+
+.tag[data-tone='travel'] {
+  --tag-strong: var(--color-schedule-travel-strong);
+  --tag-soft: var(--color-schedule-travel-soft);
+}
+
+.tag[data-tone='park'] {
+  --tag-strong: var(--color-schedule-park-strong);
+  --tag-soft: var(--color-schedule-park-soft);
+}
+
+.tag[data-tone='resort'] {
+  --tag-strong: var(--color-schedule-resort-strong);
+  --tag-soft: var(--color-schedule-resort-soft);
+}
+
+.tag[data-tone='accent'] {
+  --tag-strong: var(--trip-accent-strong, var(--color-brand-strong));
+  --tag-soft: var(--trip-accent-soft, var(--color-brand-soft));
+}
+
+.choice-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target-min);
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-thin) solid var(--color-line-subtle);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-1);
+  color: var(--color-ink-muted);
+  font-size: var(--text-label);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--motion-base) var(--ease-standard),
+    border-color var(--motion-base) var(--ease-standard),
+    color var(--motion-base) var(--ease-standard);
+}
+
+.choice-chip:hover {
+  background: var(--color-surface-2);
+  color: var(--color-ink);
+}
+
+/* Every "currently chosen" control shares the trip accent treatment. */
+.trip-tabs__link--active,
+.choice-chip[aria-pressed='true'],
+.packing__archetype[aria-checked='true'] {
+  border-color: var(--trip-accent, var(--color-brand));
   background: var(--trip-accent-soft, var(--color-brand-soft));
   color: var(--trip-accent-strong, var(--color-brand-strong));
+}
+
+/* Park-day picker shared by Lightning Lane and ride rankings. */
+.park-day-picker {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.park-day-picker__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.park-day-picker__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.park-day-picker__chip {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  padding-block: var(--space-2);
+  border-radius: var(--radius-lg);
+  text-align: left;
+}
+
+.park-day-picker__chip-label {
+  color: var(--color-ink);
+}
+
+.park-day-picker__chip-meta {
+  font-size: var(--text-meta);
+  font-weight: 500;
 }
 
 .form-stack {
@@ -512,13 +655,23 @@ select:focus {
   .trip-tabs__link {
     padding: var(--space-3);
   }
-}
 
-@media (max-width: 720px) {
+  .park-day-picker__chips {
+    flex-wrap: nowrap;
+    margin-inline: calc(-1 * var(--space-1));
+    padding: var(--space-1);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .park-day-picker__chips::-webkit-scrollbar {
+    display: none;
+  }
+
   .trip-tabs__rail {
     grid-template-columns: none;
     grid-auto-flow: column;
-    grid-auto-columns: minmax(6.5rem, 1fr);
+    grid-auto-columns: minmax(max-content, 1fr);
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
@@ -528,16 +681,9 @@ select:focus {
   .trip-tabs__rail::-webkit-scrollbar {
     display: none;
   }
-
-  .trip-tabs__rail[data-tab-count='1'] {
-    grid-template-columns: minmax(0, 1fr);
-    grid-auto-flow: row;
-    grid-auto-columns: auto;
-    overflow-x: hidden;
-  }
 }
 
-@media (max-width: 520px) {
+@media (max-width: 480px) {
   .brand-mark {
     gap: var(--space-2);
   }
@@ -545,9 +691,7 @@ select:focus {
   .brand-mark__support {
     display: none;
   }
-}
 
-@media (max-width: 360px) {
   .trip-tabs__link {
     padding: var(--space-2) var(--space-3);
   }

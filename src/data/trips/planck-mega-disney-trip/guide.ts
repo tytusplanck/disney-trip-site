@@ -25,8 +25,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Asia',
     attractionLabel: 'Expedition Everest',
     priority: 'recommended',
+    height: 44,
     notes:
-      'A thrilling roller coaster with a backward section and the Yeti. One of the best coasters in the parks. Height requirement: 44". Recommended for thrill seekers, but not required for the whole group.',
+      'A thrilling roller coaster with a backward section and the Yeti. One of the best coasters in the parks. Recommended for thrill seekers, but not required for the whole group.',
   },
   {
     id: 'kilimanjaro-safaris',
@@ -34,8 +35,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Africa',
     attractionLabel: 'Kilimanjaro Safaris',
     priority: 'must-do',
+    height: 'any',
     notes:
-      'A live animal safari through a recreated African savanna. You will see giraffes, elephants, lions, hippos, and more. No height requirement. Best done early in the morning when animals are most active.',
+      'A live animal safari through a recreated African savanna. You will see giraffes, elephants, lions, hippos, and more. Best done early in the morning when animals are most active.',
   },
   {
     id: 'kali-river-rapids',
@@ -43,8 +45,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Asia',
     attractionLabel: 'Kali River Rapids',
     priority: 'if-time',
+    height: 38,
     notes:
-      'A white-water raft ride — you will get wet. Fun in warm weather, less appealing in November. Height requirement: 38". Skip if the group is not into getting soaked.',
+      'A white-water raft ride — you will get wet. Fun in warm weather, less appealing in November. Skip if the group is not into getting soaked.',
   },
   {
     id: 'guardians-of-the-galaxy',
@@ -52,8 +55,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'World Discovery',
     attractionLabel: 'Guardians of the Galaxy: Cosmic Rewind',
     priority: 'must-do',
+    height: 42,
     notes:
-      'A reverse-launch roller coaster set to classic rock hits. One of the most unique rides Disney has ever built. Height requirement: 42". Individual Lightning Lane only — book at 7am on park day.',
+      'A reverse-launch roller coaster set to classic rock hits. One of the most unique rides Disney has ever built. Individual Lightning Lane only — book at 7am on park day.',
   },
   {
     id: 'remy-ratatouille',
@@ -61,8 +65,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'World Showcase – France',
     attractionLabel: "Remy's Ratatouille Adventure",
     priority: 'must-do',
+    height: 'any',
     notes:
-      "A family-friendly 4D trackless ride through Gusteau's kitchen from a mouse's perspective. No height requirement — perfect for the little ones. Lines get long; use Lightning Lane if possible.",
+      "A family-friendly 4D trackless ride through Gusteau's kitchen from a mouse's perspective. Perfect for the little ones. Lines get long; use Lightning Lane if possible.",
   },
   {
     id: 'test-track',
@@ -70,8 +75,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'World Discovery',
     attractionLabel: 'Test Track',
     priority: 'recommended',
+    height: 40,
     notes:
-      'Design your own SimCar and put it through performance tests, ending with a high-speed run around the outside of the building. A classic EPCOT ride. Height requirement: 40".',
+      'Design your own SimCar and put it through performance tests, ending with a high-speed run around the outside of the building. A classic EPCOT ride.',
   },
   {
     id: 'frozen-ever-after',
@@ -79,8 +85,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'World Showcase – Norway',
     attractionLabel: 'Frozen Ever After',
     priority: 'must-do',
+    height: 'any',
     notes:
-      'A gentle boat ride through the world of Frozen. Fan favorite, especially for kids. Lines are often long — worth a Lightning Lane. No height requirement.',
+      'A gentle boat ride through the world of Frozen. Fan favorite, especially for kids. Lines are often long — worth a Lightning Lane.',
   },
   {
     id: 'living-with-the-land',
@@ -97,8 +104,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'World Nature – The Land',
     attractionLabel: "Soarin' Around the World",
     priority: 'recommended',
+    height: 40,
     notes:
-      'A gentle flight simulator over landmarks around the world. Height requirement: 40". Recommended for the group, especially if the wait stays reasonable or Lightning Lane is available.',
+      'A gentle flight simulator over landmarks around the world. Recommended for the group, especially if the wait stays reasonable or Lightning Lane is available.',
   },
   {
     id: 'food-and-wine',
@@ -115,8 +123,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Tomorrowland',
     attractionLabel: 'Space Mountain',
     priority: 'if-time',
+    height: 44,
     notes:
-      'An indoor roller coaster through the dark of outer space. Height requirement: 44". A classic, but rougher than it looks; keep it as an if-time thrill option.',
+      'An indoor roller coaster through the dark of outer space. A classic, but rougher than it looks; keep it as an if-time thrill option.',
   },
   {
     id: 'seven-dwarfs-mine-train',
@@ -124,8 +133,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Fantasyland',
     attractionLabel: 'Seven Dwarfs Mine Train',
     priority: 'must-do',
+    height: 38,
     notes:
-      'A family coaster through the diamond mine from Snow White. Smooth, fun, and perfect for the kids. Height requirement: 38". The most in-demand ride at Magic Kingdom — use Lightning Lane.',
+      'A family coaster through the diamond mine from Snow White. Smooth, fun, and perfect for the kids. The most in-demand ride at Magic Kingdom — use Lightning Lane.',
   },
   {
     id: 'big-thunder-mountain',
@@ -133,8 +143,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Frontierland',
     attractionLabel: 'Big Thunder Mountain Railroad',
     priority: 'must-do',
+    height: 40,
     notes:
-      'A wild mine train coaster — "the wildest ride in the wilderness." Height requirement: 40". Great for all ages including tweens and teens.',
+      'A wild mine train coaster — "the wildest ride in the wilderness." Great for all ages including tweens and teens.',
   },
   {
     id: 'haunted-mansion',
@@ -142,8 +153,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Liberty Square',
     attractionLabel: 'The Haunted Mansion',
     priority: 'recommended',
+    height: 'any',
     notes:
-      'A beloved Disney classic — a slow dark ride through a haunted manor full of 999 happy haunts. No height requirement. A must for anyone who has not done it before.',
+      'A beloved Disney classic — a slow dark ride through a haunted manor full of 999 happy haunts. A must for anyone who has not done it before.',
   },
   {
     id: 'pirates-of-the-caribbean-mk',
@@ -151,8 +163,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Adventureland',
     attractionLabel: 'Pirates of the Caribbean',
     priority: 'recommended',
+    height: 'any',
     notes:
-      'A classic boat ride through scenes of pirate adventure. No height requirement. A leisurely, beloved ride — great filler or a must for first-timers.',
+      'A classic boat ride through scenes of pirate adventure. A leisurely, beloved ride — great filler or a must for first-timers.',
   },
   {
     id: 'jungle-cruise',
@@ -160,8 +173,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Adventureland',
     attractionLabel: 'Jungle Cruise',
     priority: 'recommended',
+    height: 'any',
     notes:
-      'A skipper-led boat ride full of classic Disney puns and animatronic animals. No height requirement. Recommended as a group-friendly Magic Kingdom staple.',
+      'A skipper-led boat ride full of classic Disney puns and animatronic animals. Recommended as a group-friendly Magic Kingdom staple.',
   },
   {
     id: 'tiana-s-bayou-adventure',
@@ -169,8 +183,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Frontierland',
     attractionLabel: "Tiana's Bayou Adventure",
     priority: 'must-do',
+    height: 40,
     notes:
-      'A musical log-flume adventure with Princess Tiana and a big finale drop. Height requirement: 40". Must do for the Magic Kingdom day; use Lightning Lane if available.',
+      'A musical log-flume adventure with Princess Tiana and a big finale drop. Must do for the Magic Kingdom day; use Lightning Lane if available.',
   },
   {
     id: 'the-many-adventures-of-winnie-the-pooh',
@@ -178,8 +193,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Fantasyland',
     attractionLabel: 'The Many Adventures of Winnie the Pooh',
     priority: 'must-do',
+    height: 'any',
     notes:
-      'A gentle storybook dark ride through the Hundred Acre Wood. No height requirement. Must do for the kid-friendly Fantasyland stack.',
+      'A gentle storybook dark ride through the Hundred Acre Wood. Must do for the kid-friendly Fantasyland stack.',
   },
   {
     id: 'it-s-a-small-world',
@@ -187,8 +203,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Fantasyland',
     attractionLabel: '"it\'s a small world"',
     priority: 'must-do',
+    height: 'any',
     notes:
-      'A classic indoor boat ride through singing scenes from around the world. No height requirement. Must do as an easy all-ages group ride.',
+      'A classic indoor boat ride through singing scenes from around the world. Must do as an easy all-ages group ride.',
   },
   {
     id: 'peter-pan-s-flight',
@@ -196,8 +213,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Fantasyland',
     attractionLabel: "Peter Pan's Flight",
     priority: 'recommended',
+    height: 'any',
     notes:
-      'A suspended dark ride over London and Never Land. No height requirement. Recommended, but prioritize it with Lightning Lane or an early low-wait window.',
+      'A suspended dark ride over London and Never Land. Recommended, but prioritize it with Lightning Lane or an early low-wait window.',
   },
   {
     id: 'buzz-lightyear-s-space-ranger-spin',
@@ -205,8 +223,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Tomorrowland',
     attractionLabel: "Buzz Lightyear's Space Ranger Spin",
     priority: 'if-time',
+    height: 'any',
     notes:
-      'An interactive blaster ride through a Toy Story space mission. No height requirement. Keep it as an if-time option when Tomorrowland has a short wait.',
+      'An interactive blaster ride through a Toy Story space mission. Keep it as an if-time option when Tomorrowland has a short wait.',
   },
   {
     id: 'tomorrowland-transit-authority-peoplemover',
@@ -214,8 +233,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Tomorrowland',
     attractionLabel: 'Tomorrowland Transit Authority PeopleMover',
     priority: 'if-time',
+    height: 'any',
     notes:
-      'A breezy elevated tour through Tomorrowland. No height requirement. Ideal if the group needs a seated break or an easy filler between higher priorities.',
+      'A breezy elevated tour through Tomorrowland. Ideal if the group needs a seated break or an easy filler between higher priorities.',
   },
   {
     id: 'tron-lightcycle-run',
@@ -223,8 +243,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Tomorrowland',
     attractionLabel: 'TRON Lightcycle / Run',
     priority: 'must-do',
+    height: 48,
     notes:
-      'The newest and fastest coaster at Magic Kingdom. You straddle a lightcycle and rocket through a TRON arena. Height requirement: 48". Individual Lightning Lane only — book early. A priority for thrill riders.',
+      'The newest and fastest coaster at Magic Kingdom. You straddle a lightcycle and rocket through a TRON arena. Individual Lightning Lane only — book early. A priority for thrill riders.',
   },
   {
     id: 'happily-ever-after',
@@ -241,8 +262,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: "Star Wars: Galaxy's Edge",
     attractionLabel: 'Star Wars: Rise of the Resistance',
     priority: 'must-do',
+    height: 40,
     notes:
-      'The most ambitious attraction Disney has ever built. An immersive multi-segment experience where you are captured by the First Order. Height requirement: 40". Individual Lightning Lane — book the moment the park opens.',
+      'The most ambitious attraction Disney has ever built. An immersive multi-segment experience where you are captured by the First Order. Individual Lightning Lane — book the moment the park opens.',
   },
   {
     id: 'smugglers-run',
@@ -250,8 +272,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: "Star Wars: Galaxy's Edge",
     attractionLabel: 'Millennium Falcon: Smugglers Run',
     priority: 'recommended',
+    height: 38,
     notes:
-      'Fly the Millennium Falcon on a mission. Interactive — pilots, gunners, and engineers each have a different role. Height requirement: 38". Great group activity.',
+      'Fly the Millennium Falcon on a mission. Interactive — pilots, gunners, and engineers each have a different role. Great group activity.',
   },
   {
     id: 'tower-of-terror',
@@ -259,8 +282,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Sunset Boulevard',
     attractionLabel: 'The Twilight Zone Tower of Terror',
     priority: 'must-do',
+    height: 40,
     notes:
-      'A drop tower in a haunted hotel with a Twilight Zone story. One of the best thrill rides in all of Disney World. Height requirement: 40". A top priority for anyone who likes drops.',
+      'A drop tower in a haunted hotel with a Twilight Zone story. One of the best thrill rides in all of Disney World. A top priority for anyone who likes drops.',
   },
   {
     id: 'slinky-dog-dash',
@@ -268,8 +292,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Toy Story Land',
     attractionLabel: 'Slinky Dog Dash',
     priority: 'must-do',
+    height: 38,
     notes:
-      'A family coaster with surprising airtime — more fun than it looks. Height requirement: 38". Great for all ages and a top pick for the kids. Lines are consistently long; worth Lightning Lane.',
+      'A family coaster with surprising airtime — more fun than it looks. Great for all ages and a top pick for the kids. Lines are consistently long; worth Lightning Lane.',
   },
   {
     id: 'rock-n-roller-coaster',
@@ -277,8 +302,9 @@ export const planckMegaDisneyTripGuide: GuideAttraction[] = [
     areaLabel: 'Sunset Boulevard',
     attractionLabel: "Rock 'n' Roller Coaster Starring The Muppets",
     priority: 'recommended',
+    height: 48,
     notes:
-      'The launch coaster is being rethemed for the Electric Mayhem and The Muppets, with the updated version announced for Summer 2026. Height requirement: 48". Recommended for thrill riders if it is open for the trip.',
+      'The launch coaster is being rethemed for the Electric Mayhem and The Muppets, with the updated version announced for Summer 2026. Recommended for thrill riders if it is open for the trip.',
   },
   {
     id: 'fantasmic',

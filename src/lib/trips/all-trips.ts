@@ -20,6 +20,12 @@ export function getTripSectionConfig(tripModule: TripDataModule): TripSectionTab
   return tripModule.sectionConfig ?? DEFAULT_SECTION_CONFIG;
 }
 
+/** A single section needs no navigation, so it yields no tabs. */
+export function getTripNavTabs(sectionConfig: TripSectionTab[] | undefined): TripSectionTab[] {
+  const tabs = sectionConfig ?? DEFAULT_SECTION_CONFIG;
+  return tabs.length > 1 ? tabs : [];
+}
+
 export interface TripRouteContext {
   trip: TripSummary;
   tripModule: TripDataModule;
