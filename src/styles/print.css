@@ -1,0 +1,85 @@
+/* Print / Save PDF export: the shared button, print-only content, and the paper page frame. */
+
+.trip-page-heading__title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3) var(--space-4);
+}
+
+.print-button__icon {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 0.5in;
+  }
+
+  /* Paper is about 720px wide, so these rules also undo the mobile shell at that breakpoint. */
+  html,
+  body {
+    background: var(--color-surface-1);
+  }
+
+  body::before {
+    display: none;
+  }
+
+  .site-header,
+  .trip-tabs,
+  .skip-link,
+  [data-print-hide] {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block;
+  }
+
+  .app-shell,
+  .trip-shell {
+    min-height: 0;
+  }
+
+  .trip-shell__main,
+  .trip-page-shell__main {
+    width: auto;
+    padding: 0;
+    gap: var(--space-5);
+  }
+
+  .trip-page-heading {
+    gap: var(--space-2);
+  }
+
+  .trip-page-heading__trip {
+    margin: 0;
+    color: var(--color-ink-muted);
+    font-size: var(--text-meta);
+    font-weight: 600;
+    letter-spacing: var(--tracking-meta);
+    text-transform: uppercase;
+  }
+
+  .trip-page-heading__title {
+    font-size: var(--text-headline-1);
+  }
+
+  .trip-page-heading__summary {
+    font-size: var(--text-body-sm);
+  }
+
+  /* Keep tag fills in saved PDFs, and an outline for printers that drop backgrounds anyway. */
+  .tag {
+    border: var(--border-thin) solid var(--tag-strong);
+    print-color-adjust: exact;
+  }
+}

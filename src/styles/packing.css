@@ -149,3 +149,47 @@
     margin-bottom: var(--space-6);
   }
 }
+
+@media print {
+  /* The printout follows the on-screen filter, named by the scope line, with a tick box per item. */
+  .packing__print-scope {
+    margin: 0 0 var(--space-5);
+    color: var(--color-ink);
+    font-size: var(--text-body-sm);
+    font-weight: 600;
+  }
+
+  .packing__section {
+    margin-bottom: var(--space-6);
+  }
+
+  .packing__section-heading {
+    break-after: avoid;
+  }
+
+  .packing__items {
+    overflow: visible;
+  }
+
+  .packing__item {
+    padding-block: var(--space-2);
+    break-inside: avoid;
+  }
+
+  .packing__item::before {
+    content: '';
+    flex-shrink: 0;
+    width: 0.9rem;
+    height: 0.9rem;
+    border: var(--border-strong) solid var(--color-ink-muted);
+    border-radius: var(--radius-none);
+  }
+
+  .packing__item--details {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .packing__item--details .packing__item-details {
+    grid-column: 2 / -1;
+  }
+}

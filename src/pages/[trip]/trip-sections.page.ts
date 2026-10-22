@@ -1,6 +1,14 @@
+import type { TripPrintCopy } from '../../lib/trips/print';
 import type { TripSection } from '../../lib/trips/types';
 
-export const tripSectionCopy: Record<TripSection, { title: string; summary: string }> = {
+interface TripSectionCopy {
+  title: string;
+  summary: string;
+  /** Present only on pages whose print layout has been checked; renders the Print / Save PDF button. */
+  print?: TripPrintCopy;
+}
+
+export const tripSectionCopy: Record<TripSection, TripSectionCopy> = {
   attractions: {
     title: 'Ride picks',
     summary: 'Rank rides by shared support, then narrow to a day or traveler when a call is close.',
@@ -8,6 +16,7 @@ export const tripSectionCopy: Record<TripSection, { title: string; summary: stri
   schedule: {
     title: 'Day-by-day plan',
     summary: 'Read the trip in one line from arrival to departure.',
+    print: { buttonLabel: 'Print / Save PDF', documentTitle: 'Day-by-day plan' },
   },
   party: {
     title: 'Traveler preferences',
@@ -25,5 +34,6 @@ export const tripSectionCopy: Record<TripSection, { title: string; summary: stri
   packing: {
     title: 'Packing lists',
     summary: "Tytus' recommendations for your trip, tuned to the weather and the group's schedule.",
+    print: { buttonLabel: 'Print / Save PDF', documentTitle: 'Packing list' },
   },
 };

@@ -12,4 +12,13 @@ describe('trip section copy', () => {
       'schedule',
     ]);
   });
+
+  it('offers print export only on the plan and packing pages', () => {
+    const printable = Object.entries(tripSectionCopy)
+      .filter(([, copy]) => copy.print)
+      .map(([section]) => section);
+    expect(printable).toEqual(['schedule', 'packing']);
+    expect(tripSectionCopy.schedule.print?.buttonLabel).toBe('Print / Save PDF');
+    expect(tripSectionCopy.packing.print?.buttonLabel).toBe('Print / Save PDF');
+  });
 });

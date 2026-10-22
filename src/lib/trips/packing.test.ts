@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest';
-import { getPackingCategories } from './packing';
+import { getPackingCategories, getPackingScopeLabel } from './packing';
 import type { PackingCategory } from './types';
 
 it('orders each category by priority, preserving ties and the editable source data', () => {
@@ -30,4 +30,10 @@ it('orders each category by priority, preserving ties and the editable source da
     getPackingCategories(categories, 'kids', 'rec')[0]?.items.map((item) => item.name),
   ).toEqual(['Recommended first', 'Recommended second']);
   expect(categories).toEqual(before);
+});
+
+it('describes the selected audience and priority for printouts', () => {
+  expect(getPackingScopeLabel('adults', 'all')).toBe('Adults · All priorities');
+  expect(getPackingScopeLabel('kids', 'must')).toBe('Adults with kids · Must pack only');
+  expect(getPackingScopeLabel('kids', 'nice')).toBe('Adults with kids · Nice to have only');
 });

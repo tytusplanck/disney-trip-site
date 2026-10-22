@@ -2,7 +2,7 @@
 
 Source: https://github.com/tabler/tabler-icons
 
-Used outline icons: `user`, `friends`.
+Used outline icons: `user`, `friends`, `printer`.
 
 MIT License
 

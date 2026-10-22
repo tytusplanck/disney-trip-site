@@ -5,6 +5,8 @@ import type { PackingArchetype, PackingPriority, TripPackingData } from '../lib/
 import {
   countPackingItems,
   getPackingCategories,
+  getPackingScopeLabel,
+  PACKING_ARCHETYPE_LABELS,
   PACKING_PRIORITY_LABELS,
 } from '../lib/trips/packing';
 
@@ -31,6 +33,7 @@ export default function PackingLists({ data }: Props) {
   const familyCount = countPackingItems(familyCategories);
   const kidsCount = countPackingItems(familyCategories.filter((category) => category.kidsOnly));
   const categories = getPackingCategories(data.categories, archetype, priority);
+  const scopeLabel = getPackingScopeLabel(archetype, priority);
 
   function handleRadioKey(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     let next: number;
@@ -56,8 +59,14 @@ export default function PackingLists({ data }: Props) {
   }
 
   return (
-    <div className="packing">
-      <div className="packing__archetypes" role="radiogroup" aria-label="Who are you packing for?">
+    <div className="packing" data-print-scope={scopeLabel}>
+      <p className="packing__print-scope print-only">Packing for: {scopeLabel}</p>
+      <div
+        className="packing__archetypes"
+        role="radiogroup"
+        aria-label="Who are you packing for?"
+        data-print-hide
+      >
         {ARCHETYPES.map((value, index) => (
           <button
             key={value}
@@ -77,9 +86,7 @@ export default function PackingLists({ data }: Props) {
             }}
           >
             <PackingIcon name={value === 'adults' ? 'user' : 'friends'} />
-            <span className="packing__archetype-title">
-              {value === 'adults' ? 'Adults' : 'Adults with kids'}
-            </span>{' '}
+            <span className="packing__archetype-title">{PACKING_ARCHETYPE_LABELS[value]}</span>{' '}
             <span className="packing__archetype-count">
               {value === 'adults'
                 ? `${String(adultCount)} items`
@@ -88,7 +95,12 @@ export default function PackingLists({ data }: Props) {
           </button>
         ))}
       </div>
-      <div className="packing__filters" role="group" aria-label="Filter by priority">
+      <div
+        className="packing__filters"
+        role="group"
+        aria-label="Filter by priority"
+        data-print-hide
+      >
         {FILTERS.map((value) => (
           <button
             key={value}

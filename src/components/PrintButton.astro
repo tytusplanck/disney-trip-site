@@ -1,0 +1,73 @@
+---
+import type { TripPrintCopy } from '../lib/trips/print';
+
+interface Props {
+  tripTitle: string;
+  copy: TripPrintCopy;
+}
+
+const { tripTitle, copy } = Astro.props;
+---
+
+<button
+  type="button"
+  class="choice-chip print-button"
+  data-print-trigger
+  data-print-trip-title={tripTitle}
+  data-print-document-title={copy.documentTitle}
+  data-print-hide
+>
+  <!-- Tabler outline `printer`, MIT licensed. See docs/licenses/tabler-icons.md. -->
+  <svg
+    class="print-button__icon"
+    aria-hidden="true"
+    focusable="false"
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2"
+    ></path>
+    <path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4"></path>
+    <path d="M7 15a2 2 0 0 1 2 -2h6a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-6a2 2 0 0 1 -2 -2z"></path>
+  </svg>
+  <span>{copy.buttonLabel}</span>
+</button>
+
+<script>
+  import { getPrintDocumentTitle } from '../lib/trips/print';
+
+  let titleBeforePrint: string | null = null;
+
+  // Name the saved PDF after the page (plus any on-screen filter), then restore the tab title.
+  const applyPrintTitle = () => {
+    const trigger = document.querySelector<HTMLElement>('[data-print-trigger]');
+    if (!trigger) return;
+    const tripTitle = trigger.dataset['printTripTitle'] ?? '';
+    const documentTitle = trigger.dataset['printDocumentTitle'] ?? '';
+    const scope = document.querySelector<HTMLElement>('[data-print-scope]')?.dataset['printScope'];
+    titleBeforePrint ??= document.title;
+    document.title = getPrintDocumentTitle(tripTitle, { documentTitle }, scope);
+  };
+
+  const restoreTitle = () => {
+    if (titleBeforePrint === null) return;
+    document.title = titleBeforePrint;
+    titleBeforePrint = null;
+  };
+
+  document.addEventListener('click', (event) => {
+    if (event.target instanceof Element && event.target.closest('[data-print-trigger]')) {
+      applyPrintTitle();
+      window.print();
+    }
+  });
+  window.addEventListener('beforeprint', applyPrintTitle);
+  window.addEventListener('afterprint', restoreTitle);
+</script>

@@ -1,8 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../Breadcrumbs.astro';
+import PrintButton from '../PrintButton.astro';
 import SiteHeader from '../SiteHeader.astro';
 import TripTabs from '../TripTabs.astro';
+import type { TripPrintCopy } from '../../lib/trips/print';
 import type { TripSection, TripSectionTab, TripSummary } from '../../lib/trips/types';
 
 interface Props {
@@ -13,9 +15,10 @@ interface Props {
   pageTitle: string;
   pageSummary?: string | undefined;
   sectionConfig?: TripSectionTab[] | undefined;
+  print?: TripPrintCopy | undefined;
 }
 
-const { title, description, trip, activeSection, pageTitle, pageSummary, sectionConfig } =
+const { title, description, trip, activeSection, pageTitle, pageSummary, sectionConfig, print } =
   Astro.props;
 
 const tripLabel = `${trip.title} / ${trip.dateLabel}`;
@@ -36,7 +39,11 @@ const tripLabel = `${trip.title} / ${trip.dateLabel}`;
     <main class="trip-shell__main trip-page-shell__main" id="main-content">
       <TripTabs trip={trip} activeSection={activeSection} sectionConfig={sectionConfig} />
       <section class="trip-page-heading">
-        <h1 class="page-title trip-page-heading__title">{pageTitle}</h1>
+        <p class="print-only trip-page-heading__trip">{tripLabel}</p>
+        <div class="trip-page-heading__title-row">
+          <h1 class="page-title trip-page-heading__title">{pageTitle}</h1>
+          {print && <PrintButton tripTitle={trip.title} copy={print} />}
+        </div>
         {pageSummary && <p class="body-copy trip-page-heading__summary">{pageSummary}</p>}
       </section>
       <slot />

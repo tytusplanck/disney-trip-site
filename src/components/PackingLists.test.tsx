@@ -188,4 +188,16 @@ describe('Packing lists', () => {
     expect(screen.queryAllByRole('heading', { level: 2 })).toHaveLength(0);
     expect(screen.getByRole('status')).toHaveTextContent('No items match this priority.');
   });
+
+  it('labels printouts with the selected audience and priority', () => {
+    const { container } = renderLists();
+    const scope = () => container.querySelector('[data-print-scope]');
+    expect(screen.getByText('Packing for: Adults · All priorities')).toBeInTheDocument();
+    expect(scope()).toHaveAttribute('data-print-scope', 'Adults · All priorities');
+    fireEvent.click(screen.getByRole('radio', { name: /Adults with kids/ }));
+    expect(screen.getByText('Packing for: Adults with kids · All priorities')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Must pack' }));
+    expect(screen.getByText('Packing for: Adults with kids · Must pack only')).toBeInTheDocument();
+    expect(scope()).toHaveAttribute('data-print-scope', 'Adults with kids · Must pack only');
+  });
 });

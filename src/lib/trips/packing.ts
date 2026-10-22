@@ -6,6 +6,11 @@ export const PACKING_PRIORITY_LABELS: Record<PackingPriority, string> = {
   nice: 'Nice to have',
 };
 
+export const PACKING_ARCHETYPE_LABELS: Record<PackingArchetype, string> = {
+  adults: 'Adults',
+  kids: 'Adults with kids',
+};
+
 const PRIORITY_ORDER: Record<PackingPriority, number> = { must: 0, rec: 1, nice: 2 };
 
 export function getPackingCategories(
@@ -31,4 +36,13 @@ export function getPackingCategories(
 
 export function countPackingItems(categories: PackingCategory[]): number {
   return categories.reduce((count, category) => count + category.items.length, 0);
+}
+
+export function getPackingScopeLabel(
+  archetype: PackingArchetype,
+  priority: PackingPriority | 'all',
+): string {
+  const priorityLabel =
+    priority === 'all' ? 'All priorities' : `${PACKING_PRIORITY_LABELS[priority]} only`;
+  return `${PACKING_ARCHETYPE_LABELS[archetype]} · ${priorityLabel}`;
 }

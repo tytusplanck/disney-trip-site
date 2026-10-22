@@ -61,6 +61,10 @@ Run these commands as needed while fixing issues, then finish with the aggregate
 
 ## Change-Specific Guidance
 
+- Print export changes (any page with a Print / Save PDF button, or styles on those pages):
+  - preview print media in the browser, then save a real PDF on Letter paper and check it: no site chrome or controls, no day or item split across pages, and the packing scope line matches the filter that was selected
+  - the paper is about 720px wide, so the `720px` mobile rules apply; a print preview at a desktop window width does not prove the paper layout
+
 - Auth or middleware changes:
   - run focused tests for `src/middleware.test.ts`, `src/pages/api/auth/auth-routes.test.ts`, and the relevant files in `src/lib/auth`
   - manually verify login, logout, redirect, and direct URL access in a real browser

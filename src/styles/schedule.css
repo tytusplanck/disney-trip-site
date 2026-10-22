@@ -216,3 +216,48 @@
     column-gap: var(--space-2);
   }
 }
+
+@media print {
+  /* Paper keeps the desktop timeline at every paper size and never splits a day across pages. */
+  .schedule-card {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: start;
+    padding: var(--space-4) 0;
+    break-inside: avoid;
+  }
+
+  .schedule-card[data-today='true'] {
+    margin-inline: 0;
+    padding-inline: 0;
+    border-radius: 0;
+    background: none;
+  }
+
+  .schedule-card__day {
+    display: grid;
+    width: 4.5rem;
+  }
+
+  .schedule-card__day-marker {
+    display: block;
+    min-height: 3rem;
+  }
+
+  .schedule-card__body {
+    display: grid;
+  }
+
+  .schedule-card__body > :not(.schedule-card__meta) {
+    grid-column: auto;
+  }
+
+  .schedule-moment {
+    grid-template-columns: 4.75rem 5.5rem minmax(0, 1fr);
+    column-gap: var(--space-3);
+  }
+
+  .schedule-moment__link-text {
+    text-decoration-line: none;
+  }
+}
