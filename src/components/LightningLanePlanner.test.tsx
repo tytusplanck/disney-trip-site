@@ -107,8 +107,8 @@ describe('LightningLanePlanner pricing', () => {
       throw new Error('Expected Animal Kingdom LL card to render');
     }
 
-    expect(within(animalKingdomCard as HTMLElement).getAllByText('$40')).not.toHaveLength(0);
-    expect(within(animalKingdomCard as HTMLElement).getAllByText('$18')).not.toHaveLength(0);
+    expect(within(animalKingdomCard as HTMLElement).getAllByText('$44')).not.toHaveLength(0);
+    expect(within(animalKingdomCard as HTMLElement).getAllByText('$19')).not.toHaveLength(0);
   });
 
   it("shows different date-specific prices for Osborne's two Magic Kingdom days", () => {

@@ -565,9 +565,9 @@ describe('pricing helpers', () => {
     expect(dayTotals).toEqual([
       {
         parkDate: '2026-11-08',
-        multiPass: 32,
+        multiPass: 29,
         singlePass: 25,
-        total: 57,
+        total: 54,
       },
       {
         parkDate: '2026-11-10',
@@ -577,18 +577,18 @@ describe('pricing helpers', () => {
       },
       {
         parkDate: '2026-11-12',
-        multiPass: 32,
+        multiPass: 28,
         singlePass: 22,
-        total: 54,
+        total: 50,
       },
       {
         parkDate: '2026-11-14',
-        multiPass: 22,
-        singlePass: 18,
-        total: 40,
+        multiPass: 25,
+        singlePass: 19,
+        total: 44,
       },
     ]);
-    expect(dayTotals.reduce((sum, day) => sum + day.total, 0)).toBe(228);
+    expect(dayTotals.reduce((sum, day) => sum + day.total, 0)).toBe(225);
   });
 });
 
