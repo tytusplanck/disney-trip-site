@@ -238,6 +238,14 @@ describe('buildLLPlannerData', () => {
       '2026-11-14',
     ]);
     expect(plannerData.heightRestrictionsMatter).toBe(false);
+    expect(
+      plannerData.inventory['magic-kingdom'].attractions.find(
+        (attraction) => attraction.id === 'mk-tianas-bayou-adventure',
+      ),
+    ).toMatchObject({
+      closedDuringTrip: true,
+      closureNote: 'Closed for refurbishment — reopens December 18, 2026',
+    });
   });
 });
 
